@@ -1,4 +1,4 @@
-package org.pet.backendpetshelter;
+package org.pet.backendpetshelter.Configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
