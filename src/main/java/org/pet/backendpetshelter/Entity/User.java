@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
+import org.pet.backendpetshelter.Roles;
 
 @Getter
 @Setter
@@ -21,4 +22,5 @@ public class User {
     private String lastName;
     private String phone;
     private Boolean isActive;
+    private Roles role;
 }
