@@ -12,6 +12,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class AnimalDTOResponse {
+    private Long id;
     private String name;
     private Species species;
     private Date birthDate;
@@ -21,6 +22,7 @@ public class AnimalDTOResponse {
 
 
     public AnimalDTOResponse(Animal animal) {
+        this.id = animal.getId();
         this.name = animal.getName();
         this.species = animal.getSpecies();
         this.birthDate = animal.getBirthDate();
