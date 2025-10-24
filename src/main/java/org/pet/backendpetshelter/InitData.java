@@ -48,12 +48,24 @@ public class InitData implements CommandLineRunner {
         User savedUser1 = userRepository.save(user1);
 
 
+        Species species1 = new Species();
+        species1.setName("Bird");
+        Species savedSpecies1 = speciesRepository.save(species1);
+
+
 
         Species dog = speciesRepository.findByName("Dog")
                 .orElseThrow(() -> new RuntimeException("Species 'Dog' not found!"));
 
         Breed breed = breedRepository.findByName("Bulldog")
                 .orElseThrow(() -> new RuntimeException("Breed 'Labrador' not found!"));
+
+
+        Breed breed1 = new Breed();
+        breed1.setName("Parrot");
+        breed1.setSpecies(savedSpecies1);
+        Breed savedBreed1 = breedRepository.save(breed1);
+
 
 
 
@@ -68,7 +80,20 @@ public class InitData implements CommandLineRunner {
         animal1.setPrice(100);
         animal1.setIsActive(true);
 
+        Animal animal2 = new Animal();
+        animal2.setName("polly");
+        animal2.setSpecies(savedSpecies1);
+        animal2.setBreed(breed1);
+        animal2.setBirthDate(dateFormat.parse("2020-05-20"));
+        animal2.setSex("female");
+        animal2.setIntakeDate(dateFormat.parse("2023-01-15"));
+        animal2.setStatus("available");
+        animal2.setPrice(150);
+        animal2.setIsActive(true);
+
+
         animalRepository.save(animal1);
+        animalRepository.save(animal2);
 
 
 
