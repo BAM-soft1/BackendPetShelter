@@ -6,4 +6,5 @@ public enum Roles {
     VETERINARIAN,
     ADOPTER,
     FOSTER,
+    USER,
 }

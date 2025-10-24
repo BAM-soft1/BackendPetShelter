@@ -2,6 +2,7 @@ package org.pet.backendpetshelter.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.pet.backendpetshelter.Entity.Breed;
 import org.pet.backendpetshelter.Entity.Species;
 
 import java.util.Date;
@@ -11,8 +12,11 @@ import java.util.Date;
 public class AnimalDTORequest {
     private String name;
     private Species species;
+    private Breed breed;
+    private String sex;
     private Date birthDate;
     private Date intakeDate;
+    private String Status;
     private int price;
     private Boolean isActive;
 }

@@ -1,15 +1,17 @@
 package org.pet.backendpetshelter.Reposiotry;
 
 
-import org.pet.backendpetshelter.Entity.Species;
+import org.pet.backendpetshelter.Entity.Breed;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface SpeciesRepository extends JpaRepository<Species, Long> {
-    Species findById(long id);
-    Optional<Species> findByName(String name);
+public interface BreedRepository extends JpaRepository<Breed, Long> {
+    Breed findById(long id);
+    Optional<Breed> findByName(String name);
+
 
 }
+

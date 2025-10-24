@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.pet.backendpetshelter.Entity.Animal;
+import org.pet.backendpetshelter.Entity.Breed;
 import org.pet.backendpetshelter.Entity.Species;
 
 import java.util.Date;
@@ -14,9 +15,12 @@ import java.util.Date;
 public class AnimalDTOResponse {
     private Long id;
     private String name;
+    private String sex;
     private Species species;
+    private Breed breed;
     private Date birthDate;
     private Date intakeDate;
+    private String Status;
     private int price;
     private Boolean isActive;
 
@@ -24,9 +28,12 @@ public class AnimalDTOResponse {
     public AnimalDTOResponse(Animal animal) {
         this.id = animal.getId();
         this.name = animal.getName();
+        this.sex = animal.getSex();
         this.species = animal.getSpecies();
+        this.breed = animal.getBreed();
         this.birthDate = animal.getBirthDate();
         this.intakeDate = animal.getIntakeDate();
+        this.Status = animal.getStatus();
         this.price = animal.getPrice();
         this.isActive = animal.getIsActive();
     }

@@ -47,5 +47,5 @@ public class SpeciesController {
         speciesService.deleteSpecies(id);
         return ResponseEntity.noContent().build();
     }
-    
+
 }

@@ -2,27 +2,36 @@ package org.pet.backendpetshelter;
 
 
 import org.pet.backendpetshelter.Entity.Animal;
+import org.pet.backendpetshelter.Entity.Breed;
+import org.pet.backendpetshelter.Entity.Species;
 import org.pet.backendpetshelter.Entity.User;
 import org.pet.backendpetshelter.Reposiotry.AnimalRepository;
+import org.pet.backendpetshelter.Reposiotry.BreedRepository;
+import org.pet.backendpetshelter.Reposiotry.SpeciesRepository;
 import org.pet.backendpetshelter.Reposiotry.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
+
 
 @Component
 public class InitData implements CommandLineRunner {
     private final UserRepository userRepository;
     private final AnimalRepository animalRepository;
+    private final SpeciesRepository speciesRepository;
+    private final BreedRepository breedRepository;
 
-    public InitData(UserRepository userRepository, AnimalRepository animalRepository) {
+    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository) {
         this.userRepository = userRepository;
         this.animalRepository = animalRepository;
+        this.speciesRepository = speciesRepository;
+        this.breedRepository = breedRepository;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         System.out.println("Henter data fra databasen");
 
         /* Users */
@@ -39,17 +48,34 @@ public class InitData implements CommandLineRunner {
         User savedUser1 = userRepository.save(user1);
 
 
-        /* Animals */
+
+        Species dog = speciesRepository.findByName("Dog")
+                .orElseThrow(() -> new RuntimeException("Species 'Dog' not found!"));
+
+        Breed breed = breedRepository.findByName("Bulldog")
+                .orElseThrow(() -> new RuntimeException("Breed 'Labrador' not found!"));
+
+
+
         Animal animal1 = new Animal();
-        animal1.setName("Buddy");
-        animal1.setSpecies("Dog");
-        animal1.setBirthDate(java.time.LocalDateTime.parse("2020-05-15 10:00:00", formatter));
-        animal1.setIntakeDate(java.time.LocalDateTime.parse("2021-06-20 14:30:00", formatter));
-        animal1.setPrice(300.0);
+        animal1.setName("rex");
+        animal1.setSpecies(dog);
+        animal1.setBreed(breed);
+        animal1.setBirthDate(dateFormat.parse("2021-03-14"));
+        animal1.setSex("male");
+        animal1.setIntakeDate(dateFormat.parse("2022-06-27"));
+        animal1.setStatus("available");
+        animal1.setPrice(100);
         animal1.setIsActive(true);
 
+        animalRepository.save(animal1);
 
-        Animal savedAnimal1 = animalRepository.save(animal1);
+
+
+
+
+
+
 
 
     }

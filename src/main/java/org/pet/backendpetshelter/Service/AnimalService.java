@@ -42,6 +42,7 @@ public class AnimalService {
 
         Animal animal = new Animal();
         animal.setName(request.getName());
+        animal.setSex(request.getSex());
         animal.setSpecies(request.getSpecies());
         animal.setBirthDate(request.getBirthDate());
         animal.setIntakeDate(request.getIntakeDate());
@@ -60,6 +61,7 @@ public class AnimalService {
 
         animal.setName(request.getName());
         animal.setSpecies(request.getSpecies());
+        animal.setSex(request.getSex());
         animal.setBirthDate(request.getBirthDate());
         animal.setIntakeDate(request.getIntakeDate());
         animal.setPrice(request.getPrice());

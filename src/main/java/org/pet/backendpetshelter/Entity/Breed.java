@@ -7,12 +7,19 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "Species")
-public class Species {
+@Table(name = "Breed")
+public class Breed {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "species_id")
+    @Column(name = "breed_id")
+
+
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "species_id")
+    private Species species;
     private String name;
 
 }

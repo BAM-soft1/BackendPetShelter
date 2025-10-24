@@ -10,9 +10,11 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@Table(name = "Animal")
 public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "animal_id")  // ← Ret dette!
 
     private Long id;
     private String name;
@@ -21,10 +23,15 @@ public class Animal {
     @JoinColumn(name = "species_id", nullable = false)
     private Species species;
 
+
+    @ManyToOne
+    @JoinColumn(name = "breed_id")
+    private Breed breed;
+
     private Date birthDate;
-    private String Sex;
+    private String sex;
     private Date intakeDate;
-    //private String Status;
+    private String Status;
     private int price;
     private Boolean isActive;
 
