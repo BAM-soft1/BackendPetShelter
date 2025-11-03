@@ -1,6 +1,5 @@
 package org.pet.backendpetshelter;
 
-
 import org.pet.backendpetshelter.Entity.*;
 import org.pet.backendpetshelter.Reposiotry.*;
 import org.springframework.boot.CommandLineRunner;
@@ -8,27 +7,33 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 
-
 @Component
 public class InitData implements CommandLineRunner {
     private final UserRepository userRepository;
     private final AnimalRepository animalRepository;
     private final SpeciesRepository speciesRepository;
     private final BreedRepository breedRepository;
-    private final VeterinianRepository veterinianRepository;
+    private final VeterinarianRepository veterinarianRepository;
 
-    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, VeterinianRepository veterinianRepository) {
+    public InitData(UserRepository userRepository, AnimalRepository animalRepository,
+                    SpeciesRepository speciesRepository, BreedRepository breedRepository,
+                    VeterinarianRepository veterinarianRepository) {
         this.userRepository = userRepository;
         this.animalRepository = animalRepository;
         this.speciesRepository = speciesRepository;
         this.breedRepository = breedRepository;
-        this.veterinianRepository = veterinianRepository;
+        this.veterinarianRepository = veterinarianRepository;
     }
 
     @Override
     public void run(String... args) throws Exception {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        System.out.println("Henter data fra databasen");
+        System.out.println("Initialiserer data...");
+
+        if (userRepository.count() > 0) {
+            System.out.println("Data findes allerede - springer initialisering over");
+            return;
+        }
 
         /* Users */
         User user1 = new User();
@@ -36,35 +41,29 @@ public class InitData implements CommandLineRunner {
         user1.setPassword("test");
         user1.setFirstName("ox");
         user1.setLastName("woo");
-        user1.setPhone(424242424);
+        user1.setPhone("424242424");
         user1.setIsActive(true);
         user1.setRole(Roles.ADOPTER);
-
-
         User savedUser1 = userRepository.save(user1);
 
-
+        /* Species */
         Species species1 = new Species();
         species1.setName("Bird");
         Species savedSpecies1 = speciesRepository.save(species1);
 
-
-
         Species dog = speciesRepository.findByName("Dog")
                 .orElseThrow(() -> new RuntimeException("Species 'Dog' not found!"));
 
+        /* Breeds */
         Breed breed = breedRepository.findByName("Bulldog")
-                .orElseThrow(() -> new RuntimeException("Breed 'Labrador' not found!"));
-
+                .orElseThrow(() -> new RuntimeException("Breed 'Bulldog' not found!"));
 
         Breed breed1 = new Breed();
         breed1.setName("Parrot");
         breed1.setSpecies(savedSpecies1);
         Breed savedBreed1 = breedRepository.save(breed1);
 
-
-
-
+        /* Animals */
         Animal animal1 = new Animal();
         animal1.setName("rex");
         animal1.setSpecies(dog);
@@ -87,29 +86,17 @@ public class InitData implements CommandLineRunner {
         animal2.setPrice(150);
         animal2.setIsActive(true);
 
-
         animalRepository.save(animal1);
         animalRepository.save(animal2);
 
+        /* Veterinarian */
+        Veterinarian veterinarian1 = new Veterinarian();
+        veterinarian1.setUser(savedUser1);
+        veterinarian1.setLicenseNumber("VET123456");
+        veterinarian1.setClinicName("Happy Pets Clinic");
+        veterinarian1.setIsActive(true);
+        veterinarianRepository.save(veterinarian1);
 
-        Veterinian veterinian1 = new Veterinian();
-        veterinian1.setUser(savedUser1);
-        veterinian1.setLicenseNumber("VET123456");
-        veterinian1.setClinicName("Happy Pets Clinic");
-        veterinian1.setIsActive(true);
-        veterinianRepository.save(veterinian1);
-
-
-
-
-
-
-
-
-
-
+        System.out.println("Data initialiseret succesfuldt!");
     }
 }
-
-
-

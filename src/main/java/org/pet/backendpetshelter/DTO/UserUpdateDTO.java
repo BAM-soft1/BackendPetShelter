@@ -11,7 +11,7 @@ public class UserUpdateDTO {
     private String password;
     private String firstName;
     private String lastName;
-    private int phone;
+    private String phone;
     private Boolean isActive;
     private Roles role;
 }

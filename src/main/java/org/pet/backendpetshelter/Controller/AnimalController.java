@@ -30,7 +30,7 @@ public class AnimalController {
 
 
     @GetMapping("/{id}")
-    public AnimalDTOResponse getAnimalById(Long id) {
+    public AnimalDTOResponse getAnimalById(@PathVariable Long id) {
         return animalService.GetAnimalById(id);
     }
 

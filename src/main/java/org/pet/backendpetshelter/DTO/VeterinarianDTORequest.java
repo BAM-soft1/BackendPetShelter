@@ -7,7 +7,7 @@ import org.pet.backendpetshelter.Entity.User;
 
 @Getter
 @Setter
-public class VeterinianDTORequest {
+public class VeterinarianDTORequest {
     private User user;
     private String licenseNumber;
     private String clinicName;

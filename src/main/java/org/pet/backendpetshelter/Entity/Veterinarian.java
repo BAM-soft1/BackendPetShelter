@@ -8,10 +8,10 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "Veterinarian")
-public class Veterinian {
+public class Veterinarian {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "veterinian_id")
+    @Column(name = "vet_id")
     private Long id;
 
     // Står ikke en relation i diagram

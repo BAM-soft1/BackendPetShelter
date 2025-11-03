@@ -21,7 +21,7 @@ public class UserDTORequest {
     private String lastName;
 
     private String password;
-    private int phone;
+    private String phone;
     private Boolean isActive;
     private Roles role;
 
