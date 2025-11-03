@@ -1,14 +1,8 @@
 package org.pet.backendpetshelter;
 
 
-import org.pet.backendpetshelter.Entity.Animal;
-import org.pet.backendpetshelter.Entity.Breed;
-import org.pet.backendpetshelter.Entity.Species;
-import org.pet.backendpetshelter.Entity.User;
-import org.pet.backendpetshelter.Reposiotry.AnimalRepository;
-import org.pet.backendpetshelter.Reposiotry.BreedRepository;
-import org.pet.backendpetshelter.Reposiotry.SpeciesRepository;
-import org.pet.backendpetshelter.Reposiotry.UserRepository;
+import org.pet.backendpetshelter.Entity.*;
+import org.pet.backendpetshelter.Reposiotry.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -21,12 +15,14 @@ public class InitData implements CommandLineRunner {
     private final AnimalRepository animalRepository;
     private final SpeciesRepository speciesRepository;
     private final BreedRepository breedRepository;
+    private final VeterinianRepository veterinianRepository;
 
-    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository) {
+    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, VeterinianRepository veterinianRepository) {
         this.userRepository = userRepository;
         this.animalRepository = animalRepository;
         this.speciesRepository = speciesRepository;
         this.breedRepository = breedRepository;
+        this.veterinianRepository = veterinianRepository;
     }
 
     @Override
@@ -94,6 +90,15 @@ public class InitData implements CommandLineRunner {
 
         animalRepository.save(animal1);
         animalRepository.save(animal2);
+
+
+        Veterinian veterinian1 = new Veterinian();
+        veterinian1.setUser(savedUser1);
+        veterinian1.setLicenseNumber("VET123456");
+        veterinian1.setClinicName("Happy Pets Clinic");
+        veterinian1.setIsActive(true);
+        veterinianRepository.save(veterinian1);
+
 
 
 
