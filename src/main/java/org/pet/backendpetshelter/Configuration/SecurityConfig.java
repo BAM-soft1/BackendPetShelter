@@ -30,6 +30,7 @@ public class SecurityConfig {
                         .requestMatchers("/species", "/species/**").permitAll()
                         .requestMatchers("/breed", "/breed/**").permitAll()
                         .requestMatchers("/veterinarian", "/veterinarian/**").permitAll()
+                        .requestMatchers("/medicalRecord", "/medicalRecord/**").permitAll()
                         .anyRequest().authenticated()
                 );
 

@@ -14,15 +14,17 @@ public class InitData implements CommandLineRunner {
     private final SpeciesRepository speciesRepository;
     private final BreedRepository breedRepository;
     private final VeterinarianRepository veterinarianRepository;
+    private final MedicalRecordReposiotry medicalRecordReposiotry;
 
     public InitData(UserRepository userRepository, AnimalRepository animalRepository,
                     SpeciesRepository speciesRepository, BreedRepository breedRepository,
-                    VeterinarianRepository veterinarianRepository) {
+                    VeterinarianRepository veterinarianRepository, MedicalRecordReposiotry medicalRecordReposiotry) {
         this.userRepository = userRepository;
         this.animalRepository = animalRepository;
         this.speciesRepository = speciesRepository;
         this.breedRepository = breedRepository;
         this.veterinarianRepository = veterinarianRepository;
+        this.medicalRecordReposiotry = medicalRecordReposiotry;
     }
 
     @Override
@@ -30,10 +32,7 @@ public class InitData implements CommandLineRunner {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         System.out.println("Initialiserer data...");
 
-        if (userRepository.count() > 0) {
-            System.out.println("Data findes allerede - springer initialisering over");
-            return;
-        }
+
 
         /* Users */
         User user1 = new User();
@@ -96,6 +95,18 @@ public class InitData implements CommandLineRunner {
         veterinarian1.setClinicName("Happy Pets Clinic");
         veterinarian1.setIsActive(true);
         veterinarianRepository.save(veterinarian1);
+
+
+        /* Medical Records */
+        MedicalRecord medicalRecord1 = new MedicalRecord();
+        medicalRecord1.setAnimal(animal1);
+        medicalRecord1.setVeterinarian(veterinarian1);
+        medicalRecord1.setDate(dateFormat.parse("2023-07-10"));
+        medicalRecord1.setDiagnosis("Regular Checkup - Healthy");
+        medicalRecord1.setTreatment("N/A");
+        medicalRecord1.setCost(50);
+        medicalRecordReposiotry.save(medicalRecord1);
+
 
         System.out.println("Data initialiseret succesfuldt!");
     }

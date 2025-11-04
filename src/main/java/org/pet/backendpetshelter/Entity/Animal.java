@@ -14,7 +14,7 @@ import java.util.Date;
 public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "animal_id")  // ← Ret dette!
+    @Column(name = "animal_id")
 
     private Long id;
     private String name;
