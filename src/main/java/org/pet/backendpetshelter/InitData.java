@@ -37,10 +37,10 @@ public class InitData implements CommandLineRunner {
         /* Users */
         User user1 = new User();
         user1.setEmail("ox1@gmail.com");
-        user1.setPassword("test");
+        user1.setPassword("test123!");
         user1.setFirstName("ox");
         user1.setLastName("woo");
-        user1.setPhone(424242424);
+        user1.setPhone("424242424");
         user1.setIsActive(true);
         user1.setRole(Roles.ADOPTER);
 
@@ -52,7 +52,14 @@ public class InitData implements CommandLineRunner {
         species1.setName("Bird");
         Species savedSpecies1 = speciesRepository.save(species1);
 
+        Species species2 = new Species();
+        species2.setName("Dog");
+        speciesRepository.save(species2);
 
+        Breed breed2 = new Breed();
+        breed2.setName("Bulldog");
+        breed2.setSpecies(species2);
+        breedRepository.save(breed2);
 
         Species dog = speciesRepository.findByName("Dog")
                 .orElseThrow(() -> new RuntimeException("Species 'Dog' not found!"));
