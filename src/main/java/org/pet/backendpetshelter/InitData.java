@@ -33,8 +33,14 @@ public class InitData implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        // Uncomment the line below to seed the database with initial data
+        // populateDatabase();
+        System.out.println("Application started.");
+    }
+
+    public void populateDatabase() throws Exception {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        System.out.println("Henter data fra databasen");
+        System.out.println("Seeding database with initial data...");
 
         /* Users */
         User user1 = new User();
@@ -252,14 +258,7 @@ public class InitData implements CommandLineRunner {
         animal10.setImageUrl("https://images.unsplash.com/photo-1558788353-f76d92427f16?w=800");
         animalRepository.save(animal10);
 
-
-
-
-
-
-
-
-
+        System.out.println("Database seeded successfully with initial data!");
     }
 }
 
