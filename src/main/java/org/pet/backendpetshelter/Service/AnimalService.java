@@ -44,10 +44,13 @@ public class AnimalService {
         animal.setName(request.getName());
         animal.setSex(request.getSex());
         animal.setSpecies(request.getSpecies());
+        animal.setBreed(request.getBreed());
         animal.setBirthDate(request.getBirthDate());
         animal.setIntakeDate(request.getIntakeDate());
+        animal.setStatus(request.getStatus());
         animal.setPrice(request.getPrice());
         animal.setIsActive(request.getIsActive());
+        animal.setImageUrl(request.getImageUrl());
 
         animalRepository.save(animal);
         return new AnimalDTOResponse(animal);
@@ -61,11 +64,14 @@ public class AnimalService {
 
         animal.setName(request.getName());
         animal.setSpecies(request.getSpecies());
+        animal.setBreed(request.getBreed());
         animal.setSex(request.getSex());
         animal.setBirthDate(request.getBirthDate());
         animal.setIntakeDate(request.getIntakeDate());
+        animal.setStatus(request.getStatus());
         animal.setPrice(request.getPrice());
         animal.setIsActive(request.getIsActive());
+        animal.setImageUrl(request.getImageUrl());
 
         animalRepository.save(animal);
         return new AnimalDTOResponse(animal);

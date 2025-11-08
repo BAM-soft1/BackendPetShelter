@@ -16,7 +16,8 @@ public class AnimalDTORequest {
     private String sex;
     private Date birthDate;
     private Date intakeDate;
-    private String Status;
+    private String status;
     private int price;
     private Boolean isActive;
+    private String imageUrl;
 }
