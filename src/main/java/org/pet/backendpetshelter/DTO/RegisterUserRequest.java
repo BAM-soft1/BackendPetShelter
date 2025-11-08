@@ -24,7 +24,7 @@ public class RegisterUserRequest {
     private String phone;
 
     @NotBlank @Size(min = 7, message = "Password must be at least 7 characters")
-    @Pattern(regexp = ".*[!@#$%^&*()_+\\-=[\\]{};':\"\\\\|,.<>/?].*",
+    @Pattern(regexp = ".*[!@#$%^&*()_+=\\-{}:;\"'<>,.?/|\\[\\]\\\\].*",
             message = "Password must include at least one special character")
     private String password;
 

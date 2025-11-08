@@ -35,8 +35,8 @@ public class JwtService {
     private String buildToken(String subject, Map<String, Object> claims, Key key, long expSecs) {
         Instant now = Instant.now();
         return Jwts.builder()
-                .setSubject(subject)
                 .setClaims(claims)
+                .setSubject(subject)  // Must be AFTER setClaims to avoid being overwritten
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plusSeconds(expSecs)))
                 .signWith(key, SignatureAlgorithm.HS256)

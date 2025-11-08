@@ -161,7 +161,7 @@ public class AuthService {
 
     private boolean isPasswordStrong(String pwd) {
         if (pwd == null || pwd.length() < 7) return false;
-        return pwd.matches(".*[!@#$%^&*()_+\\-=[\\]{};':\"\\\\|,.<>/?].*");
+        return pwd.matches(".*[!@#$%^&*()_+=\\-{}:;\"'<>,.?/|\\[\\]\\\\].*");
     }
 
     private UserResponse toUserResponse(User u) {
