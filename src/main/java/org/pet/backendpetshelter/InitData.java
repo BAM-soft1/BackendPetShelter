@@ -21,12 +21,14 @@ public class InitData implements CommandLineRunner {
     private final AnimalRepository animalRepository;
     private final SpeciesRepository speciesRepository;
     private final BreedRepository breedRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository) {
+    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.animalRepository = animalRepository;
         this.speciesRepository = speciesRepository;
         this.breedRepository = breedRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -37,15 +39,15 @@ public class InitData implements CommandLineRunner {
         /* Users */
         User user1 = new User();
         user1.setEmail("ox1@gmail.com");
-        user1.setPassword("test123!");
+        user1.setPassword(passwordEncoder.encode("test123!"));
         user1.setFirstName("ox");
         user1.setLastName("woo");
         user1.setPhone("424242424");
         user1.setIsActive(true);
-        user1.setRole(Roles.ADOPTER);
+        user1.setRole(Roles.ADMIN);
 
 
-        User savedUser1 = userRepository.save(user1);
+        userRepository.save(user1);
 
 
         Species species1 = new Species();
@@ -71,7 +73,7 @@ public class InitData implements CommandLineRunner {
         Breed breed1 = new Breed();
         breed1.setName("Parrot");
         breed1.setSpecies(savedSpecies1);
-        Breed savedBreed1 = breedRepository.save(breed1);
+        breedRepository.save(breed1);
 
 
 
