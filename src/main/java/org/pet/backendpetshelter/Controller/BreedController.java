@@ -26,7 +26,7 @@ public class BreedController {
     }
 
     @GetMapping("/{id}")
-    public BreedDTOResponse getBreedById(Long id) {
+    public BreedDTOResponse getBreedById(@PathVariable Long id) {
         return breedService.getBreedById(id);
     }
 

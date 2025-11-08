@@ -49,7 +49,8 @@ public class AnimalService {
         animal.setIntakeDate(request.getIntakeDate());
         animal.setStatus(request.getStatus());
         animal.setPrice(request.getPrice());
-        animal.setIsActive(request.getIsActive());
+        // Automatically set isActive based on status
+        animal.setIsActive(isStatusActive(request.getStatus()));
         animal.setImageUrl(request.getImageUrl());
 
         animalRepository.save(animal);
@@ -70,7 +71,8 @@ public class AnimalService {
         animal.setIntakeDate(request.getIntakeDate());
         animal.setStatus(request.getStatus());
         animal.setPrice(request.getPrice());
-        animal.setIsActive(request.getIsActive());
+        // Automatically set isActive based on status
+        animal.setIsActive(isStatusActive(request.getStatus()));
         animal.setImageUrl(request.getImageUrl());
 
         animalRepository.save(animal);
@@ -86,5 +88,15 @@ public class AnimalService {
         animalRepository.deleteById(id);
     }
 
+    /**
+     * Helper method to determine if an animal should be active based on status
+     * @param status the status of the animal
+     * @return true if the animal should be active, false otherwise
+     */
+    private boolean isStatusActive(String status) {
+        // Animals are active when they are available or fostered
+        // Animals are inactive when adopted or deceased
+        return "available".equalsIgnoreCase(status) || "fostered".equalsIgnoreCase(status);
+    }
 
 }

@@ -26,7 +26,7 @@ public class SpeciesController {
     }
 
     @GetMapping("/{id}")
-    public SpeciesDTOResponse getSpeciesById(Long id){
+    public SpeciesDTOResponse getSpeciesById(@PathVariable Long id){
         return speciesService.GetSpeciesById(id);
     }
 
