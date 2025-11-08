@@ -17,6 +17,7 @@ import org.pet.backendpetshelter.Reposiotry.UserRepository;
 import org.pet.backendpetshelter.Roles;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Map;
@@ -81,6 +82,7 @@ public class AuthService {
         private final long accessExpiresInSeconds;
     }
 
+    @Transactional
     public LoginPair loginIssueTokens(LoginRequest req) {
         User user = userRepository.findByEmail(req.getEmail().toLowerCase())
                 .orElseThrow(() -> new EntityNotFoundException("Invalid credentials"));
