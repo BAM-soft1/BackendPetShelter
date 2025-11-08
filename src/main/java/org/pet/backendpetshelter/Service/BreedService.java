@@ -43,6 +43,19 @@ public class BreedService {
     }
 
     /**
+     * Get breeds by species
+     * @param speciesId the ID of the species
+     * @return List of BreedDTOResponse
+     * This method retrieves all breeds for a specific species.
+     */
+    public List<BreedDTOResponse> getBreedsBySpecies(Long speciesId) {
+        return breedRepository.findAll().stream()
+                .filter(breed -> breed.getSpecies() != null && breed.getSpecies().getId().equals(speciesId))
+                .map(BreedDTOResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Add a new breed
      * @param request BreedDTORequest containing breed information
      * @return BreedDTOResponse
