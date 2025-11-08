@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/species")
+@RequestMapping("api/species")
 @CrossOrigin
 public class SpeciesController {
     private final SpeciesService speciesService;
