@@ -14,7 +14,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173", "https://abdiox.github.io")
+                        .allowedOrigins("http://localhost:5173", "https://pet-shelter-frontend-i82h.onrender.com")
                         .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true);

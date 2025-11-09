@@ -34,7 +34,7 @@ public class InitData implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // Uncomment the line below to seed the database with initial data
-        // populateDatabase();
+        populateDatabase();
         System.out.println("Application started.");
     }
 
