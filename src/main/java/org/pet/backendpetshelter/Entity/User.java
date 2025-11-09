@@ -9,17 +9,34 @@ import org.pet.backendpetshelter.Roles;
 @Getter
 @Setter
 @Entity
-@Table(name = "User")
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_users_email", columnNames = "email")
+})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
+
+    @Column(nullable = false, length = 255)
     private String email;
+
+    @Column(nullable = false, length = 60)
     private String password;
+
+    @Column(nullable = false, length = 80)
     private String firstName;
+
+    @Column(nullable = false, length = 80)
     private String lastName;
-    private int phone;
-    private Boolean isActive;
+
+    @Column(length = 32)
+    private String phone;
+
+    @Column(nullable = false)
+    private Boolean isActive = true;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 32)
     private Roles role;
 }
