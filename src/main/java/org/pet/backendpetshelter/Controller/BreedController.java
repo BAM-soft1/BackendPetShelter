@@ -26,10 +26,14 @@ public class BreedController {
     }
 
     @GetMapping("/{id}")
-    public BreedDTOResponse getBreedById(Long id) {
+    public BreedDTOResponse getBreedById(@PathVariable Long id) {
         return breedService.getBreedById(id);
     }
 
+    @GetMapping("/species/{speciesId}")
+    public List<BreedDTOResponse> getBreedsBySpecies(@PathVariable Long speciesId) {
+        return breedService.getBreedsBySpecies(speciesId);
+    }
 
     @PostMapping("/add")
     public ResponseEntity<BreedDTOResponse> addBreed(@RequestBody BreedDTORequest breedDTORequest) {

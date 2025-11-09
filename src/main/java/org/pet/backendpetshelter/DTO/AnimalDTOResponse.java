@@ -20,9 +20,10 @@ public class AnimalDTOResponse {
     private Breed breed;
     private Date birthDate;
     private Date intakeDate;
-    private String Status;
+    private String status;
     private int price;
     private Boolean isActive;
+    private String imageUrl;
 
 
     public AnimalDTOResponse(Animal animal) {
@@ -33,8 +34,9 @@ public class AnimalDTOResponse {
         this.breed = animal.getBreed();
         this.birthDate = animal.getBirthDate();
         this.intakeDate = animal.getIntakeDate();
-        this.Status = animal.getStatus();
+        this.status = animal.getStatus();
         this.price = animal.getPrice();
         this.isActive = animal.getIsActive();
+        this.imageUrl = animal.getImageUrl();
     }
 }
