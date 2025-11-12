@@ -5,10 +5,9 @@ import org.pet.backendpetshelter.Entity.Animal;
 import org.pet.backendpetshelter.Entity.Breed;
 import org.pet.backendpetshelter.Entity.Species;
 import org.pet.backendpetshelter.Entity.User;
-import org.pet.backendpetshelter.Reposiotry.AnimalRepository;
-import org.pet.backendpetshelter.Reposiotry.BreedRepository;
-import org.pet.backendpetshelter.Reposiotry.SpeciesRepository;
-import org.pet.backendpetshelter.Reposiotry.UserRepository;
+import org.pet.backendpetshelter.Entity.MedicalRecord;
+import org.pet.backendpetshelter.Entity.Veterinarian;
+import org.pet.backendpetshelter.Reposiotry.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -21,13 +20,17 @@ public class InitData implements CommandLineRunner {
     private final AnimalRepository animalRepository;
     private final SpeciesRepository speciesRepository;
     private final BreedRepository breedRepository;
+    private final MedicalRecordReposiotry medicalRecordReposiotry;
+    private final VeterinarianRepository veterinarianRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, MedicalRecordReposiotry medicalRecordReposiotry, VeterinarianRepository veterinarianRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.animalRepository = animalRepository;
         this.speciesRepository = speciesRepository;
         this.breedRepository = breedRepository;
+        this.medicalRecordReposiotry = medicalRecordReposiotry;
+        this.veterinarianRepository = veterinarianRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -257,6 +260,26 @@ public class InitData implements CommandLineRunner {
         animal10.setIsActive(false);
         animal10.setImageUrl("https://images.unsplash.com/photo-1558788353-f76d92427f16?w=800");
         animalRepository.save(animal10);
+
+
+        /* Veterinarian */
+        Veterinarian veterinarian1 = new Veterinarian();
+        veterinarian1.setUser(user1);
+        veterinarian1.setLicenseNumber("VET123456");
+        veterinarian1.setClinicName("Happy Pets Clinic");
+        veterinarian1.setIsActive(true);
+        veterinarianRepository.save(veterinarian1);
+
+
+        /* Medical Records */
+        MedicalRecord medicalRecord1 = new MedicalRecord();
+        medicalRecord1.setAnimal(animal1);
+        medicalRecord1.setVeterinarian(veterinarian1);
+        medicalRecord1.setDate(dateFormat.parse("2023-07-10"));
+        medicalRecord1.setDiagnosis("Regular Checkup - Healthy");
+        medicalRecord1.setTreatment("N/A");
+        medicalRecord1.setCost(50);
+        medicalRecordReposiotry.save(medicalRecord1);
 
         System.out.println("Database seeded successfully with initial data!");
     }
