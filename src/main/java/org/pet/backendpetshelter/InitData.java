@@ -19,9 +19,10 @@ public class InitData implements CommandLineRunner {
     private final VeterinarianRepository veterinarianRepository;
     private final VaccinationRepository vaccinationRepository;
     private final VaccinationTypeRepository vaccinationTypeRepository;
+    private final VaccineTypeSpeciesRepository vaccineTypeSpeciesRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, MedicalRecordReposiotry medicalRecordReposiotry, VeterinarianRepository veterinarianRepository, VaccinationRepository vaccinationRepository, VaccinationTypeRepository vaccinationTypeRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, MedicalRecordReposiotry medicalRecordReposiotry, VeterinarianRepository veterinarianRepository, VaccinationRepository vaccinationRepository, VaccinationTypeRepository vaccinationTypeRepository, VaccineTypeSpeciesRepository vaccineTypeSpeciesRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.animalRepository = animalRepository;
         this.speciesRepository = speciesRepository;
@@ -30,6 +31,7 @@ public class InitData implements CommandLineRunner {
         this.veterinarianRepository = veterinarianRepository;
         this.vaccinationRepository = vaccinationRepository;
         this.vaccinationTypeRepository = vaccinationTypeRepository;
+        this.vaccineTypeSpeciesRepository = vaccineTypeSpeciesRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -300,6 +302,14 @@ public class InitData implements CommandLineRunner {
         vaccination1.setDate_administered(dateFormat.parse("2023-07-10"));
         vaccination1.setNext_due_date(dateFormat.parse("2024-07-10"));
         vaccinationRepository.save(vaccination1);
+
+
+        /* Vaccine Type Species */
+        VaccineTypeSpecies vts1 = new VaccineTypeSpecies();
+        vts1.setSpecies(dog);
+        vts1.setVaccinationType(vaccinationType);
+        vaccineTypeSpeciesRepository.save(vts1);
+
 
 
 

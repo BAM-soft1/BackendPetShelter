@@ -30,5 +30,6 @@ public class Vaccination {
     @ManyToOne
     @JoinColumn(name = "vaccinationType_id")
     private VaccinationType vaccinationType;
+
     private Date next_due_date;
 }

@@ -1,7 +1,6 @@
 package org.pet.backendpetshelter.DTO;
 
 import lombok.Getter;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.pet.backendpetshelter.Entity.Animal;
