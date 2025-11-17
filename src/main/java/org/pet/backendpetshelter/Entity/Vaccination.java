@@ -26,6 +26,9 @@ public class Vaccination {
     private Veterinarian veterinarian;
 
     private Date date_administered;
-    private String vaccine_name;
+
+    @ManyToOne
+    @JoinColumn(name = "vaccinationType_id")
+    private VaccinationType vaccinationType;
     private Date next_due_date;
 }

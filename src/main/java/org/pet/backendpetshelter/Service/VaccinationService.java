@@ -43,7 +43,7 @@ public class VaccinationService {
         vaccination.setAnimal(request.getAnimal());
         vaccination.setVeterinarian(request.getVeterinarian());
         vaccination.setDate_administered(request.getDate_administered());
-        vaccination.setVaccine_name(request.getVaccine_name());
+        vaccination.setVaccinationType(request.getVaccinationType());
         vaccination.setNext_due_date(request.getNext_due_date());
 
         vaccinationRepository.save(vaccination);
@@ -59,7 +59,7 @@ public class VaccinationService {
         vaccination.setAnimal(request.getAnimal());
         vaccination.setVeterinarian(request.getVeterinarian());
         vaccination.setDate_administered(request.getDate_administered());
-        vaccination.setVaccine_name(request.getVaccine_name());
+        vaccination.setVaccinationType(request.getVaccinationType());
         vaccination.setNext_due_date(request.getNext_due_date());
 
         vaccinationRepository.save(vaccination);

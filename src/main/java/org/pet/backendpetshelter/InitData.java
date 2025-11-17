@@ -1,12 +1,7 @@
 package org.pet.backendpetshelter;
 
 
-import org.pet.backendpetshelter.Entity.Animal;
-import org.pet.backendpetshelter.Entity.Breed;
-import org.pet.backendpetshelter.Entity.Species;
-import org.pet.backendpetshelter.Entity.User;
-import org.pet.backendpetshelter.Entity.MedicalRecord;
-import org.pet.backendpetshelter.Entity.Veterinarian;
+import org.pet.backendpetshelter.Entity.*;
 import org.pet.backendpetshelter.Reposiotry.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -22,15 +17,19 @@ public class InitData implements CommandLineRunner {
     private final BreedRepository breedRepository;
     private final MedicalRecordReposiotry medicalRecordReposiotry;
     private final VeterinarianRepository veterinarianRepository;
+    private final VaccinationRepository vaccinationRepository;
+    private final VaccinationTypeRepository vaccinationTypeRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, MedicalRecordReposiotry medicalRecordReposiotry, VeterinarianRepository veterinarianRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, MedicalRecordReposiotry medicalRecordReposiotry, VeterinarianRepository veterinarianRepository, VaccinationRepository vaccinationRepository, VaccinationTypeRepository vaccinationTypeRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.animalRepository = animalRepository;
         this.speciesRepository = speciesRepository;
         this.breedRepository = breedRepository;
         this.medicalRecordReposiotry = medicalRecordReposiotry;
         this.veterinarianRepository = veterinarianRepository;
+        this.vaccinationRepository = vaccinationRepository;
+        this.vaccinationTypeRepository = vaccinationTypeRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -280,6 +279,30 @@ public class InitData implements CommandLineRunner {
         medicalRecord1.setTreatment("N/A");
         medicalRecord1.setCost(50);
         medicalRecordReposiotry.save(medicalRecord1);
+
+
+        /* Vaccination Type */
+        VaccinationType vaccinationType = new VaccinationType();
+        vaccinationType.setVaccineName("Rabies Vaccine");
+        vaccinationType.setDescription("Protects against rabies virus.");
+        vaccinationType.setDuration_months(12);
+        vaccinationType.setRequired_for_adoption(1);
+        vaccinationTypeRepository.save(vaccinationType);
+
+
+
+
+        /* Vaccination */
+        Vaccination vaccination1 = new Vaccination();
+        vaccination1.setAnimal(animal1);
+        vaccination1.setVeterinarian(veterinarian1);
+        vaccination1.setVaccinationType(vaccinationType);
+        vaccination1.setDate_administered(dateFormat.parse("2023-07-10"));
+        vaccination1.setNext_due_date(dateFormat.parse("2024-07-10"));
+        vaccinationRepository.save(vaccination1);
+
+
+
 
         System.out.println("Database seeded successfully with initial data!");
     }
