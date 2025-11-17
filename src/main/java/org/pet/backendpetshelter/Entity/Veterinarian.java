@@ -14,7 +14,6 @@ public class Veterinarian {
     @Column(name = "vet_id")
     private Long id;
 
-    // Står ikke en relation i diagram
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
