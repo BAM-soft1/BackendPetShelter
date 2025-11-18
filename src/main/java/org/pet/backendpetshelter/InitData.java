@@ -20,9 +20,10 @@ public class InitData implements CommandLineRunner {
     private final VaccinationRepository vaccinationRepository;
     private final VaccinationTypeRepository vaccinationTypeRepository;
     private final VaccineTypeSpeciesRepository vaccineTypeSpeciesRepository;
+    private final FosterCareRepository fosterCareRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, MedicalRecordReposiotry medicalRecordReposiotry, VeterinarianRepository veterinarianRepository, VaccinationRepository vaccinationRepository, VaccinationTypeRepository vaccinationTypeRepository, VaccineTypeSpeciesRepository vaccineTypeSpeciesRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, MedicalRecordReposiotry medicalRecordReposiotry, VeterinarianRepository veterinarianRepository, VaccinationRepository vaccinationRepository, VaccinationTypeRepository vaccinationTypeRepository, VaccineTypeSpeciesRepository vaccineTypeSpeciesRepository, FosterCareRepository fosterCareRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.animalRepository = animalRepository;
         this.speciesRepository = speciesRepository;
@@ -32,6 +33,7 @@ public class InitData implements CommandLineRunner {
         this.vaccinationRepository = vaccinationRepository;
         this.vaccinationTypeRepository = vaccinationTypeRepository;
         this.vaccineTypeSpeciesRepository = vaccineTypeSpeciesRepository;
+        this.fosterCareRepository = fosterCareRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -309,6 +311,16 @@ public class InitData implements CommandLineRunner {
         vts1.setSpecies(dog);
         vts1.setVaccinationType(vaccinationType);
         vaccineTypeSpeciesRepository.save(vts1);
+
+
+        /* Foster Care */
+        FosterCare fosterCare1 = new FosterCare();
+        fosterCare1.setFosterParent(user1);
+        fosterCare1.setAnimal(animal2);
+        fosterCare1.setStartDate(dateFormat.parse("2023-08-01"));
+        fosterCare1.setEndDate(dateFormat.parse("2023-09-01"));
+        fosterCare1.setIsActive(true);
+        fosterCareRepository.save(fosterCare1);
 
 
 
