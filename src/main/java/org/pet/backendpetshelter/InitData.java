@@ -3,6 +3,7 @@ package org.pet.backendpetshelter;
 
 import org.pet.backendpetshelter.Entity.*;
 import org.pet.backendpetshelter.Reposiotry.*;
+import org.pet.backendpetshelter.Service.AdoptionApplicationService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +22,10 @@ public class InitData implements CommandLineRunner {
     private final VaccinationTypeRepository vaccinationTypeRepository;
     private final VaccineTypeSpeciesRepository vaccineTypeSpeciesRepository;
     private final FosterCareRepository fosterCareRepository;
+    private final AdoptionApplicationRepository adoptionApplicationRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, MedicalRecordReposiotry medicalRecordReposiotry, VeterinarianRepository veterinarianRepository, VaccinationRepository vaccinationRepository, VaccinationTypeRepository vaccinationTypeRepository, VaccineTypeSpeciesRepository vaccineTypeSpeciesRepository, FosterCareRepository fosterCareRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, MedicalRecordReposiotry medicalRecordReposiotry, VeterinarianRepository veterinarianRepository, VaccinationRepository vaccinationRepository, VaccinationTypeRepository vaccinationTypeRepository, VaccineTypeSpeciesRepository vaccineTypeSpeciesRepository, FosterCareRepository fosterCareRepository, AdoptionApplicationRepository adoptionApplicationRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.animalRepository = animalRepository;
         this.speciesRepository = speciesRepository;
@@ -34,6 +36,7 @@ public class InitData implements CommandLineRunner {
         this.vaccinationTypeRepository = vaccinationTypeRepository;
         this.vaccineTypeSpeciesRepository = vaccineTypeSpeciesRepository;
         this.fosterCareRepository = fosterCareRepository;
+        this.adoptionApplicationRepository = adoptionApplicationRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -321,6 +324,17 @@ public class InitData implements CommandLineRunner {
         fosterCare1.setEndDate(dateFormat.parse("2023-09-01"));
         fosterCare1.setIsActive(true);
         fosterCareRepository.save(fosterCare1);
+
+
+        /* Adoption Application */
+        AdoptionApplication adoptionApplication1 = new AdoptionApplication();
+        adoptionApplication1.setUser(user1);
+        adoptionApplication1.setAnimal(animal3);
+        adoptionApplication1.setApplicationDate(dateFormat.parse("2023-09-15"));
+        adoptionApplication1.setStatus(Status.PENDING);
+        adoptionApplication1.setReviewedByUser(null);
+        adoptionApplication1.setIsActive(true);
+        adoptionApplicationRepository.save(adoptionApplication1);
 
 
 
