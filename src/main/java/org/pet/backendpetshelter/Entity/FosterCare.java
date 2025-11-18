@@ -9,9 +9,11 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@Table(name = "foster_care")
 public class FosterCare {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "fostercare_id")
     private Long id;
 
     @ManyToOne
@@ -24,7 +26,9 @@ public class FosterCare {
 
     private Date startDate;
     private Date endDate;
-    private Boolean isActive;
+
+    @Column(nullable = false)
+    private Boolean isActive  = true;;
 
 
 

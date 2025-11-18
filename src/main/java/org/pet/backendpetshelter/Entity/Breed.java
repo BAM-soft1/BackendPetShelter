@@ -20,6 +20,8 @@ public class Breed {
     @ManyToOne
     @JoinColumn(name = "species_id")
     private Species species;
+
+    @Column(nullable = false, length = 32)
     private String name;
 
 }

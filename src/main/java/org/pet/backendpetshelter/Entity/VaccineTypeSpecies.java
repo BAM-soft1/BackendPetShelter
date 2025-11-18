@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "vaccination_types_pecies")
 public class VaccineTypeSpecies {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

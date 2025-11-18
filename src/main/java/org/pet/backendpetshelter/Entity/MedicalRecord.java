@@ -9,6 +9,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@Table(name = "medical_record")
 public class MedicalRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +25,11 @@ public class MedicalRecord {
     private Veterinarian veterinarian;
 
     private Date date;
+
+    @Column(nullable = false, length = 32)
     private String diagnosis;
+
+    @Column(nullable = false, length = 32)
     private String treatment;
     private int cost;
 }

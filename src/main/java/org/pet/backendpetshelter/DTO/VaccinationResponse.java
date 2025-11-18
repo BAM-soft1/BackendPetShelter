@@ -15,6 +15,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class VaccinationResponse {
+    private Long id;
     private Animal animal;
     private Veterinarian veterinarian;
     private Date date_administered;
@@ -23,6 +24,7 @@ public class VaccinationResponse {
 
 
     public VaccinationResponse(Vaccination vaccination) {
+        this.id = vaccination.getId();
         this.animal = vaccination.getAnimal();
         this.veterinarian = vaccination.getVeterinarian();
         this.date_administered = vaccination.getDate_administered();

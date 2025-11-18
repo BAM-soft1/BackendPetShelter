@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "vaccination_type")
 public class VaccinationType {
 
     @Id
@@ -14,7 +15,7 @@ public class VaccinationType {
     @Column(name = "vaccinationType_id")
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 32)
     private String vaccineName;
 
     @Column(length = 1000)

@@ -13,6 +13,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class FosterCareRespons {
+    private Long id;
     private Animal animal;
     private User fosterParent;
     private Date startDate;
@@ -20,6 +21,7 @@ public class FosterCareRespons {
     private Boolean isActive;
 
     public FosterCareRespons(FosterCare fosterCare) {
+        this.id = fosterCare.getId();
         this.animal = fosterCare.getAnimal();
         this.fosterParent = fosterCare.getFosterParent();
         this.startDate = fosterCare.getStartDate();

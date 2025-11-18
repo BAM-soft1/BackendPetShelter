@@ -17,6 +17,8 @@ public class Animal {
     @Column(name = "animal_id")
 
     private Long id;
+
+    @Column(nullable = false, length = 80)
     private String name;
 
     @ManyToOne
@@ -31,6 +33,8 @@ public class Animal {
     private Date birthDate;
     private String sex;
     private Date intakeDate;
+
+    @Column(nullable = false, length = 80)
     private String status;
     private int price;
     private Boolean isActive;
