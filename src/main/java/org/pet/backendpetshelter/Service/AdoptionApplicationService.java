@@ -19,8 +19,7 @@ public class AdoptionApplicationService
     }
 
     public List<AdoptionApplicationRespons> GetAllAdoptionApplications() {
-        List<AdoptionApplication> applications = adoptionApplicationRepository.findAll();
-        return applications.stream()
+        return adoptionApplicationRepository.findAll().stream()
                 .map(AdoptionApplicationRespons::new)
                 .toList();
     }
