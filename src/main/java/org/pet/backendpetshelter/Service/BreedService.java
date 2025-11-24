@@ -4,7 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.pet.backendpetshelter.DTO.BreedDTORequest;
 import org.pet.backendpetshelter.DTO.BreedDTOResponse;
 import org.pet.backendpetshelter.Entity.Breed;
-import org.pet.backendpetshelter.Reposiotry.BreedRepository;
+import org.pet.backendpetshelter.Repository.BreedRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

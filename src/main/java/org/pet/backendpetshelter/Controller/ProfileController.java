@@ -1,7 +1,7 @@
 package org.pet.backendpetshelter.Controller;
 
 import org.pet.backendpetshelter.DTO.UserResponse;
-import org.pet.backendpetshelter.Reposiotry.UserRepository;
+import org.pet.backendpetshelter.Repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

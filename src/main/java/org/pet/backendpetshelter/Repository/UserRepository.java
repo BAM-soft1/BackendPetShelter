@@ -1,4 +1,4 @@
-package org.pet.backendpetshelter.Reposiotry;
+package org.pet.backendpetshelter.Repository;
 
 
 import org.pet.backendpetshelter.Entity.User;
@@ -12,6 +12,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findById(long id);
     boolean existsByEmail(String email);
     Optional<User> findByEmail(String email);
-
-
 }

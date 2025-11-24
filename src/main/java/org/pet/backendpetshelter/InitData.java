@@ -2,8 +2,7 @@ package org.pet.backendpetshelter;
 
 
 import org.pet.backendpetshelter.Entity.*;
-import org.pet.backendpetshelter.Reposiotry.*;
-import org.pet.backendpetshelter.Service.AdoptionApplicationService;
+import org.pet.backendpetshelter.Repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +15,7 @@ public class InitData implements CommandLineRunner {
     private final AnimalRepository animalRepository;
     private final SpeciesRepository speciesRepository;
     private final BreedRepository breedRepository;
-    private final MedicalRecordReposiotry medicalRecordReposiotry;
+    private final MedicalRecordRepository medicalRecordReposiotry;
     private final VeterinarianRepository veterinarianRepository;
     private final VaccinationRepository vaccinationRepository;
     private final VaccinationTypeRepository vaccinationTypeRepository;
@@ -26,7 +25,7 @@ public class InitData implements CommandLineRunner {
     private final AdoptionRepository adoptionRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, MedicalRecordReposiotry medicalRecordReposiotry, VeterinarianRepository veterinarianRepository, VaccinationRepository vaccinationRepository, VaccinationTypeRepository vaccinationTypeRepository, VaccineTypeSpeciesRepository vaccineTypeSpeciesRepository, FosterCareRepository fosterCareRepository, AdoptionApplicationRepository adoptionApplicationRepository, AdoptionRepository adoptionRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+    public InitData(UserRepository userRepository, AnimalRepository animalRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, MedicalRecordRepository medicalRecordReposiotry, VeterinarianRepository veterinarianRepository, VaccinationRepository vaccinationRepository, VaccinationTypeRepository vaccinationTypeRepository, VaccineTypeSpeciesRepository vaccineTypeSpeciesRepository, FosterCareRepository fosterCareRepository, AdoptionApplicationRepository adoptionApplicationRepository, AdoptionRepository adoptionRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.animalRepository = animalRepository;
         this.speciesRepository = speciesRepository;

@@ -4,7 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.pet.backendpetshelter.DTO.MedicalRecordDTORequest;
 import org.pet.backendpetshelter.DTO.MedicalRecordDTOResponse;
 import org.pet.backendpetshelter.Entity.MedicalRecord;
-import org.pet.backendpetshelter.Reposiotry.MedicalRecordReposiotry;
+import org.pet.backendpetshelter.Repository.MedicalRecordRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +13,9 @@ import java.util.List;
 public class MedicalRecordService {
 
 
-    private final MedicalRecordReposiotry medicalRecordReposiotry;
+    private final MedicalRecordRepository medicalRecordReposiotry;
 
-    public MedicalRecordService(MedicalRecordReposiotry medicalRecordReposiotry) {
+    public MedicalRecordService(MedicalRecordRepository medicalRecordReposiotry) {
         this.medicalRecordReposiotry = medicalRecordReposiotry;
     }
 
