@@ -293,8 +293,8 @@ public class InitData implements CommandLineRunner {
         VaccinationType vaccinationType = new VaccinationType();
         vaccinationType.setVaccineName("Rabies Vaccine");
         vaccinationType.setDescription("Protects against rabies virus.");
-        vaccinationType.setDuration_months(12);
-        vaccinationType.setRequired_for_adoption(1);
+        vaccinationType.setDurationMonths(12);
+        vaccinationType.setRequiredForAdoption(1);
         vaccinationTypeRepository.save(vaccinationType);
 
 
@@ -305,8 +305,8 @@ public class InitData implements CommandLineRunner {
         vaccination1.setAnimal(animal1);
         vaccination1.setVeterinarian(veterinarian1);
         vaccination1.setVaccinationType(vaccinationType);
-        vaccination1.setDate_administered(dateFormat.parse("2023-07-10"));
-        vaccination1.setNext_due_date(dateFormat.parse("2024-07-10"));
+        vaccination1.setDateAdministered(dateFormat.parse("2023-07-10"));
+        vaccination1.setNextDueDate(dateFormat.parse("2024-07-10"));
         vaccinationRepository.save(vaccination1);
 
 

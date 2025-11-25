@@ -9,6 +9,6 @@ public class VaccinationTypeRequest {
     private Long id;
     private String vaccineName;
     private String description;
-    private int duration_months;
-    private int required_for_adoption;
+    private int durationMonths;
+    private int requiredForAdoption;
 }

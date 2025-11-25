@@ -8,11 +8,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "vaccination_types_pecies")
+@Table(name = "vaccination_type_species")
 public class VaccineTypeSpecies {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "vaccinneTypeSpecies_id")
+    @Column(name = "vaccine_type_species_id")
     private Long id;
 
     @ManyToOne
@@ -20,6 +20,6 @@ public class VaccineTypeSpecies {
     private Species species;
 
     @ManyToOne
-    @JoinColumn(name = "vaccinationType_id", nullable = false)
+    @JoinColumn(name = "vaccination_type_id", nullable = false)
     private VaccinationType vaccinationType;
 }

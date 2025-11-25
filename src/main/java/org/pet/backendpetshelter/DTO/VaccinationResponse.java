@@ -18,18 +18,18 @@ public class VaccinationResponse {
     private Long id;
     private Animal animal;
     private Veterinarian veterinarian;
-    private Date date_administered;
+    private Date dateAdministered;
     private VaccinationType vaccinationType;
-    private Date next_due_date;
+    private Date nextDueDate;
 
 
     public VaccinationResponse(Vaccination vaccination) {
         this.id = vaccination.getId();
         this.animal = vaccination.getAnimal();
         this.veterinarian = vaccination.getVeterinarian();
-        this.date_administered = vaccination.getDate_administered();
+        this.dateAdministered = vaccination.getDateAdministered();
         this.vaccinationType = vaccination.getVaccinationType();
-        this.next_due_date = vaccination.getNext_due_date();
+        this.nextDueDate = vaccination.getNextDueDate();
 
     }
 }

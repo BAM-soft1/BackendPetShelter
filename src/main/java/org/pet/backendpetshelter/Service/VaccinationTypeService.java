@@ -40,8 +40,8 @@ public class VaccinationTypeService {
 
         vaccinationType.setVaccineName(request.getVaccineName());
         vaccinationType.setDescription(request.getDescription());
-        vaccinationType.setDuration_months(request.getDuration_months());
-        vaccinationType.setRequired_for_adoption(request.getRequired_for_adoption());
+        vaccinationType.setDurationMonths(request.getDurationMonths());
+        vaccinationType.setRequiredForAdoption(request.getRequiredForAdoption());
 
         vaccinationTypeRepository.save(vaccinationType);
         return new VaccinationTypeResponse(vaccinationType);
@@ -57,8 +57,8 @@ public class VaccinationTypeService {
 
         vaccinationType.setVaccineName(request.getVaccineName());
         vaccinationType.setDescription(request.getDescription());
-        vaccinationType.setDuration_months(request.getDuration_months());
-        vaccinationType.setRequired_for_adoption(request.getRequired_for_adoption());
+        vaccinationType.setDurationMonths(request.getDurationMonths());
+        vaccinationType.setRequiredForAdoption(request.getRequiredForAdoption());
 
         vaccinationTypeRepository.save(vaccinationType);
         return new VaccinationTypeResponse(vaccinationType);
