@@ -4,12 +4,14 @@ package org.pet.backendpetshelter;
 import org.pet.backendpetshelter.Entity.*;
 import org.pet.backendpetshelter.Reposiotry.*;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 
 
 @Component
+@Order(1) // Run first, before DatabaseFeaturesInitializer
 public class InitData implements CommandLineRunner {
     private final UserRepository userRepository;
     private final AnimalRepository animalRepository;

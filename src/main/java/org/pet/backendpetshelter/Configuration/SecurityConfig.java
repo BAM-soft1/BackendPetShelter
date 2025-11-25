@@ -45,6 +45,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/vaccination/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/vaccination-type/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/vaccine-type-species/**").permitAll()
+
+                        // Stored procedures GETs
+                        .requestMatchers(HttpMethod.GET, "/api/test-procedures/**").permitAll()
                         
                         // Public docs
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
