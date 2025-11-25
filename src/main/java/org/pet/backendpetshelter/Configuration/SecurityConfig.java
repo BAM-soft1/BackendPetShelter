@@ -37,7 +37,12 @@ public class SecurityConfig {
 
                         // animal endpoint
                         .requestMatchers("/api/animal").permitAll()
-
+                        .requestMatchers("/api/species").permitAll()
+                        .requestMatchers("/api/breed").permitAll()
+                        .requestMatchers("/api/veterinarian").permitAll()
+                        .requestMatchers("/api/").permitAll()
+                        .requestMatchers("/api/animal").permitAll()
+                        
                         // Public docs
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
 

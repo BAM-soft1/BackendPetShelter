@@ -3,7 +3,6 @@ package org.pet.backendpetshelter;
 
 import org.pet.backendpetshelter.Entity.*;
 import org.pet.backendpetshelter.Reposiotry.*;
-import org.pet.backendpetshelter.Service.AdoptionApplicationService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 

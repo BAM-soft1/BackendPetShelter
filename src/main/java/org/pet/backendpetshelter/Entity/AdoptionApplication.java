@@ -15,14 +15,14 @@ import java.util.Date;
 public class AdoptionApplication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "adoption_appliacation_id")
+    @Column(name = "adoption_application_id")
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "animal_id", nullable = false)
     private Animal animal;
 
