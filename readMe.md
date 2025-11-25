@@ -86,3 +86,14 @@ Postman
 Swagger UI (automatically generated via Springdoc):
 
 http://localhost:8080/swagger-ui/index.html
+
+8. Import Database Data
+
+Database backup file:
+https://drive.google.com/file/d/1sfUT6aVllgShfY-fTKNrPjVe3Oy3QubK/view?usp=sharing
+
+Export SQL from another database
+
+Import it into pet_shelter1 using MySQL Workbench or CLI:
+
+mysql -u root -p pet_shelter1 < dump.sql
