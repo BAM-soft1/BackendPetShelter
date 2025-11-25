@@ -35,13 +35,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/refresh").permitAll()
                         .requestMatchers("/api/auth/logout").authenticated()
 
-                        // animal endpoint
-                        .requestMatchers("/api/animal").permitAll()
-                        .requestMatchers("/api/species").permitAll()
-                        .requestMatchers("/api/breed").permitAll()
-                        .requestMatchers("/api/veterinarian").permitAll()
-                        .requestMatchers("/api/").permitAll()
-                        .requestMatchers("/api/animal").permitAll()
+                        // Public GET endpoints - allow browsing without authentication
+                        .requestMatchers(HttpMethod.GET, "/api/animal/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/species/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/breed/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/veterinarian/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/foster-care/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/medical-record/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/vaccination/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/vaccination-type/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/vaccine-type-species/**").permitAll()
                         
                         // Public docs
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
