@@ -70,6 +70,9 @@ class AuthServiceTest {
         );
     }
 
+
+    //-----------------------------  Password -----------------------------\\
+
     @Nested
     @DisplayName("Password Validation Tests - isPasswordStrong()")
     class PasswordValidationTests {
@@ -337,5 +340,318 @@ class AuthServiceTest {
     }
 
 
+    //-----------------------------  USER REGISTRATION -----------------------------\\
+    @Nested
+    @DisplayName("User Registration Tests - register()")
+    class UserRegistrationTests {
+
+        // ==================== EQUIVALENCE PARTITIONING - VALID PARTITION ====================
+
+        @Test
+        @DisplayName("Should successfully register user with all valid fields")
+        void testValidRegistrationWithAllFields() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+            request.setPhone("12345678");
+            request.setPassword("Pass123!");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+            when(passwordEncoder.encode("Pass123!")).thenReturn("$2a$10$hashedPassword");
+
+            User savedUser = new User();
+            savedUser.setId(1L);
+            savedUser.setEmail("test@example.com");
+            savedUser.setFirstName("John");
+            savedUser.setLastName("Doe");
+            savedUser.setPhone("12345678");
+            savedUser.setPassword("$2a$10$hashedPassword");
+            savedUser.setIsActive(true);
+            savedUser.setRole(Roles.USER);
+
+            when(userRepository.save(any(User.class))).thenReturn(savedUser);
+
+            UserResponse response = authService.register(request);
+
+            assertNotNull(response);
+            assertEquals("test@example.com", response.getEmail());
+            assertEquals("John", response.getFirstName());
+            assertEquals("Doe", response.getLastName());
+            assertEquals("12345678", response.getPhone());
+            assertEquals(true, response.getIsActive());
+            assertEquals(Roles.USER, response.getRole());
+            verify(userRepository).existsByEmail("test@example.com");
+            verify(passwordEncoder).encode("Pass123!");
+            verify(userRepository).save(any(User.class));
+        }
+
+        @Test
+        @DisplayName("Should successfully register user with optional phone omitted")
+        void testValidRegistrationWithoutPhone() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+            request.setPhone(null);
+            request.setPassword("Pass123!");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+            when(passwordEncoder.encode("Pass123!")).thenReturn("$2a$10$hashedPassword");
+
+            User savedUser = new User();
+            savedUser.setId(1L);
+            savedUser.setEmail("test@example.com");
+            savedUser.setFirstName("John");
+            savedUser.setLastName("Doe");
+            savedUser.setPhone(null);
+            savedUser.setPassword("$2a$10$hashedPassword");
+            savedUser.setIsActive(true);
+            savedUser.setRole(Roles.USER);
+
+            when(userRepository.save(any(User.class))).thenReturn(savedUser);
+
+            UserResponse response = authService.register(request);
+
+            assertNotNull(response);
+            assertNull(response.getPhone());
+            verify(userRepository).save(any(User.class));
+        }
+
+        // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION 1: DUPLICATE EMAIL ====================
+
+        @Test
+        @DisplayName("Should throw IllegalArgumentException when email already exists")
+        void testDuplicateEmailThrowsException() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("existing@example.com");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+            request.setPassword("Pass123!");
+
+            when(userRepository.existsByEmail("existing@example.com")).thenReturn(true);
+
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> authService.register(request)
+            );
+
+            assertEquals("Email already in use", exception.getMessage());
+            verify(userRepository).existsByEmail("existing@example.com");
+            verify(userRepository, never()).save(any(User.class));
+        }
+
+        // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION 2: WEAK PASSWORD ====================
+
+        @Test
+        @DisplayName("Should throw IllegalArgumentException when password is weak (no special character)")
+        void testWeakPasswordThrowsException() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+            request.setPassword("Pass123");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> authService.register(request)
+            );
+
+            assertEquals("Password must be at least 7 characters and include a special character", exception.getMessage());
+            verify(userRepository, never()).save(any(User.class));
+        }
+
+        @Test
+        @DisplayName("Should throw IllegalArgumentException when password is too short")
+        void testShortPasswordThrowsException() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+            request.setPassword("Pass1!");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> authService.register(request)
+            );
+
+            assertEquals("Password must be at least 7 characters and include a special character", exception.getMessage());
+            verify(userRepository, never()).save(any(User.class));
+        }
+
+        // ==================== VERIFICATION TESTS ====================
+
+        @Test
+        @DisplayName("Should verify password is BCrypt hashed and not plain text")
+        void testPasswordIsHashed() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+            request.setPassword("Pass123!");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+            when(passwordEncoder.encode("Pass123!")).thenReturn("$2a$10$hashedPassword");
+
+            User savedUser = new User();
+            savedUser.setId(1L);
+            savedUser.setEmail("test@example.com");
+            savedUser.setFirstName("John");
+            savedUser.setLastName("Doe");
+            savedUser.setPassword("$2a$10$hashedPassword");
+            savedUser.setIsActive(true);
+            savedUser.setRole(Roles.USER);
+
+            when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+                User user = invocation.getArgument(0);
+                assertNotEquals("Pass123!", user.getPassword());
+                assertTrue(user.getPassword().startsWith("$2a$"));
+                return savedUser;
+            });
+
+            authService.register(request);
+
+            verify(passwordEncoder).encode("Pass123!");
+        }
+
+        @Test
+        @DisplayName("Should verify default role is USER")
+        void testDefaultRoleIsUser() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+            request.setPassword("Pass123!");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+            when(passwordEncoder.encode("Pass123!")).thenReturn("$2a$10$hashedPassword");
+
+            User savedUser = new User();
+            savedUser.setId(1L);
+            savedUser.setEmail("test@example.com");
+            savedUser.setFirstName("John");
+            savedUser.setLastName("Doe");
+            savedUser.setPassword("$2a$10$hashedPassword");
+            savedUser.setIsActive(true);
+            savedUser.setRole(Roles.USER);
+
+            when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+                User user = invocation.getArgument(0);
+                assertEquals(Roles.USER, user.getRole());
+                return savedUser;
+            });
+
+            UserResponse response = authService.register(request);
+
+            assertEquals(Roles.USER, response.getRole());
+        }
+
+        @Test
+        @DisplayName("Should verify isActive defaults to true")
+        void testDefaultIsActiveIsTrue() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+            request.setPassword("Pass123!");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+            when(passwordEncoder.encode("Pass123!")).thenReturn("$2a$10$hashedPassword");
+
+            User savedUser = new User();
+            savedUser.setId(1L);
+            savedUser.setEmail("test@example.com");
+            savedUser.setFirstName("John");
+            savedUser.setLastName("Doe");
+            savedUser.setPassword("$2a$10$hashedPassword");
+            savedUser.setIsActive(true);
+            savedUser.setRole(Roles.USER);
+
+            when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+                User user = invocation.getArgument(0);
+                assertEquals(true, user.getIsActive());
+                return savedUser;
+            });
+
+            UserResponse response = authService.register(request);
+
+            assertEquals(true, response.getIsActive());
+        }
+
+        // ==================== DATA NORMALIZATION TESTS ====================
+
+        @Test
+        @DisplayName("Should convert email to lowercase")
+        void testEmailConvertedToLowercase() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("Test@EXAMPLE.COM");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+            request.setPassword("Pass123!");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+            when(passwordEncoder.encode("Pass123!")).thenReturn("$2a$10$hashedPassword");
+
+            User savedUser = new User();
+            savedUser.setId(1L);
+            savedUser.setEmail("test@example.com");
+            savedUser.setFirstName("John");
+            savedUser.setLastName("Doe");
+            savedUser.setPassword("$2a$10$hashedPassword");
+            savedUser.setIsActive(true);
+            savedUser.setRole(Roles.USER);
+
+            when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+                User user = invocation.getArgument(0);
+                assertEquals("test@example.com", user.getEmail());
+                return savedUser;
+            });
+
+            UserResponse response = authService.register(request);
+
+            assertEquals("test@example.com", response.getEmail());
+            verify(userRepository).existsByEmail("test@example.com");
+        }
+
+        @Test
+        @DisplayName("Should trim firstName and lastName")
+        void testNamesAreTrimmed() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setFirstName("  John  ");
+            request.setLastName("  Doe  ");
+            request.setPassword("Pass123!");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+            when(passwordEncoder.encode("Pass123!")).thenReturn("$2a$10$hashedPassword");
+
+            User savedUser = new User();
+            savedUser.setId(1L);
+            savedUser.setEmail("test@example.com");
+            savedUser.setFirstName("John");
+            savedUser.setLastName("Doe");
+            savedUser.setPassword("$2a$10$hashedPassword");
+            savedUser.setIsActive(true);
+            savedUser.setRole(Roles.USER);
+
+            when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+                User user = invocation.getArgument(0);
+                assertEquals("John", user.getFirstName());
+                assertEquals("Doe", user.getLastName());
+                return savedUser;
+            });
+
+            UserResponse response = authService.register(request);
+
+            assertEquals("John", response.getFirstName());
+            assertEquals("Doe", response.getLastName());
+        }
+    }
     
 }
+
+
