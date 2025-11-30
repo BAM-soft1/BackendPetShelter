@@ -722,4 +722,254 @@ class AuthServiceTest {
         }
     }
 
+    // ----------------------------- TOKEN REFRESH -----------------------------\\
+
+    @Nested
+    @DisplayName("Token Refresh Tests - rotateRefreshToken()")
+    class TokenRefreshTests {
+
+        // ==================== TEST HELPERS ====================
+
+        private RefreshToken createValidRefreshToken(String token) {
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setFirstName("John");
+            user.setLastName("Doe");
+            user.setIsActive(true);
+            user.setRole(Roles.USER);
+
+            RefreshToken refreshToken = new RefreshToken();
+            refreshToken.setId(1L);
+            refreshToken.setToken(token);
+            refreshToken.setUser(user);
+            refreshToken.setExpiresAt(Instant.now().plusSeconds(86400L));
+            refreshToken.setRevoked(false);
+
+            return refreshToken;
+        }
+
+        // ==================== EQUIVALENCE PARTITIONING - VALID PARTITION
+        // ====================
+
+        @Test
+        @DisplayName("Should successfully rotate token with valid refresh token")
+        void testSuccessfulTokenRotationWithValidToken() {
+            String oldRefreshToken = "valid-refresh-token-123";
+            RefreshToken oldToken = createValidRefreshToken(oldRefreshToken);
+
+            when(refreshTokenRepository.findByToken(oldRefreshToken)).thenReturn(Optional.of(oldToken));
+            when(jwtService.generateAccessToken(eq("test@example.com"), anyMap())).thenReturn("new-access-token");
+
+            Instant beforeRotation = Instant.now();
+            AuthService.RotateResult result = authService.rotateRefreshToken(oldRefreshToken);
+            Instant afterRotation = Instant.now();
+
+            // Verify result
+            assertNotNull(result);
+            assertEquals("new-access-token", result.getAccessToken());
+            assertNotNull(result.getRefreshToken());
+            assertNotEquals(oldRefreshToken, result.getRefreshToken());
+
+            // Verify old token is revoked
+            assertTrue(oldToken.getRevoked());
+
+            // Verify order: revoke old THEN create new
+            InOrder inOrder = inOrder(refreshTokenRepository);
+            inOrder.verify(refreshTokenRepository).save(argThat(rt -> rt.getRevoked()));
+            inOrder.verify(refreshTokenRepository).save(argThat(rt -> !rt.getRevoked() &&
+                    rt.getUser().getId().equals(1L) &&
+                    rt.getToken() != null &&
+                    !rt.getToken().equals(oldRefreshToken) &&
+                    rt.getExpiresAt().isAfter(beforeRotation.plusSeconds(86400L - 5)) &&
+                    rt.getExpiresAt().isBefore(afterRotation.plusSeconds(86400L + 5))));
+
+            verify(jwtService).generateAccessToken(eq("test@example.com"), anyMap());
+        }
+
+        // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION 1:
+        // NON-EXISTENT TOKEN ====================
+
+        @Test
+        @DisplayName("Should throw EntityNotFoundException when refresh token does not exist")
+        void testRotationFailsWithNonExistentToken() {
+            String nonExistentToken = "non-existent-token";
+
+            when(refreshTokenRepository.findByToken(nonExistentToken)).thenReturn(Optional.empty());
+
+            EntityNotFoundException exception = assertThrows(
+                    EntityNotFoundException.class,
+                    () -> authService.rotateRefreshToken(nonExistentToken));
+
+            assertEquals("Invalid refresh token", exception.getMessage());
+            verify(refreshTokenRepository).findByToken(nonExistentToken);
+            verify(jwtService, never()).generateAccessToken(anyString(), anyMap());
+            verify(refreshTokenRepository, never()).save(any(RefreshToken.class));
+        }
+
+        // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION 2: REVOKED
+        // TOKEN ====================
+
+        @Test
+        @DisplayName("Should throw IllegalArgumentException when refresh token is revoked")
+        void testRotationFailsWithRevokedToken() {
+            String revokedToken = "revoked-token-123";
+            RefreshToken token = createValidRefreshToken(revokedToken);
+            token.setRevoked(true);
+
+            when(refreshTokenRepository.findByToken(revokedToken)).thenReturn(Optional.of(token));
+
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> authService.rotateRefreshToken(revokedToken));
+
+            assertEquals("Refresh token expired or revoked", exception.getMessage());
+            verify(jwtService, never()).generateAccessToken(anyString(), anyMap());
+        }
+
+        // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION 3: EXPIRED
+        // TOKEN ====================
+
+        @Test
+        @DisplayName("Should throw IllegalArgumentException when refresh token is expired")
+        void testRotationFailsWithExpiredToken() {
+            String expiredToken = "expired-token-123";
+            RefreshToken token = createValidRefreshToken(expiredToken);
+            token.setExpiresAt(Instant.now().minusSeconds(3600L));
+
+            when(refreshTokenRepository.findByToken(expiredToken)).thenReturn(Optional.of(token));
+
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> authService.rotateRefreshToken(expiredToken));
+
+            assertEquals("Refresh token expired or revoked", exception.getMessage());
+            verify(jwtService, never()).generateAccessToken(anyString(), anyMap());
+        }
+
+        // ==================== TOKEN VERIFICATION TESTS ====================
+
+        @Test
+        @DisplayName("Should verify new access token is generated with correct claims")
+        void testNewAccessTokenIsGenerated() {
+            String oldRefreshToken = "valid-refresh-token-123";
+            RefreshToken oldToken = createValidRefreshToken(oldRefreshToken);
+
+            when(refreshTokenRepository.findByToken(oldRefreshToken)).thenReturn(Optional.of(oldToken));
+            when(jwtService.generateAccessToken(eq("test@example.com"), anyMap())).thenReturn("new-access-token");
+
+            AuthService.RotateResult result = authService.rotateRefreshToken(oldRefreshToken);
+
+            assertNotNull(result.getAccessToken());
+            assertEquals("new-access-token", result.getAccessToken());
+
+            verify(jwtService).generateAccessToken(
+                    eq("test@example.com"),
+                    argThat(claims -> claims.containsKey("role") &&
+                            claims.get("role").equals("USER") &&
+                            claims.containsKey("uid") &&
+                            claims.get("uid").equals(1L)));
+        }
+    }
+
+        // ----------------------------- LOGOUT -----------------------------\\
+
+    @Nested
+    @DisplayName("Logout Tests - logout()")
+    class LogoutTests {
+
+        // ==================== TEST HELPER ====================
+
+        private RefreshToken createValidRefreshToken(String token) {
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setRole(Roles.USER);
+
+            RefreshToken refreshToken = new RefreshToken();
+            refreshToken.setId(1L);
+            refreshToken.setToken(token);
+            refreshToken.setUser(user);
+            refreshToken.setExpiresAt(Instant.now().plusSeconds(86400L));
+            refreshToken.setRevoked(false);
+
+            return refreshToken;
+        }
+
+        // ==================== EQUIVALENCE PARTITIONING - VALID PARTITION
+        // ====================
+
+        @Test
+        @DisplayName("Should successfully logout with valid access and refresh tokens")
+        void testSuccessfulLogoutWithValidTokens() {
+            String accessToken = "valid-access-token-123";
+            String refreshToken = "valid-refresh-token-123";
+            RefreshToken token = createValidRefreshToken(refreshToken);
+
+            when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(token));
+
+            authService.logout(accessToken, refreshToken);
+
+            // Verify refresh token is revoked
+            assertTrue(token.getRevoked());
+            verify(refreshTokenRepository).findByToken(refreshToken);
+            verify(refreshTokenRepository).save(token);
+
+            // Verify access token is denylisted
+            verify(denylistService).deny(accessToken, 3600L);
+        }
+
+        // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION
+        // ====================
+
+        @Test
+        @DisplayName("Should handle logout gracefully when refresh token does not exist")
+        void testLogoutWithNonExistentRefreshToken() {
+            String accessToken = "valid-access-token-123";
+            String nonExistentRefreshToken = "non-existent-refresh-token";
+
+            when(refreshTokenRepository.findByToken(nonExistentRefreshToken)).thenReturn(Optional.empty());
+
+            assertDoesNotThrow(() -> authService.logout(accessToken, nonExistentRefreshToken));
+
+            verify(refreshTokenRepository).findByToken(nonExistentRefreshToken);
+            verify(refreshTokenRepository, never()).save(any(RefreshToken.class));
+
+            // Access token should still be denylisted
+            verify(denylistService).deny(accessToken, 3600L);
+        }
+
+        // ==================== VERIFICATION TESTS ====================
+
+        @Test
+        @DisplayName("Should verify refresh token is marked as revoked after logout")
+        void testRefreshTokenIsRevoked() {
+            String accessToken = "valid-access-token-123";
+            String refreshToken = "valid-refresh-token-123";
+            RefreshToken token = createValidRefreshToken(refreshToken);
+
+            when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(token));
+
+            authService.logout(accessToken, refreshToken);
+
+            verify(refreshTokenRepository).save(argThat(rt -> rt.getId().equals(1L) &&
+                    rt.getRevoked() &&
+                    rt.getToken().equals(refreshToken)));
+        }
+
+        @Test
+        @DisplayName("Should verify access token is added to denylist with correct expiration")
+        void testAccessTokenIsAddedToDenylist() {
+            String accessToken = "valid-access-token-123";
+            String refreshToken = "valid-refresh-token-123";
+            RefreshToken token = createValidRefreshToken(refreshToken);
+
+            when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(token));
+
+            authService.logout(accessToken, refreshToken);
+
+            verify(denylistService).deny(accessToken, 3600L);
+        }
+    }
+
 }
