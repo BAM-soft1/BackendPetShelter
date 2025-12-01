@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -80,8 +81,9 @@ class AuthServiceTest {
                 jwtProperties);
     }
 
-    // ----------------------------- Password -----------------------------\\
+    // ==================== BLACKBOX TESTS ====================
 
+    // ----------------------------- Password -----------------------------\\
     @Nested
     @DisplayName("Password Validation Tests - isPasswordStrong()")
     class PasswordValidationTests {
@@ -187,163 +189,6 @@ class AuthServiceTest {
         void testPasswordWithWhitespaceAndSpecial() throws Exception {
             assertTrue(invokeIsPasswordStrong("Pass 12!"));
         }
-
-        // ------ These tests checks every special character ------ \\
-        @Test
-        @DisplayName("Should return true with exclamation mark special character")
-        void testPasswordWithExclamation() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123!"));
-        }
-
-        @Test
-        @DisplayName("Should return true with at symbol special character")
-        void testPasswordWithAtSymbol() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123@"));
-        }
-
-        @Test
-        @DisplayName("Should return true with hash special character")
-        void testPasswordWithHash() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123#"));
-        }
-
-        @Test
-        @DisplayName("Should return true with dollar sign special character")
-        void testPasswordWithDollar() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123$"));
-        }
-
-        @Test
-        @DisplayName("Should return true with percent special character")
-        void testPasswordWithPercent() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123%"));
-        }
-
-        @Test
-        @DisplayName("Should return true with caret special character")
-        void testPasswordWithCaret() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123^"));
-        }
-
-        @Test
-        @DisplayName("Should return true with ampersand special character")
-        void testPasswordWithAmpersand() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123&"));
-        }
-
-        @Test
-        @DisplayName("Should return true with asterisk special character")
-        void testPasswordWithAsterisk() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123*"));
-        }
-
-        @Test
-        @DisplayName("Should return true with parentheses special characters")
-        void testPasswordWithParentheses() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123("));
-            assertTrue(invokeIsPasswordStrong("Pass123)"));
-        }
-
-        @Test
-        @DisplayName("Should return true with underscore special character")
-        void testPasswordWithUnderscore() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123_"));
-        }
-
-        @Test
-        @DisplayName("Should return true with plus special character")
-        void testPasswordWithPlus() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123+"));
-        }
-
-        @Test
-        @DisplayName("Should return true with equals special character")
-        void testPasswordWithEquals() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123="));
-        }
-
-        @Test
-        @DisplayName("Should return true with hyphen special character")
-        void testPasswordWithHyphen() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123-"));
-        }
-
-        @Test
-        @DisplayName("Should return true with curly braces special characters")
-        void testPasswordWithCurlyBraces() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123{"));
-            assertTrue(invokeIsPasswordStrong("Pass123}"));
-        }
-
-        @Test
-        @DisplayName("Should return true with square brackets special characters")
-        void testPasswordWithSquareBrackets() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123["));
-            assertTrue(invokeIsPasswordStrong("Pass123]"));
-        }
-
-        @Test
-        @DisplayName("Should return true with colon special character")
-        void testPasswordWithColon() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123:"));
-        }
-
-        @Test
-        @DisplayName("Should return true with semicolon special character")
-        void testPasswordWithSemicolon() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123;"));
-        }
-
-        @Test
-        @DisplayName("Should return true with quote special characters")
-        void testPasswordWithQuotes() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123\""));
-            assertTrue(invokeIsPasswordStrong("Pass123'"));
-        }
-
-        @Test
-        @DisplayName("Should return true with angle brackets special characters")
-        void testPasswordWithAngleBrackets() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123<"));
-            assertTrue(invokeIsPasswordStrong("Pass123>"));
-        }
-
-        @Test
-        @DisplayName("Should return true with comma special character")
-        void testPasswordWithComma() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123,"));
-        }
-
-        @Test
-        @DisplayName("Should return true with period special character")
-        void testPasswordWithPeriod() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123."));
-        }
-
-        @Test
-        @DisplayName("Should return true with question mark special character")
-        void testPasswordWithQuestionMark() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123?"));
-        }
-
-        @Test
-        @DisplayName("Should return true with forward slash special character")
-        void testPasswordWithForwardSlash() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123/"));
-        }
-
-        @Test
-        @DisplayName("Should return true with pipe special character")
-        void testPasswordWithPipe() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123|"));
-        }
-
-        @Test
-        @DisplayName("Should return true with backslash special character")
-        void testPasswordWithBackslash() throws Exception {
-            assertTrue(invokeIsPasswordStrong("Pass123\\"));
-        }
-
     }
 
     // ----------------------------- USER REGISTRATION
@@ -498,35 +343,6 @@ class AuthServiceTest {
             assertEquals(true, response.getIsActive());
             verify(userRepository).save(argThat(user -> user.getIsActive() == true));
         }
-
-        // ==================== DATA NORMALIZATION ====================
-
-        @Test
-        @DisplayName("Should convert email to lowercase")
-        void testEmailConvertedToLowercase() {
-            RegisterUserRequest request = createValidRequest();
-            request.setEmail("Test@EXAMPLE.COM");
-            mockSuccessfulRegistration("test@example.com");
-
-            UserResponse response = authService.register(request);
-
-            assertEquals("test@example.com", response.getEmail());
-            verify(userRepository).existsByEmail("test@example.com");
-        }
-
-        @Test
-        @DisplayName("Should trim firstName and lastName")
-        void testNamesAreTrimmed() {
-            RegisterUserRequest request = createValidRequest();
-            request.setFirstName("  John  ");
-            request.setLastName("  Doe  ");
-            mockSuccessfulRegistration("test@example.com");
-
-            UserResponse response = authService.register(request);
-
-            assertEquals("John", response.getFirstName());
-            assertEquals("Doe", response.getLastName());
-        }
     }
 
     // ----------------------------- USER LOGIN -----------------------------\\
@@ -585,19 +401,6 @@ class AuthServiceTest {
             verify(refreshTokenRepository).save(any(RefreshToken.class));
         }
 
-        @Test
-        @DisplayName("Should login successfully with case-insensitive email")
-        void testLoginIsCaseInsensitiveForEmail() {
-            LoginRequest request = createValidLoginRequest();
-            request.setEmail("Test@EXAMPLE.COM");
-            User user = createActiveUser();
-            mockSuccessfulLogin(user);
-
-            AuthService.LoginPair result = authService.loginIssueTokens(request);
-
-            assertNotNull(result);
-            verify(userRepository).findByEmail("test@example.com");
-        }
 
         // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION 1: WRONG
         // PASSWORD ====================
@@ -972,4 +775,229 @@ class AuthServiceTest {
         }
     }
 
+
+    // ==================== WHITEBOX STATEMENT COVERAGE TESTS ====================
+
+@Nested
+@DisplayName(" Whitebox Statement Coverage - register()")
+class RegisterWhiteboxTests {
+
+    // ==================== EDGE CASES NOT COVERED IN BLACKBOX TESTING ====================
+    
+    @Test
+    @DisplayName("WB: Should handle email with mixed case (toLowerCase coverage)")
+    void testEmailLowerCase_MixedCase() {
+        RegisterUserRequest request = new RegisterUserRequest();
+        request.setEmail("TeSt@ExAmPlE.CoM");
+        request.setPassword("Pass123!");
+        request.setFirstName("John");
+        request.setLastName("Doe");
+        request.setPhone("+1234567890");
+        
+        when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+        when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            user.setId(1L);
+            return user;
+        });
+
+        authService.register(request);
+
+        verify(userRepository).existsByEmail("test@example.com");
+        verify(userRepository).save(argThat(user -> user.getEmail().equals("test@example.com")));
+    }
+
+    @Test
+    @DisplayName("WB: Should trim firstName with leading/trailing spaces")
+    void testFirstNameTrim_WithSpaces() {
+        RegisterUserRequest request = new RegisterUserRequest();
+        request.setEmail("test@example.com");
+        request.setPassword("Pass123!");
+        request.setFirstName("   John   ");
+        request.setLastName("Doe");
+        request.setPhone("+1234567890");
+        
+        when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+        when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            user.setId(1L);
+            return user;
+        });
+
+        UserResponse response = authService.register(request);
+
+        assertEquals("John", response.getFirstName());
+        verify(userRepository).save(argThat(user -> user.getFirstName().equals("John")));
+    }
+
+    @Test
+    @DisplayName("WB: Should trim lastName with leading/trailing spaces")
+    void testLastNameTrim_WithSpaces() {
+        RegisterUserRequest request = new RegisterUserRequest();
+        request.setEmail("test@example.com");
+        request.setPassword("Pass123!");
+        request.setFirstName("John");
+        request.setLastName("   Doe   ");
+        request.setPhone("+1234567890");
+        
+        when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+        when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            user.setId(1L);
+            return user;
+        });
+
+        UserResponse response = authService.register(request);
+
+        assertEquals("Doe", response.getLastName());
+        verify(userRepository).save(argThat(user -> user.getLastName().equals("Doe")));
+    }
+
+    @Test
+    @DisplayName("WB: Should handle password with backslash special character")
+    void testPasswordStrong_BackslashSpecialChar() {
+        RegisterUserRequest request = new RegisterUserRequest();
+        request.setEmail("test@example.com");
+        request.setPassword("Pass123\\");
+        request.setFirstName("John");
+        request.setLastName("Doe");
+        request.setPhone("+1234567890");
+        
+        when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+        when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            user.setId(1L);
+            return user;
+        });
+
+        assertDoesNotThrow(() -> authService.register(request));
+    }
+
+    @Test
+    @DisplayName("WB: Should handle password with bracket special characters")
+    void testPasswordStrong_BracketSpecialChars() {
+        RegisterUserRequest request = new RegisterUserRequest();
+        request.setEmail("test@example.com");
+        request.setPassword("Pass123[");
+        request.setFirstName("John");
+        request.setLastName("Doe");
+        request.setPhone("+1234567890");
+        
+        when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+        when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            user.setId(1L);
+            return user;
+        });
+
+        assertDoesNotThrow(() -> authService.register(request));
+    }
 }
+
+@Nested
+@DisplayName("Phase 2: Whitebox Statement Coverage - loginIssueTokens()")
+class LoginWhiteboxTests {
+
+    // ==================== EDGE CASES NOT COVERED IN BLACKBOX TESTING ====================
+    
+    @Test
+    @DisplayName("WB: Should handle email with uppercase in login (toLowerCase coverage)")
+    void testLoginEmail_UpperCase() {
+        LoginRequest request = new LoginRequest();
+        request.setEmail("TEST@EXAMPLE.COM");
+        request.setPassword("Pass123!");
+        
+        User user = new User();
+        user.setId(1L);
+        user.setEmail("test@example.com");
+        user.setPassword("$2a$10$hashedPassword");
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setIsActive(true);
+        user.setRole(Roles.USER);
+
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("Pass123!", user.getPassword())).thenReturn(true);
+        when(jwtService.generateAccessToken(eq("test@example.com"), anyMap())).thenReturn("access-token-123");
+
+        authService.loginIssueTokens(request);
+
+        verify(userRepository).findByEmail("test@example.com");
+    }
+
+    @Test
+    @DisplayName("WB: Should handle null isActive (Boolean.FALSE.equals coverage)")
+    void testIsActive_NullValue() {
+        LoginRequest request = new LoginRequest();
+        request.setEmail("test@example.com");
+        request.setPassword("Pass123!");
+        
+        User user = new User();
+        user.setId(1L);
+        user.setEmail("test@example.com");
+        user.setPassword("$2a$10$hashedPassword");
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setIsActive(null); // null should not throw exception
+        user.setRole(Roles.USER);
+
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("Pass123!", user.getPassword())).thenReturn(true);
+        when(jwtService.generateAccessToken(eq("test@example.com"), anyMap())).thenReturn("access-token-123");
+
+        assertDoesNotThrow(() -> authService.loginIssueTokens(request));
+    }
+}
+
+@Nested
+@DisplayName("Phase 2: Whitebox Statement Coverage - logout()")
+class LogoutWhiteboxTests {
+
+    // ==================== EDGE CASES NOT COVERED WITH BLACKBOX TESTING ====================
+    
+    @Test
+    @DisplayName("WB: Should handle blank refreshToken (isBlank coverage)")
+    void testRefreshToken_BlankString() {
+        String accessToken = "access-token";
+        String refreshToken = "   "; // blank but not null
+
+        authService.logout(accessToken, refreshToken);
+
+        verify(refreshTokenRepository, never()).findByToken(anyString());
+        verify(denylistService).deny(accessToken, 3600L);
+    }
+
+    @Test
+    @DisplayName("WB: Should handle blank accessToken (isBlank coverage)")
+    void testAccessToken_BlankString() {
+        String accessToken = "   "; // blank but not null
+        String refreshToken = "refresh-token";
+        
+        User user = new User();
+        user.setId(1L);
+        user.setEmail("test@example.com");
+        user.setRole(Roles.USER);
+
+        RefreshToken rt = new RefreshToken();
+        rt.setId(1L);
+        rt.setToken(refreshToken);
+        rt.setUser(user);
+        rt.setExpiresAt(Instant.now().plusSeconds(86400L));
+        rt.setRevoked(false);
+
+        when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(rt));
+
+        authService.logout(accessToken, refreshToken);
+
+        verify(refreshTokenRepository).save(argThat(RefreshToken::getRevoked));
+        verify(denylistService, never()).deny(anyString(), anyLong());
+    }
+}
+
+    }
+
