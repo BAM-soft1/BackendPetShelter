@@ -39,7 +39,7 @@ class JwtServiceTest {
     }
 
     // ==================== TEST HELPER ====================
-    
+
     private Map<String, Object> createValidClaims() {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", "USER");
@@ -51,8 +51,9 @@ class JwtServiceTest {
     @DisplayName("Token Generation & Parsing Tests - generateAccessToken() & parseAccessToken()")
     class TokenGenerationAndParsingTests {
 
-        // ==================== EQUIVALENCE PARTITIONING - VALID PARTITION ====================
-        
+        // ==================== EQUIVALENCE PARTITIONING - VALID PARTITION
+        // ====================
+
         @Test
         @DisplayName("Should generate access token with valid claims")
         void testGenerateAccessTokenWithValidClaims() {
@@ -89,23 +90,23 @@ class JwtServiceTest {
             Instant beforeGeneration = Instant.now();
             String token = jwtService.generateAccessToken(subject, claims);
             Instant afterGeneration = Instant.now();
-            
+
             Jws<Claims> parsedToken = jwtService.parseAccessToken(token);
             Claims body = parsedToken.getBody();
 
             // Verify subject (sub)
             assertEquals(subject, body.getSubject());
-            
+
             // Verify custom claims (role, uid)
             assertEquals("USER", body.get("role"));
             assertEquals(123, body.get("uid", Integer.class));
-            
+
             // Verify issuedAt (iat)
             Date issuedAt = body.getIssuedAt();
             assertNotNull(issuedAt);
             assertTrue(issuedAt.toInstant().isAfter(beforeGeneration.minusSeconds(1)));
             assertTrue(issuedAt.toInstant().isBefore(afterGeneration.plusSeconds(1)));
-            
+
             // Verify expiration (exp)
             Date expiration = body.getExpiration();
             assertNotNull(expiration);
@@ -120,7 +121,7 @@ class JwtServiceTest {
             Instant beforeGeneration = Instant.now();
             String token = jwtService.generateAccessToken(subject, claims);
             Instant afterGeneration = Instant.now();
-            
+
             Jws<Claims> parsedToken = jwtService.parseAccessToken(token);
             Date expiration = parsedToken.getBody().getExpiration();
 
@@ -132,8 +133,9 @@ class JwtServiceTest {
             assertTrue(expiration.toInstant().isBefore(expectedExpirationMax.plusSeconds(2)));
         }
 
-        // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION 1: EXPIRED TOKEN ====================
-        
+        // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION 1: EXPIRED
+        // TOKEN ====================
+
         @Test
         @DisplayName("Should throw ExpiredJwtException when parsing expired token")
         void testParseExpiredToken() {
@@ -154,8 +156,9 @@ class JwtServiceTest {
             });
         }
 
-        // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION 2: INVALID SIGNATURE ====================
-        
+        // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION 2: INVALID
+        // SIGNATURE ====================
+
         @Test
         @DisplayName("Should throw SignatureException when parsing token with invalid signature")
         void testParseTokenWithInvalidSignature() {
@@ -176,8 +179,9 @@ class JwtServiceTest {
             });
         }
 
-        // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION 3: MALFORMED TOKEN ====================
-        
+        // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION 3:
+        // MALFORMED TOKEN ====================
+
         @Test
         @DisplayName("Should throw MalformedJwtException when parsing malformed token")
         void testParseMalformedToken() {
@@ -189,5 +193,135 @@ class JwtServiceTest {
         }
     }
 
-    
+
+        // ==================== WHITEBOX STATEMENT and DECISION COVERAGE TESTS ====================
+    @Nested
+    @DisplayName("Phase 2: Whitebox Statement & Decision Coverage Tests")
+    class WhiteboxCoverageTests {
+
+        // ==== STATEMENT COVERAGE: Refresh Token Generation Path ====
+
+        @Test
+        @DisplayName("Should generate refresh token using refresh key and expiration")
+        void testGenerateRefreshTokenUsesRefreshKeyAndExpiration() {
+            String subject = "user@example.com";
+            Map<String, Object> claims = createValidClaims();
+
+            String refreshToken = jwtService.generateRefreshToken(subject, claims);
+
+            assertNotNull(refreshToken);
+            assertFalse(refreshToken.isEmpty());
+            assertEquals(3, refreshToken.split("\\.").length);
+        }
+
+        // ==== STATEMENT COVERAGE: Refresh Token Parsing Path ====
+
+        @Test
+        @DisplayName("Should parse refresh token using refresh key")
+        void testParseRefreshTokenUsesRefreshKey() {
+            String subject = "user@example.com";
+            Map<String, Object> claims = createValidClaims();
+
+            String refreshToken = jwtService.generateRefreshToken(subject, claims);
+            Jws<Claims> parsedToken = jwtService.parseRefreshToken(refreshToken);
+
+            assertNotNull(parsedToken);
+            assertEquals(subject, parsedToken.getBody().getSubject());
+            assertEquals("USER", parsedToken.getBody().get("role"));
+        }
+
+        // ==== STATEMENT COVERAGE: Refresh Token Expiration Path ====
+
+        @Test
+        @DisplayName("Should verify refresh token expiration is set correctly (24 hours)")
+        void testRefreshTokenExpirationSetCorrectly() {
+            String subject = "user@example.com";
+            Map<String, Object> claims = createValidClaims();
+
+            Instant beforeGeneration = Instant.now();
+            String refreshToken = jwtService.generateRefreshToken(subject, claims);
+            Instant afterGeneration = Instant.now();
+
+            Jws<Claims> parsedToken = jwtService.parseRefreshToken(refreshToken);
+            Date expiration = parsedToken.getBody().getExpiration();
+
+            // Verify expiration is ~24 hours (86400 seconds) from now
+            long refreshExpSeconds = 86400L;
+            Instant expectedExpiration = beforeGeneration.plusSeconds(refreshExpSeconds);
+            Instant expectedExpirationMax = afterGeneration.plusSeconds(refreshExpSeconds);
+
+            assertTrue(expiration.toInstant().isAfter(expectedExpiration.minusSeconds(2)));
+            assertTrue(expiration.toInstant().isBefore(expectedExpirationMax.plusSeconds(2)));
+        }
+
+        // ==== DECISION COVERAGE: Refresh Token Signature Validation (Invalid Branch)
+        // ====
+
+        @Test
+        @DisplayName("Should throw SignatureException when parsing refresh token with access key")
+        void testParseRefreshTokenWithWrongKey() {
+            String subject = "user@example.com";
+            Map<String, Object> claims = createValidClaims();
+
+            // Generate refresh token (signed with refresh key)
+            String refreshToken = jwtService.generateRefreshToken(subject, claims);
+
+            // Try to parse with access key parser - should fail signature validation
+            assertThrows(SignatureException.class, () -> {
+                jwtService.parseAccessToken(refreshToken);
+            });
+        }
+
+        // ==== DECISION COVERAGE: Access Token Signature Validation (Invalid Branch)
+        // ====
+
+        @Test
+        @DisplayName("Should throw SignatureException when parsing access token with refresh key")
+        void testParseAccessTokenWithWrongKey() {
+            String subject = "user@example.com";
+            Map<String, Object> claims = createValidClaims();
+
+            // Generate access token (signed with access key)
+            String accessToken = jwtService.generateAccessToken(subject, claims);
+
+            // Try to parse with refresh key parser - should fail signature validation
+            assertThrows(SignatureException.class, () -> {
+                jwtService.parseRefreshToken(accessToken);
+            });
+        }
+
+        // ==== DECISION COVERAGE: Refresh Token Expiration Check (Expired Branch) ====
+
+        @Test
+        @DisplayName("Should throw ExpiredJwtException when parsing expired refresh token")
+        void testParseExpiredRefreshToken() {
+            // Create a JwtService with negative expiration for refresh token
+            JwtProperties expiredProps = new JwtProperties();
+            expiredProps.setAccessSecret(TEST_ACCESS_SECRET);
+            expiredProps.setRefreshSecret(TEST_REFRESH_SECRET);
+            expiredProps.setAccessExpirationSeconds(ACCESS_EXPIRATION_SECONDS);
+            expiredProps.setRefreshExpirationSeconds(-1L);
+            JwtService expiredJwtService = new JwtService(expiredProps);
+
+            String subject = "user@example.com";
+            Map<String, Object> claims = createValidClaims();
+            String expiredRefreshToken = expiredJwtService.generateRefreshToken(subject, claims);
+
+            assertThrows(ExpiredJwtException.class, () -> {
+                jwtService.parseRefreshToken(expiredRefreshToken);
+            });
+        }
+
+        // ==== DECISION COVERAGE: Refresh Token Parsing (Malformed Branch) ====
+
+        @Test
+        @DisplayName("Should throw MalformedJwtException when parsing malformed refresh token")
+        void testParseMalformedRefreshToken() {
+            String malformedToken = "invalid.refresh.token";
+
+            assertThrows(MalformedJwtException.class, () -> {
+                jwtService.parseRefreshToken(malformedToken);
+            });
+        }
+    }
 }
