@@ -23,9 +23,9 @@ import java.util.Date;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -150,6 +150,22 @@ private AnimalDTORequest animalDTORequest;
         assertEquals(499, response.getPrice());
         verify(animalRepository).save(any(Animal.class));
 
+        // ==================== INVALID PARTITIONS PARTITION ====================
+    }
+
+        @Test
+        @DisplayName("Name is null - Throws Exception")
+        void testCreateAnimalWithNullName() {
+            // Arrange
+            AnimalDTORequest request = createValidRequest();
+            request.setName("");
+
+
+            assertThrows(IllegalArgumentException.class, () -> animalService.addAnimal(request));
+            verify(animalRepository, never()).save(any(Animal.class));
+        }
+
+
 
     }
 
@@ -157,4 +173,3 @@ private AnimalDTORequest animalDTORequest;
 }
 
 
-}
