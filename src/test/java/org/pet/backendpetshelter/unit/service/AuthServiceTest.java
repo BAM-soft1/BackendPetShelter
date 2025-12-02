@@ -401,7 +401,6 @@ class AuthServiceTest {
             verify(refreshTokenRepository).save(any(RefreshToken.class));
         }
 
-
         // ==================== EQUIVALENCE PARTITIONING - INVALID PARTITION 1: WRONG
         // PASSWORD ====================
 
@@ -675,7 +674,7 @@ class AuthServiceTest {
         }
     }
 
-        // ----------------------------- LOGOUT -----------------------------\\
+    // ----------------------------- LOGOUT -----------------------------\\
 
     @Nested
     @DisplayName("Logout Tests - logout()")
@@ -775,229 +774,880 @@ class AuthServiceTest {
         }
     }
 
-
     // ==================== WHITEBOX STATEMENT COVERAGE TESTS ====================
 
-@Nested
-@DisplayName(" Whitebox Statement Coverage - register()")
-class RegisterWhiteboxTests {
+    @Nested
+    @DisplayName(" Whitebox Statement Coverage - register()")
+    class RegisterWhiteboxTests {
 
-    // ==================== EDGE CASES NOT COVERED IN BLACKBOX TESTING ====================
-    
-    @Test
-    @DisplayName("WB: Should handle email with mixed case (toLowerCase coverage)")
-    void testEmailLowerCase_MixedCase() {
-        RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("TeSt@ExAmPlE.CoM");
-        request.setPassword("Pass123!");
-        request.setFirstName("John");
-        request.setLastName("Doe");
-        request.setPhone("+1234567890");
-        
-        when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
-        when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
-            User user = invocation.getArgument(0);
-            user.setId(1L);
-            return user;
-        });
+        // ==================== EDGE CASES NOT COVERED IN BLACKBOX TESTING
+        // ====================
 
-        authService.register(request);
+        @Test
+        @DisplayName("WB: Should handle email with mixed case (toLowerCase coverage)")
+        void testEmailLowerCase_MixedCase() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("TeSt@ExAmPlE.CoM");
+            request.setPassword("Pass123!");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+            request.setPhone("+1234567890");
 
-        verify(userRepository).existsByEmail("test@example.com");
-        verify(userRepository).save(argThat(user -> user.getEmail().equals("test@example.com")));
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+            when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
+            when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+                User user = invocation.getArgument(0);
+                user.setId(1L);
+                return user;
+            });
+
+            authService.register(request);
+
+            verify(userRepository).existsByEmail("test@example.com");
+            verify(userRepository).save(argThat(user -> user.getEmail().equals("test@example.com")));
+        }
+
+        @Test
+        @DisplayName("WB: Should trim firstName with leading/trailing spaces")
+        void testFirstNameTrim_WithSpaces() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("Pass123!");
+            request.setFirstName("   John   ");
+            request.setLastName("Doe");
+            request.setPhone("+1234567890");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+            when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
+            when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+                User user = invocation.getArgument(0);
+                user.setId(1L);
+                return user;
+            });
+
+            UserResponse response = authService.register(request);
+
+            assertEquals("John", response.getFirstName());
+            verify(userRepository).save(argThat(user -> user.getFirstName().equals("John")));
+        }
+
+        @Test
+        @DisplayName("WB: Should trim lastName with leading/trailing spaces")
+        void testLastNameTrim_WithSpaces() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("Pass123!");
+            request.setFirstName("John");
+            request.setLastName("   Doe   ");
+            request.setPhone("+1234567890");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+            when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
+            when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+                User user = invocation.getArgument(0);
+                user.setId(1L);
+                return user;
+            });
+
+            UserResponse response = authService.register(request);
+
+            assertEquals("Doe", response.getLastName());
+            verify(userRepository).save(argThat(user -> user.getLastName().equals("Doe")));
+        }
+
+        @Test
+        @DisplayName("WB: Should handle password with backslash special character")
+        void testPasswordStrong_BackslashSpecialChar() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("Pass123\\");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+            request.setPhone("+1234567890");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+            when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
+            when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+                User user = invocation.getArgument(0);
+                user.setId(1L);
+                return user;
+            });
+
+            assertDoesNotThrow(() -> authService.register(request));
+        }
+
+        @Test
+        @DisplayName("WB: Should handle password with bracket special characters")
+        void testPasswordStrong_BracketSpecialChars() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("Pass123[");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+            request.setPhone("+1234567890");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+            when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
+            when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+                User user = invocation.getArgument(0);
+                user.setId(1L);
+                return user;
+            });
+
+            assertDoesNotThrow(() -> authService.register(request));
+        }
     }
 
-    @Test
-    @DisplayName("WB: Should trim firstName with leading/trailing spaces")
-    void testFirstNameTrim_WithSpaces() {
-        RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("test@example.com");
-        request.setPassword("Pass123!");
-        request.setFirstName("   John   ");
-        request.setLastName("Doe");
-        request.setPhone("+1234567890");
-        
-        when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
-        when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
-            User user = invocation.getArgument(0);
+    @Nested
+    @DisplayName("Whitebox Statement Coverage - loginIssueTokens()")
+    class LoginWhiteboxTests {
+
+        // ==================== EDGE CASES NOT COVERED IN BLACKBOX TESTING
+        // ====================
+
+        @Test
+        @DisplayName("WB: Should handle email with uppercase in login (toLowerCase coverage)")
+        void testLoginEmail_UpperCase() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("TEST@EXAMPLE.COM");
+            request.setPassword("Pass123!");
+
+            User user = new User();
             user.setId(1L);
-            return user;
-        });
+            user.setEmail("test@example.com");
+            user.setPassword("$2a$10$hashedPassword");
+            user.setFirstName("John");
+            user.setLastName("Doe");
+            user.setIsActive(true);
+            user.setRole(Roles.USER);
 
-        UserResponse response = authService.register(request);
+            when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+            when(passwordEncoder.matches("Pass123!", user.getPassword())).thenReturn(true);
+            when(jwtService.generateAccessToken(eq("test@example.com"), anyMap())).thenReturn("access-token-123");
 
-        assertEquals("John", response.getFirstName());
-        verify(userRepository).save(argThat(user -> user.getFirstName().equals("John")));
+            authService.loginIssueTokens(request);
+
+            verify(userRepository).findByEmail("test@example.com");
+        }
+
+        @Test
+        @DisplayName("WB: Should handle null isActive (Boolean.FALSE.equals coverage)")
+        void testIsActive_NullValue() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("Pass123!");
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setPassword("$2a$10$hashedPassword");
+            user.setFirstName("John");
+            user.setLastName("Doe");
+            user.setIsActive(null); // null should not throw exception
+            user.setRole(Roles.USER);
+
+            when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+            when(passwordEncoder.matches("Pass123!", user.getPassword())).thenReturn(true);
+            when(jwtService.generateAccessToken(eq("test@example.com"), anyMap())).thenReturn("access-token-123");
+
+            assertDoesNotThrow(() -> authService.loginIssueTokens(request));
+        }
     }
 
-    @Test
-    @DisplayName("WB: Should trim lastName with leading/trailing spaces")
-    void testLastNameTrim_WithSpaces() {
-        RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("test@example.com");
-        request.setPassword("Pass123!");
-        request.setFirstName("John");
-        request.setLastName("   Doe   ");
-        request.setPhone("+1234567890");
-        
-        when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
-        when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
-            User user = invocation.getArgument(0);
+    @Nested
+    @DisplayName("Whitebox Statement Coverage - logout()")
+    class LogoutWhiteboxTests {
+
+        // ==================== EDGE CASES NOT COVERED WITH BLACKBOX TESTING
+        // ====================
+
+        @Test
+        @DisplayName("WB: Should handle blank refreshToken (isBlank coverage)")
+        void testRefreshToken_BlankString() {
+            String accessToken = "access-token";
+            String refreshToken = "   "; // blank but not null
+
+            authService.logout(accessToken, refreshToken);
+
+            verify(refreshTokenRepository, never()).findByToken(anyString());
+            verify(denylistService).deny(accessToken, 3600L);
+        }
+
+        @Test
+        @DisplayName("WB: Should handle blank accessToken (isBlank coverage)")
+        void testAccessToken_BlankString() {
+            String accessToken = "   "; // blank but not null
+            String refreshToken = "refresh-token";
+
+            User user = new User();
             user.setId(1L);
-            return user;
-        });
+            user.setEmail("test@example.com");
+            user.setRole(Roles.USER);
 
-        UserResponse response = authService.register(request);
+            RefreshToken rt = new RefreshToken();
+            rt.setId(1L);
+            rt.setToken(refreshToken);
+            rt.setUser(user);
+            rt.setExpiresAt(Instant.now().plusSeconds(86400L));
+            rt.setRevoked(false);
 
-        assertEquals("Doe", response.getLastName());
-        verify(userRepository).save(argThat(user -> user.getLastName().equals("Doe")));
+            when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(rt));
+
+            authService.logout(accessToken, refreshToken);
+
+            verify(refreshTokenRepository).save(argThat(RefreshToken::getRevoked));
+            verify(denylistService, never()).deny(anyString(), anyLong());
+        }
     }
 
-    @Test
-    @DisplayName("WB: Should handle password with backslash special character")
-    void testPasswordStrong_BackslashSpecialChar() {
-        RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("test@example.com");
-        request.setPassword("Pass123\\");
-        request.setFirstName("John");
-        request.setLastName("Doe");
-        request.setPhone("+1234567890");
-        
-        when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
-        when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
-            User user = invocation.getArgument(0);
-            user.setId(1L);
-            return user;
-        });
 
-        assertDoesNotThrow(() -> authService.register(request));
+    // ==================== Whitebox DECISION COVERAGE TESTS ====================
+
+    @Nested
+    @DisplayName("Decision Coverage - register()")
+    class RegisterDecisionCoverageTests {
+
+        // ==================== DECISION POINT 1: existsByEmail() ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when email exists")
+        void testEmailExists_TrueBranch() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("existing@example.com");
+            request.setPassword("Pass123!");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+
+            when(userRepository.existsByEmail("existing@example.com")).thenReturn(true);
+
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> authService.register(request));
+
+            assertEquals("Email already in use", exception.getMessage());
+            verify(userRepository).existsByEmail("existing@example.com");
+            verify(userRepository, never()).save(any(User.class));
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when email does not exist")
+        void testEmailExists_FalseBranch() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("new@example.com");
+            request.setPassword("Pass123!");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+
+            when(userRepository.existsByEmail("new@example.com")).thenReturn(false);
+            when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
+            when(userRepository.save(any(User.class))).thenAnswer(inv -> {
+                User u = inv.getArgument(0);
+                u.setId(1L);
+                return u;
+            });
+
+            UserResponse response = authService.register(request);
+
+            assertNotNull(response);
+            verify(userRepository).existsByEmail("new@example.com");
+            verify(userRepository).save(any(User.class));
+        }
+
+        // ==================== DECISION POINT 2: isPasswordStrong()
+        // ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when password is strong")
+        void testIsPasswordStrong_TrueBranch() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("StrongPass123!");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+            when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
+            when(userRepository.save(any(User.class))).thenAnswer(inv -> {
+                User u = inv.getArgument(0);
+                u.setId(1L);
+                return u;
+            });
+
+            UserResponse response = authService.register(request);
+
+            assertNotNull(response);
+            verify(userRepository).save(any(User.class));
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when password is weak")
+        void testIsPasswordStrong_FalseBranch() {
+            RegisterUserRequest request = new RegisterUserRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("weak");
+            request.setFirstName("John");
+            request.setLastName("Doe");
+
+            when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> authService.register(request));
+
+            assertEquals("Password must be at least 7 characters and include a special character",
+                    exception.getMessage());
+            verify(userRepository, never()).save(any(User.class));
+        }
     }
 
-    @Test
-    @DisplayName("WB: Should handle password with bracket special characters")
-    void testPasswordStrong_BracketSpecialChars() {
-        RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("test@example.com");
-        request.setPassword("Pass123[");
-        request.setFirstName("John");
-        request.setLastName("Doe");
-        request.setPhone("+1234567890");
-        
-        when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
-        when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
-            User user = invocation.getArgument(0);
-            user.setId(1L);
-            return user;
-        });
+    @Nested
+    @DisplayName("Decision Coverage - loginIssueTokens()")
+    class LoginDecisionCoverageTests {
 
-        assertDoesNotThrow(() -> authService.register(request));
+        // ==================== DECISION POINT 1: findByEmail().isEmpty()
+        // ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when user does not exist (Optional.empty)")
+        void testUserExists_TrueBranch() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("nonexistent@example.com");
+            request.setPassword("Pass123!");
+
+            when(userRepository.findByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
+
+            EntityNotFoundException exception = assertThrows(
+                    EntityNotFoundException.class,
+                    () -> authService.loginIssueTokens(request));
+
+            assertEquals("Invalid credentials", exception.getMessage());
+            verify(userRepository).findByEmail("nonexistent@example.com");
+            verify(passwordEncoder, never()).matches(anyString(), anyString());
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when user exists (Optional.present)")
+        void testUserExists_FalseBranch() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("existing@example.com");
+            request.setPassword("Pass123!");
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("existing@example.com");
+            user.setPassword("$2a$10$hashedPassword");
+            user.setIsActive(true);
+            user.setRole(Roles.USER);
+
+            when(userRepository.findByEmail("existing@example.com")).thenReturn(Optional.of(user));
+            when(passwordEncoder.matches("Pass123!", "$2a$10$hashedPassword")).thenReturn(true);
+            when(jwtService.generateAccessToken(eq("existing@example.com"), anyMap())).thenReturn("token");
+
+            AuthService.LoginPair result = authService.loginIssueTokens(request);
+
+            assertNotNull(result);
+            verify(userRepository).findByEmail("existing@example.com");
+        }
+
+        // ==================== DECISION POINT 2: Boolean.FALSE.equals(isActive)
+        // ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when user is inactive")
+        void testIsActive_TrueBranch() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("Pass123!");
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setPassword("$2a$10$hashedPassword");
+            user.setIsActive(false); // Inactive
+            user.setRole(Roles.USER);
+
+            when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+
+            IllegalStateException exception = assertThrows(
+                    IllegalStateException.class,
+                    () -> authService.loginIssueTokens(request));
+
+            assertEquals("User is deactivated", exception.getMessage());
+            verify(passwordEncoder, never()).matches(anyString(), anyString());
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when user is active")
+        void testIsActive_FalseBranch() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("Pass123!");
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setPassword("$2a$10$hashedPassword");
+            user.setIsActive(true); // Active
+            user.setRole(Roles.USER);
+
+            when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+            when(passwordEncoder.matches("Pass123!", "$2a$10$hashedPassword")).thenReturn(true);
+            when(jwtService.generateAccessToken(eq("test@example.com"), anyMap())).thenReturn("token");
+
+            AuthService.LoginPair result = authService.loginIssueTokens(request);
+
+            assertNotNull(result);
+            verify(passwordEncoder).matches("Pass123!", "$2a$10$hashedPassword");
+        }
+
+        // ==================== DECISION POINT 3: !passwordEncoder.matches()
+        // ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when password does not match")
+        void testPasswordMatches_TrueBranch() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("WrongPassword!");
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setPassword("$2a$10$hashedPassword");
+            user.setIsActive(true);
+            user.setRole(Roles.USER);
+
+            when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+            when(passwordEncoder.matches("WrongPassword!", "$2a$10$hashedPassword")).thenReturn(false);
+
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> authService.loginIssueTokens(request));
+
+            assertEquals("Invalid credentials", exception.getMessage());
+            verify(passwordEncoder).matches("WrongPassword!", "$2a$10$hashedPassword");
+            verify(jwtService, never()).generateAccessToken(anyString(), anyMap());
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when password matches")
+        void testPasswordMatches_FalseBranch() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("CorrectPassword!");
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setPassword("$2a$10$hashedPassword");
+            user.setIsActive(true);
+            user.setRole(Roles.USER);
+
+            when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
+            when(passwordEncoder.matches("CorrectPassword!", "$2a$10$hashedPassword")).thenReturn(true);
+            when(jwtService.generateAccessToken(eq("test@example.com"), anyMap())).thenReturn("token");
+
+            AuthService.LoginPair result = authService.loginIssueTokens(request);
+
+            assertNotNull(result);
+            verify(jwtService).generateAccessToken(eq("test@example.com"), anyMap());
+        }
     }
+
+    @Nested
+    @DisplayName("Decision Coverage - rotateRefreshToken()")
+    class RotateRefreshTokenDecisionCoverageTests {
+
+        // ==================== DECISION POINT 1: findByToken().isEmpty()
+        // ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when token does not exist (Optional.empty)")
+        void testTokenExists_TrueBranch() {
+            String nonExistentToken = "non-existent-token";
+
+            when(refreshTokenRepository.findByToken(nonExistentToken)).thenReturn(Optional.empty());
+
+            EntityNotFoundException exception = assertThrows(
+                    EntityNotFoundException.class,
+                    () -> authService.rotateRefreshToken(nonExistentToken));
+
+            assertEquals("Invalid refresh token", exception.getMessage());
+            verify(refreshTokenRepository).findByToken(nonExistentToken);
+            verify(jwtService, never()).generateAccessToken(anyString(), anyMap());
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when token exists (Optional.present)")
+        void testTokenExists_FalseBranch() {
+            String existingToken = "existing-token";
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setRole(Roles.USER);
+
+            RefreshToken token = new RefreshToken();
+            token.setId(1L);
+            token.setToken(existingToken);
+            token.setUser(user);
+            token.setExpiresAt(Instant.now().plusSeconds(86400L));
+            token.setRevoked(false);
+
+            when(refreshTokenRepository.findByToken(existingToken)).thenReturn(Optional.of(token));
+            when(jwtService.generateAccessToken(eq("test@example.com"), anyMap())).thenReturn("new-token");
+
+            AuthService.RotateResult result = authService.rotateRefreshToken(existingToken);
+
+            assertNotNull(result);
+            verify(refreshTokenRepository).findByToken(existingToken);
+        }
+
+        // ==================== DECISION POINT 2: getRevoked() ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when token is revoked")
+        void testGetRevoked_TrueBranch() {
+            String revokedToken = "revoked-token";
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setRole(Roles.USER);
+
+            RefreshToken token = new RefreshToken();
+            token.setId(1L);
+            token.setToken(revokedToken);
+            token.setUser(user);
+            token.setExpiresAt(Instant.now().plusSeconds(86400L));
+            token.setRevoked(true); // Revoked
+
+            when(refreshTokenRepository.findByToken(revokedToken)).thenReturn(Optional.of(token));
+
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> authService.rotateRefreshToken(revokedToken));
+
+            assertEquals("Refresh token expired or revoked", exception.getMessage());
+            verify(jwtService, never()).generateAccessToken(anyString(), anyMap());
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when token is not revoked")
+        void testGetRevoked_FalseBranch() {
+            String validToken = "valid-token";
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setRole(Roles.USER);
+
+            RefreshToken token = new RefreshToken();
+            token.setId(1L);
+            token.setToken(validToken);
+            token.setUser(user);
+            token.setExpiresAt(Instant.now().plusSeconds(86400L));
+            token.setRevoked(false); // Not revoked
+
+            when(refreshTokenRepository.findByToken(validToken)).thenReturn(Optional.of(token));
+            when(jwtService.generateAccessToken(eq("test@example.com"), anyMap())).thenReturn("new-token");
+
+            AuthService.RotateResult result = authService.rotateRefreshToken(validToken);
+
+            assertNotNull(result);
+            verify(jwtService).generateAccessToken(eq("test@example.com"), anyMap());
+        }
+
+        // ==================== DECISION POINT 3: getExpiresAt().isBefore(Instant.now())
+        // ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when token is expired")
+        void testIsExpired_TrueBranch() {
+            String expiredToken = "expired-token";
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setRole(Roles.USER);
+
+            RefreshToken token = new RefreshToken();
+            token.setId(1L);
+            token.setToken(expiredToken);
+            token.setUser(user);
+            token.setExpiresAt(Instant.now().minusSeconds(3600L)); // Expired
+            token.setRevoked(false);
+
+            when(refreshTokenRepository.findByToken(expiredToken)).thenReturn(Optional.of(token));
+
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> authService.rotateRefreshToken(expiredToken));
+
+            assertEquals("Refresh token expired or revoked", exception.getMessage());
+            verify(jwtService, never()).generateAccessToken(anyString(), anyMap());
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when token is not expired")
+        void testIsExpired_FalseBranch() {
+            String validToken = "valid-token";
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setRole(Roles.USER);
+
+            RefreshToken token = new RefreshToken();
+            token.setId(1L);
+            token.setToken(validToken);
+            token.setUser(user);
+            token.setExpiresAt(Instant.now().plusSeconds(86400L)); // Not expired
+            token.setRevoked(false);
+
+            when(refreshTokenRepository.findByToken(validToken)).thenReturn(Optional.of(token));
+            when(jwtService.generateAccessToken(eq("test@example.com"), anyMap())).thenReturn("new-token");
+
+            AuthService.RotateResult result = authService.rotateRefreshToken(validToken);
+
+            assertNotNull(result);
+            verify(jwtService).generateAccessToken(eq("test@example.com"), anyMap());
+        }
+    }
+
+    @Nested
+    @DisplayName("Decision Coverage - isPasswordStrong()")
+    class IsPasswordStrongDecisionCoverageTests {
+
+        private Method isPasswordStrongMethod;
+
+        @BeforeEach
+        void setUp() throws NoSuchMethodException {
+            isPasswordStrongMethod = AuthService.class.getDeclaredMethod("isPasswordStrong", String.class);
+            isPasswordStrongMethod.setAccessible(true);
+        }
+
+        private boolean invokeIsPasswordStrong(String password) throws Exception {
+            return (boolean) isPasswordStrongMethod.invoke(authService, password);
+        }
+
+        // ==================== DECISION POINT 1: pwd.length() < 7 ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when password length < 7")
+        void testPasswordLength_TrueBranch() throws Exception {
+            assertFalse(invokeIsPasswordStrong("Pass1!"));
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when password length >= 7")
+        void testPasswordLength_FalseBranch() throws Exception {
+            assertTrue(invokeIsPasswordStrong("Pass12!"));
+        }
+
+        // ==================== DECISION POINT 2: pwd.matches(regex)
+        // ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when password matches regex (has special char)")
+        void testPasswordRegex_TrueBranch() throws Exception {
+            assertTrue(invokeIsPasswordStrong("Pass123!"));
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when password does not match regex (no special char)")
+        void testPasswordRegex_FalseBranch() throws Exception {
+            assertFalse(invokeIsPasswordStrong("Pass123"));
+        }
+    }
+
+    @Nested
+    @DisplayName("Decision Coverage - logout()")
+    class LogoutDecisionCoverageTests {
+
+        // ==================== DECISION POINT 1: refreshToken != null
+        // ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when refreshToken is not null")
+        void testRefreshTokenNotNull_TrueBranch() {
+            String accessToken = "access-token";
+            String refreshToken = "refresh-token";
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setRole(Roles.USER);
+
+            RefreshToken rt = new RefreshToken();
+            rt.setId(1L);
+            rt.setToken(refreshToken);
+            rt.setUser(user);
+            rt.setExpiresAt(Instant.now().plusSeconds(86400L));
+            rt.setRevoked(false);
+
+            when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(rt));
+
+            authService.logout(accessToken, refreshToken);
+
+            verify(refreshTokenRepository).findByToken(refreshToken);
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when refreshToken is null")
+        void testRefreshTokenNotNull_FalseBranch() {
+            String accessToken = "access-token";
+
+            authService.logout(accessToken, null);
+
+            verify(refreshTokenRepository, never()).findByToken(anyString());
+            verify(denylistService).deny(accessToken, 3600L);
+        }
+
+        // ==================== DECISION POINT 2: !refreshToken.isBlank()
+        // ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when refreshToken is not blank")
+        void testRefreshTokenNotBlank_TrueBranch() {
+            String accessToken = "access-token";
+            String refreshToken = "refresh-token";
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setRole(Roles.USER);
+
+            RefreshToken rt = new RefreshToken();
+            rt.setId(1L);
+            rt.setToken(refreshToken);
+            rt.setUser(user);
+            rt.setExpiresAt(Instant.now().plusSeconds(86400L));
+            rt.setRevoked(false);
+
+            when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(rt));
+
+            authService.logout(accessToken, refreshToken);
+
+            verify(refreshTokenRepository).findByToken(refreshToken);
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when refreshToken is blank")
+        void testRefreshTokenNotBlank_FalseBranch() {
+            String accessToken = "access-token";
+            String refreshToken = "   ";
+
+            authService.logout(accessToken, refreshToken);
+
+            verify(refreshTokenRepository, never()).findByToken(anyString());
+            verify(denylistService).deny(accessToken, 3600L);
+        }
+
+        // ==================== DECISION POINT 3: accessToken != null
+        // ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when accessToken is not null")
+        void testAccessTokenNotNull_TrueBranch() {
+            String accessToken = "access-token";
+            String refreshToken = "refresh-token";
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setRole(Roles.USER);
+
+            RefreshToken rt = new RefreshToken();
+            rt.setId(1L);
+            rt.setToken(refreshToken);
+            rt.setUser(user);
+            rt.setExpiresAt(Instant.now().plusSeconds(86400L));
+            rt.setRevoked(false);
+
+            when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(rt));
+
+            authService.logout(accessToken, refreshToken);
+
+            verify(denylistService).deny(accessToken, 3600L);
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when accessToken is null")
+        void testAccessTokenNotNull_FalseBranch() {
+            String refreshToken = "refresh-token";
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setRole(Roles.USER);
+
+            RefreshToken rt = new RefreshToken();
+            rt.setId(1L);
+            rt.setToken(refreshToken);
+            rt.setUser(user);
+            rt.setExpiresAt(Instant.now().plusSeconds(86400L));
+            rt.setRevoked(false);
+
+            when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(rt));
+
+            authService.logout(null, refreshToken);
+
+            verify(denylistService, never()).deny(anyString(), anyLong());
+        }
+
+        // ==================== DECISION POINT 4: !accessToken.isBlank()
+        // ====================
+
+        @Test
+        @DisplayName("DC: Should execute TRUE branch when accessToken is not blank")
+        void testAccessTokenNotBlank_TrueBranch() {
+            String accessToken = "access-token";
+            String refreshToken = "refresh-token";
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setRole(Roles.USER);
+
+            RefreshToken rt = new RefreshToken();
+            rt.setId(1L);
+            rt.setToken(refreshToken);
+            rt.setUser(user);
+            rt.setExpiresAt(Instant.now().plusSeconds(86400L));
+            rt.setRevoked(false);
+
+            when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(rt));
+
+            authService.logout(accessToken, refreshToken);
+
+            verify(denylistService).deny(accessToken, 3600L);
+        }
+
+        @Test
+        @DisplayName("DC: Should execute FALSE branch when accessToken is blank")
+        void testAccessTokenNotBlank_FalseBranch() {
+            String accessToken = "   ";
+            String refreshToken = "refresh-token";
+
+            User user = new User();
+            user.setId(1L);
+            user.setEmail("test@example.com");
+            user.setRole(Roles.USER);
+
+            RefreshToken rt = new RefreshToken();
+            rt.setId(1L);
+            rt.setToken(refreshToken);
+            rt.setUser(user);
+            rt.setExpiresAt(Instant.now().plusSeconds(86400L));
+            rt.setRevoked(false);
+
+            when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(rt));
+
+            authService.logout(accessToken, refreshToken);
+
+            verify(denylistService, never()).deny(anyString(), anyLong());
+        }
+    }
+
 }
-
-@Nested
-@DisplayName("Phase 2: Whitebox Statement Coverage - loginIssueTokens()")
-class LoginWhiteboxTests {
-
-    // ==================== EDGE CASES NOT COVERED IN BLACKBOX TESTING ====================
-    
-    @Test
-    @DisplayName("WB: Should handle email with uppercase in login (toLowerCase coverage)")
-    void testLoginEmail_UpperCase() {
-        LoginRequest request = new LoginRequest();
-        request.setEmail("TEST@EXAMPLE.COM");
-        request.setPassword("Pass123!");
-        
-        User user = new User();
-        user.setId(1L);
-        user.setEmail("test@example.com");
-        user.setPassword("$2a$10$hashedPassword");
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setIsActive(true);
-        user.setRole(Roles.USER);
-
-        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("Pass123!", user.getPassword())).thenReturn(true);
-        when(jwtService.generateAccessToken(eq("test@example.com"), anyMap())).thenReturn("access-token-123");
-
-        authService.loginIssueTokens(request);
-
-        verify(userRepository).findByEmail("test@example.com");
-    }
-
-    @Test
-    @DisplayName("WB: Should handle null isActive (Boolean.FALSE.equals coverage)")
-    void testIsActive_NullValue() {
-        LoginRequest request = new LoginRequest();
-        request.setEmail("test@example.com");
-        request.setPassword("Pass123!");
-        
-        User user = new User();
-        user.setId(1L);
-        user.setEmail("test@example.com");
-        user.setPassword("$2a$10$hashedPassword");
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setIsActive(null); // null should not throw exception
-        user.setRole(Roles.USER);
-
-        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("Pass123!", user.getPassword())).thenReturn(true);
-        when(jwtService.generateAccessToken(eq("test@example.com"), anyMap())).thenReturn("access-token-123");
-
-        assertDoesNotThrow(() -> authService.loginIssueTokens(request));
-    }
-}
-
-@Nested
-@DisplayName("Phase 2: Whitebox Statement Coverage - logout()")
-class LogoutWhiteboxTests {
-
-    // ==================== EDGE CASES NOT COVERED WITH BLACKBOX TESTING ====================
-    
-    @Test
-    @DisplayName("WB: Should handle blank refreshToken (isBlank coverage)")
-    void testRefreshToken_BlankString() {
-        String accessToken = "access-token";
-        String refreshToken = "   "; // blank but not null
-
-        authService.logout(accessToken, refreshToken);
-
-        verify(refreshTokenRepository, never()).findByToken(anyString());
-        verify(denylistService).deny(accessToken, 3600L);
-    }
-
-    @Test
-    @DisplayName("WB: Should handle blank accessToken (isBlank coverage)")
-    void testAccessToken_BlankString() {
-        String accessToken = "   "; // blank but not null
-        String refreshToken = "refresh-token";
-        
-        User user = new User();
-        user.setId(1L);
-        user.setEmail("test@example.com");
-        user.setRole(Roles.USER);
-
-        RefreshToken rt = new RefreshToken();
-        rt.setId(1L);
-        rt.setToken(refreshToken);
-        rt.setUser(user);
-        rt.setExpiresAt(Instant.now().plusSeconds(86400L));
-        rt.setRevoked(false);
-
-        when(refreshTokenRepository.findByToken(refreshToken)).thenReturn(Optional.of(rt));
-
-        authService.logout(accessToken, refreshToken);
-
-        verify(refreshTokenRepository).save(argThat(RefreshToken::getRevoked));
-        verify(denylistService, never()).deny(anyString(), anyLong());
-    }
-}
-
-    }
-
