@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import org.pet.backendpetshelter.DTO.VeterinarianDTORequest;
 import org.pet.backendpetshelter.DTO.VeterinarianDTOResponse;
 import org.pet.backendpetshelter.Entity.Veterinarian;
-import org.pet.backendpetshelter.Reposiotry.VeterinarianRepository;
+import org.pet.backendpetshelter.Repository.VeterinarianRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

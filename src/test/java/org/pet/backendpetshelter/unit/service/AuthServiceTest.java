@@ -24,8 +24,8 @@ import org.pet.backendpetshelter.Configuration.JwtService;
 import org.pet.backendpetshelter.Configuration.RefreshToken;
 import org.pet.backendpetshelter.DTO.LoginRequest;
 import org.pet.backendpetshelter.DTO.RegisterUserRequest;
-import org.pet.backendpetshelter.Reposiotry.RefreshTokenRepository;
-import org.pet.backendpetshelter.Reposiotry.UserRepository;
+import org.pet.backendpetshelter.Repository.RefreshTokenRepository;
+import org.pet.backendpetshelter.Repository.UserRepository;
 import org.pet.backendpetshelter.Service.AuthService;
 import org.pet.backendpetshelter.Service.TokenDenylistService;
 import org.pet.backendpetshelter.DTO.UserResponse;
@@ -202,8 +202,8 @@ class AuthServiceTest {
         private RegisterUserRequest createValidRequest() {
             RegisterUserRequest request = new RegisterUserRequest();
             request.setEmail("test@example.com");
-            request.setFirstName("John");
-            request.setLastName("Doe");
+            request.setFirstName("Sergio");
+            request.setLastName("Ramos");
             request.setPhone("12345678");
             request.setPassword("Pass123!");
             return request;
@@ -244,8 +244,8 @@ class AuthServiceTest {
 
             assertNotNull(response);
             assertEquals("test@example.com", response.getEmail());
-            assertEquals("John", response.getFirstName());
-            assertEquals("Doe", response.getLastName());
+            assertEquals("Sergio", response.getFirstName());
+            assertEquals("Ramos", response.getLastName());
             assertEquals("12345678", response.getPhone());
             assertEquals(true, response.getIsActive());
             assertEquals(Roles.USER, response.getRole());
@@ -365,8 +365,8 @@ class AuthServiceTest {
             user.setId(1L);
             user.setEmail("test@example.com");
             user.setPassword("$2a$10$hashedPassword");
-            user.setFirstName("John");
-            user.setLastName("Doe");
+            user.setFirstName("Sergio");
+            user.setLastName("Ramos");
             user.setIsActive(true);
             user.setRole(Roles.USER);
             return user;
@@ -536,8 +536,8 @@ class AuthServiceTest {
             User user = new User();
             user.setId(1L);
             user.setEmail("test@example.com");
-            user.setFirstName("John");
-            user.setLastName("Doe");
+            user.setFirstName("Sergio");
+            user.setLastName("Ramos");
             user.setIsActive(true);
             user.setRole(Roles.USER);
 
@@ -789,8 +789,8 @@ class AuthServiceTest {
             RegisterUserRequest request = new RegisterUserRequest();
             request.setEmail("TeSt@ExAmPlE.CoM");
             request.setPassword("Pass123!");
-            request.setFirstName("John");
-            request.setLastName("Doe");
+            request.setFirstName("Sergio");
+            request.setLastName("Ramos");
             request.setPhone("+1234567890");
 
             when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
@@ -813,8 +813,8 @@ class AuthServiceTest {
             RegisterUserRequest request = new RegisterUserRequest();
             request.setEmail("test@example.com");
             request.setPassword("Pass123!");
-            request.setFirstName("   John   ");
-            request.setLastName("Doe");
+            request.setFirstName("   Sergio   ");
+            request.setLastName("Ramos");
             request.setPhone("+1234567890");
 
             when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
@@ -827,8 +827,8 @@ class AuthServiceTest {
 
             UserResponse response = authService.register(request);
 
-            assertEquals("John", response.getFirstName());
-            verify(userRepository).save(argThat(user -> user.getFirstName().equals("John")));
+            assertEquals("Sergio", response.getFirstName());
+            verify(userRepository).save(argThat(user -> user.getFirstName().equals("Sergio")));
         }
 
         @Test
@@ -837,8 +837,8 @@ class AuthServiceTest {
             RegisterUserRequest request = new RegisterUserRequest();
             request.setEmail("test@example.com");
             request.setPassword("Pass123!");
-            request.setFirstName("John");
-            request.setLastName("   Doe   ");
+            request.setFirstName("Sergio");
+            request.setLastName("   Ramos   ");
             request.setPhone("+1234567890");
 
             when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
@@ -851,8 +851,8 @@ class AuthServiceTest {
 
             UserResponse response = authService.register(request);
 
-            assertEquals("Doe", response.getLastName());
-            verify(userRepository).save(argThat(user -> user.getLastName().equals("Doe")));
+            assertEquals("Ramos", response.getLastName());
+            verify(userRepository).save(argThat(user -> user.getLastName().equals("Ramos")));
         }
 
         @Test
@@ -861,8 +861,8 @@ class AuthServiceTest {
             RegisterUserRequest request = new RegisterUserRequest();
             request.setEmail("test@example.com");
             request.setPassword("Pass123\\");
-            request.setFirstName("John");
-            request.setLastName("Doe");
+            request.setFirstName("Sergio");
+            request.setLastName("Ramos");
             request.setPhone("+1234567890");
 
             when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
@@ -882,8 +882,8 @@ class AuthServiceTest {
             RegisterUserRequest request = new RegisterUserRequest();
             request.setEmail("test@example.com");
             request.setPassword("Pass123[");
-            request.setFirstName("John");
-            request.setLastName("Doe");
+            request.setFirstName("Sergio");
+            request.setLastName("Ramos");
             request.setPhone("+1234567890");
 
             when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
@@ -916,8 +916,8 @@ class AuthServiceTest {
             user.setId(1L);
             user.setEmail("test@example.com");
             user.setPassword("$2a$10$hashedPassword");
-            user.setFirstName("John");
-            user.setLastName("Doe");
+            user.setFirstName("Sergio");
+            user.setLastName("Ramos");
             user.setIsActive(true);
             user.setRole(Roles.USER);
 
@@ -941,8 +941,8 @@ class AuthServiceTest {
             user.setId(1L);
             user.setEmail("test@example.com");
             user.setPassword("$2a$10$hashedPassword");
-            user.setFirstName("John");
-            user.setLastName("Doe");
+            user.setFirstName("Sergio");
+            user.setLastName("Ramos");
             user.setIsActive(null); // null should not throw exception
             user.setRole(Roles.USER);
 
@@ -1015,8 +1015,8 @@ class AuthServiceTest {
             RegisterUserRequest request = new RegisterUserRequest();
             request.setEmail("existing@example.com");
             request.setPassword("Pass123!");
-            request.setFirstName("John");
-            request.setLastName("Doe");
+            request.setFirstName("Sergio");
+            request.setLastName("Ramos");
 
             when(userRepository.existsByEmail("existing@example.com")).thenReturn(true);
 
@@ -1035,8 +1035,8 @@ class AuthServiceTest {
             RegisterUserRequest request = new RegisterUserRequest();
             request.setEmail("new@example.com");
             request.setPassword("Pass123!");
-            request.setFirstName("John");
-            request.setLastName("Doe");
+            request.setFirstName("Sergio");
+            request.setLastName("Ramos");
 
             when(userRepository.existsByEmail("new@example.com")).thenReturn(false);
             when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
@@ -1062,8 +1062,8 @@ class AuthServiceTest {
             RegisterUserRequest request = new RegisterUserRequest();
             request.setEmail("test@example.com");
             request.setPassword("StrongPass123!");
-            request.setFirstName("John");
-            request.setLastName("Doe");
+            request.setFirstName("Sergio");
+            request.setLastName("Ramos");
 
             when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
             when(passwordEncoder.encode(anyString())).thenReturn("$2a$10$hashedPassword");
@@ -1085,8 +1085,8 @@ class AuthServiceTest {
             RegisterUserRequest request = new RegisterUserRequest();
             request.setEmail("test@example.com");
             request.setPassword("weak");
-            request.setFirstName("John");
-            request.setLastName("Doe");
+            request.setFirstName("Sergio");
+            request.setLastName("Ramos");
 
             when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
 

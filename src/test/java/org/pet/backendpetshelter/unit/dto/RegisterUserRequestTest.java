@@ -30,8 +30,8 @@ class RegisterUserRequestTest {
     private RegisterUserRequest createValidRequest() {
         RegisterUserRequest request = new RegisterUserRequest();
         request.setEmail("user@example.com");
-        request.setFirstName("John");
-        request.setLastName("Doe");
+        request.setFirstName("Sergio");
+        request.setLastName("Ramos");
         request.setPhone("+45 12345678");
         request.setPassword("SecureP@ss123");
         return request;

@@ -3,7 +3,7 @@ package org.pet.backendpetshelter.Service;
 import org.pet.backendpetshelter.DTO.VaccinationRequest;
 import org.pet.backendpetshelter.DTO.VaccinationResponse;
 import org.pet.backendpetshelter.Entity.Vaccination;
-import org.pet.backendpetshelter.Reposiotry.VaccinationRepository;
+import org.pet.backendpetshelter.Repository.VaccinationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

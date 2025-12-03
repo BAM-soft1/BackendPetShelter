@@ -7,10 +7,10 @@ import org.pet.backendpetshelter.Entity.Adoption;
 import org.pet.backendpetshelter.Entity.AdoptionApplication;
 import org.pet.backendpetshelter.Entity.Animal;
 import org.pet.backendpetshelter.Entity.User;
-import org.pet.backendpetshelter.Reposiotry.AdoptionApplicationRepository;
-import org.pet.backendpetshelter.Reposiotry.AdoptionRepository;
-import org.pet.backendpetshelter.Reposiotry.AnimalRepository;
-import org.pet.backendpetshelter.Reposiotry.UserRepository;
+import org.pet.backendpetshelter.Repository.AdoptionApplicationRepository;
+import org.pet.backendpetshelter.Repository.AdoptionRepository;
+import org.pet.backendpetshelter.Repository.AnimalRepository;
+import org.pet.backendpetshelter.Repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

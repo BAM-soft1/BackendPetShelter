@@ -38,5 +38,5 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 32)
-    private Roles role;
+    private Roles role = Roles.USER;
 }
