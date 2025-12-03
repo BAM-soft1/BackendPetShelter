@@ -99,6 +99,18 @@ public class AnimalService {
         if (breed == null) {
             throw new IllegalArgumentException("Breed cannot be null");
         }
+
+        if (breed.getId() == null) {
+            throw new IllegalArgumentException("Breed ID cannot be null");
+        }
+
+        if (breed.getName() == null) {
+            throw new IllegalArgumentException("Breed name cannot be null or empty");
+        }
+
+        if (breed.getName() == null || breed.getName().isBlank()) {
+            throw new IllegalArgumentException("Breed name cannot be null or empty");
+        }
     }
 
     private void validateSex(String sex) {

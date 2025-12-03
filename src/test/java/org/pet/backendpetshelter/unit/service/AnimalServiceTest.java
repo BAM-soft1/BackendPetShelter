@@ -258,8 +258,6 @@ public class AnimalServiceTest {
 
 
 
-
-
         // Breed Invalid
         @Test
         @DisplayName("Breed is null - Throws Exception")
@@ -272,6 +270,59 @@ public class AnimalServiceTest {
             verify(animalRepository, never()).save(any(Animal.class));
         }
 
+        @Test
+        @DisplayName("Breed with null id - Throws Exception")
+        void testCreateAnimalWithBreedNullId() {
+            // Arrange
+            AnimalDTORequest request = createValidRequest();
+            Breed breed = createValidBreed();
+            breed.setId(null);
+            request.setBreed(breed);
+
+            assertThrows(IllegalArgumentException.class, () -> animalService.addAnimal(request));
+            verify(animalRepository, never()).save(any(Animal.class));
+        }
+
+        @Test
+        @DisplayName("Breed with null name - Throws Exception")
+        void testCreateAnimalWithBreedNullName() {
+            // Arrange
+            AnimalDTORequest request = createValidRequest();
+            Breed breed = createValidBreed();
+            breed.setName(null);
+            request.setBreed(breed);
+
+            assertThrows(IllegalArgumentException.class, () -> animalService.addAnimal(request));
+            verify(animalRepository, never()).save(any(Animal.class));
+        }
+
+
+        @Test
+        @DisplayName("Breed with empty name - Throws Exception")
+        void testCreateAnimalWithBreedEmptyName() {
+            // Arrange
+            AnimalDTORequest request = createValidRequest();
+            Breed breed = createValidBreed();
+            breed.setName("");
+            request.setBreed(breed);
+
+            assertThrows(IllegalArgumentException.class, () -> animalService.addAnimal(request));
+            verify(animalRepository, never()).save(any(Animal.class));
+        }
+
+        @Test
+        @DisplayName("Breed with blank name - Throws Exception")
+        void testCreateAnimalWithBreedBlankName() {
+            // Arrange
+            AnimalDTORequest request = createValidRequest();
+            Breed breed = createValidBreed();
+            breed.setName("   ");
+            request.setBreed(breed);
+
+            assertThrows(IllegalArgumentException.class, () -> animalService.addAnimal(request));
+            verify(animalRepository, never()).save(any(Animal.class));
+        }
+        
 
         // Sex Invalid
         @Test
