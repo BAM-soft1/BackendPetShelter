@@ -51,8 +51,8 @@ public class VaccinationMigrator implements CommandLineRunner {
                 .animalId(v.getAnimal() != null ? toStringOrNull(v.getAnimal().getId()) : null)
                 .veterinarianId(v.getVeterinarian() != null ? toStringOrNull(v.getVeterinarian().getId()) : null)
                 .vaccinationTypeId(v.getVaccinationType() != null ? toStringOrNull(v.getVaccinationType().getId()) : null)
-                .dateAdministered(v.getDate_administered())
-                .nextDueDate(v.getNext_due_date())
+                .dateAdministered(v.getDateAdministered())
+                .nextDueDate(v.getNextDueDate())
                 .build();
     }
 

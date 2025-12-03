@@ -50,8 +50,8 @@ public class VaccinationTypeMigrator implements CommandLineRunner {
                 .id(toStringOrNull(t.getId()))
                 .vaccineName(t.getVaccineName())
                 .description(t.getDescription())
-                .durationMonths(t.getDuration_months())
-                .requiredForAdoption(t.getRequired_for_adoption())
+                .durationMonths(t.getDurationMonths())
+                .requiredForAdoption(t.getRequiredForAdoption())
                 .build();
     }
 

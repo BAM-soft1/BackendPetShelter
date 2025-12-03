@@ -1,6 +1,6 @@
 package org.pet.backendpetshelter.Controller;
 
-import org.pet.backendpetshelter.Reposiotry.AnimalProceduresRepository;
+import org.pet.backendpetshelter.Repository.AnimalProceduresRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
