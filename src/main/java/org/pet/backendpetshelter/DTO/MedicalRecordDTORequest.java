@@ -1,6 +1,5 @@
 package org.pet.backendpetshelter.DTO;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.pet.backendpetshelter.Entity.Animal;

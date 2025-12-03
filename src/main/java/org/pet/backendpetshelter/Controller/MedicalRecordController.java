@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/medicalRecord")
+@RequestMapping("/api/medical-record")
 @CrossOrigin
 public class MedicalRecordController {
 

@@ -12,7 +12,7 @@ public class VaccinationType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "vaccinationType_id")
+    @Column(name = "vaccination_type_id")
     private Long id;
 
     @Column(unique = true, nullable = false, length = 32)
@@ -21,8 +21,8 @@ public class VaccinationType {
     @Column(length = 1000)
     private String description;
 
-    private int duration_months;
-    private int required_for_adoption;
+    private int durationMonths;
+    private int requiredForAdoption;
 
 }
 
