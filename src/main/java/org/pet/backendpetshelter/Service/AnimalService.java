@@ -64,12 +64,35 @@ public class AnimalService {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
+
+        if (!name.matches("^[a-zA-Z]+$")) {
+            throw new IllegalArgumentException("Name must contain at least one non-alphabetic character");
+        }
+
+        if (name.length() < 2 || name.length() > 30) {
+            throw new IllegalArgumentException("Name must be between 2 and 30 characters long");
+        }
     }
+
 
     private void validateSpecies(Species species) {
         if (species == null) {
             throw new IllegalArgumentException("Species cannot be null");
         }
+
+        if (species.getId() == null) {
+            throw new IllegalArgumentException("Species ID cannot be null");
+        }
+
+        if (species.getName() == null) {
+            throw new IllegalArgumentException("Species name cannot be empty");
+        }
+
+        if (species.getName() == null || species.getName().isBlank()) {
+            throw new IllegalArgumentException("Species name cannot be null or empty");
+        }
+
+
     }
 
     private void validateBreed(Breed breed) {
@@ -81,6 +104,10 @@ public class AnimalService {
     private void validateSex(String sex) {
         if (sex == null || sex.isBlank()) {
             throw new IllegalArgumentException("Sex cannot be null or empty");
+        }
+
+        if (!sex.equals("Male") && !sex.equals("Female")) {
+            throw new IllegalArgumentException("Sex must be either 'Male' or 'Female'");
         }
     }
 
@@ -111,11 +138,18 @@ public class AnimalService {
         if (status == null || status.isBlank()) {
             throw new IllegalArgumentException("Status cannot be null or empty");
         }
+
+        List<String> validStatus = List.of("Available", "Adopted"); if (!validStatus.contains(status)) {
+            throw new IllegalArgumentException("Status must be either 'Available' or 'Adopted'"); }
     }
 
     private void validatePrice(int price) {
         if (price < 0) {
             throw new IllegalArgumentException("Price cannot be negative");
+        }
+
+        if (price > 30000) {
+            throw new IllegalArgumentException("Price cannot exceed 30,000");
         }
     }
 
@@ -123,12 +157,16 @@ public class AnimalService {
         if (isActive == null) {
             throw new IllegalArgumentException("isActive cannot be null");
         }
+
     }
 
     private void validateImageUrl(String imageUrl) {
         if (imageUrl == null || imageUrl.isBlank()) {
             throw new IllegalArgumentException("Image URL cannot be null or empty");
         }
+
+        if (!imageUrl.matches("^(http|https)://.+")) {
+            throw new IllegalArgumentException("Invalid image URL format"); }
     }
 
 
