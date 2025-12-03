@@ -124,6 +124,9 @@ public class AnimalServiceTest {
 
         // ==================== VALID PARTITION ====================
 
+
+        // Happy path :D
+
         @Test
         @DisplayName("Create Animal - Valid Data")
         void createAnimal_ValidData_Success() {
@@ -148,6 +151,7 @@ public class AnimalServiceTest {
             assertEquals("Available", response.getStatus());
             assertEquals(499, response.getPrice());
             verify(animalRepository).save(any(Animal.class));
+
 
             // ==================== INVALID PARTITIONS PARTITION ====================
         }
@@ -322,7 +326,7 @@ public class AnimalServiceTest {
             assertThrows(IllegalArgumentException.class, () -> animalService.addAnimal(request));
             verify(animalRepository, never()).save(any(Animal.class));
         }
-        
+
 
         // Sex Invalid
         @Test
@@ -517,7 +521,6 @@ public class AnimalServiceTest {
 
 
     }
-
 
 
 

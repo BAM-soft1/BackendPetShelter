@@ -213,7 +213,6 @@ public class AnimalService {
         animal.setIntakeDate(request.getIntakeDate());
         animal.setStatus(request.getStatus());
         animal.setPrice(request.getPrice());
-        // Automatically set isActive based on status
         animal.setIsActive(isStatusActive(request.getStatus()));
         animal.setImageUrl(request.getImageUrl());
 
