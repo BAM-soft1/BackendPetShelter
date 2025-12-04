@@ -68,17 +68,66 @@ public class AuthControllerTest {
         userRepository.deleteAll();
     }
 
+    // Create User entity 
+    private User createUserEntity(String email, String password, boolean isActive) {
+        User user = new User();
+        user.setEmail(email);
+        user.setFirstName("Test");
+        user.setLastName("User");
+        user.setPhone("12345678");
+        user.setPassword(passwordEncoder.encode(password));
+        user.setIsActive(isActive);
+        user.setRole(Roles.USER);
+        return user;
+    }
+
+    // Create default User entity (not saved)
+    private User createDefaultUserEntity() {
+        return createUserEntity("test@example.com", "Test123!", true);
+    }
+
+    // Create RegisterUserRequest DTO
+    private RegisterUserRequest createRegisterRequest(String email, String password) {
+        RegisterUserRequest request = new RegisterUserRequest();
+        request.setEmail(email);
+        request.setFirstName("Test");
+        request.setLastName("User");
+        request.setPhone("12345678");
+        request.setPassword(password);
+        return request;
+    }
+
+    // Create LoginRequest DTO
+    private LoginRequest createLoginRequest(String email, String password) {
+        LoginRequest request = new LoginRequest();
+        request.setEmail(email);
+        request.setPassword(password);
+        return request;
+    }
+
+    // Helper for creating tokens
+    private String createAccessToken(User user) {
+        return jwtService.generateAccessToken(
+                user.getEmail(),
+                Map.of("role", user.getRole().name(), "uid", user.getId()));
+    }
+
+    // Helper for creating refresh tokens 
+    private RefreshToken createRefreshTokenEntity(User user) {
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setUser(user);
+        refreshToken.setToken(UUID.randomUUID().toString());
+        refreshToken.setExpiresAt(java.time.Instant.now().plusSeconds(3600));
+        refreshToken.setRevoked(false);
+        return refreshToken;
+    }
+
     // ========== POST /api/auth/register ==========
 
     @Test
     @DisplayName("POST /api/auth/register - Should return 201 with UserResponse")
     void register_ShouldReturn201WithUserResponse() throws Exception {
-        RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("newuser@example.com");
-        request.setFirstName("Mohamed");
-        request.setLastName("Salah");
-        request.setPhone("12345678");
-        request.setPassword("SecurePass123!");
+        RegisterUserRequest request = createRegisterRequest("newuser@example.com", "SecurePass123!");
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -87,8 +136,8 @@ public class AuthControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.email").value("newuser@example.com"))
-                .andExpect(jsonPath("$.firstName").value("Mohamed"))
-                .andExpect(jsonPath("$.lastName").value("Salah"))
+                .andExpect(jsonPath("$.firstName").value("Test"))
+                .andExpect(jsonPath("$.lastName").value("User"))
                 .andExpect(jsonPath("$.phone").value("12345678"))
                 .andExpect(jsonPath("$.isActive").value(true))
                 .andExpect(jsonPath("$.role").value("USER"));
@@ -97,21 +146,10 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/register - Should return 400 for duplicate email")
     void register_ShouldReturn400ForDuplicateEmail() throws Exception {
-        User existingUser = new User();
-        existingUser.setEmail("existing@example.com");
-        existingUser.setFirstName("Existing");
-        existingUser.setLastName("User");
-        existingUser.setPhone("55555555");
-        existingUser.setPassword(passwordEncoder.encode("ExistingPass123!"));
-        existingUser.setIsActive(true);
+        User existingUser = createUserEntity("existing@example.com", "ExistingPass123!", true);
         userRepository.save(existingUser);
 
-        RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("existing@example.com");
-        request.setFirstName("New");
-        request.setLastName("User");
-        request.setPhone("66666666");
-        request.setPassword("NewPass123!");
+        RegisterUserRequest request = createRegisterRequest("existing@example.com", "NewPass123!");
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -123,12 +161,7 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/register - Should return 400 for invalid email format")
     void register_ShouldReturn400ForInvalidEmail() throws Exception {
-        RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("not-an-email");
-        request.setFirstName("Invalid");
-        request.setLastName("Email");
-        request.setPhone("22222222");
-        request.setPassword("ValidPass123!");
+        RegisterUserRequest request = createRegisterRequest("not-an-email", "ValidPass123!");
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -140,12 +173,7 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/register - Should return 400 for weak password")
     void register_ShouldReturn400ForWeakPassword() throws Exception {
-        RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("weakpass@example.com");
-        request.setFirstName("Weak");
-        request.setLastName("Password");
-        request.setPhone("77777777");
-        request.setPassword("short");
+        RegisterUserRequest request = createRegisterRequest("weakpass@example.com", "short");
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -170,12 +198,7 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/register - Should save user to database")
     void register_ShouldSaveUserToDatabase() throws Exception {
-        RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("dbtest@example.com");
-        request.setFirstName("Database");
-        request.setLastName("Test");
-        request.setPhone("87654321");
-        request.setPassword("DbPass123!");
+        RegisterUserRequest request = createRegisterRequest("dbtest@example.com", "DbPass123!");
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -185,20 +208,15 @@ public class AuthControllerTest {
         Optional<User> savedUser = userRepository.findByEmail("dbtest@example.com");
         assertThat(savedUser).isPresent();
         assertThat(savedUser.get().getEmail()).isEqualTo("dbtest@example.com");
-        assertThat(savedUser.get().getFirstName()).isEqualTo("Database");
-        assertThat(savedUser.get().getLastName()).isEqualTo("Test");
+        assertThat(savedUser.get().getFirstName()).isEqualTo("Test");
+        assertThat(savedUser.get().getLastName()).isEqualTo("User");
     }
 
     @Test
     @DisplayName("POST /api/auth/register - Should hash password in database")
     void register_ShouldHashPasswordInDatabase() throws Exception {
         String rawPassword = "MySecurePassword123!";
-        RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("hashtest@example.com");
-        request.setFirstName("Hash");
-        request.setLastName("Test");
-        request.setPhone("11223344");
-        request.setPassword(rawPassword);
+        RegisterUserRequest request = createRegisterRequest("hashtest@example.com", rawPassword);
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -214,12 +232,7 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/register - Should not issue tokens at registration")
     void register_ShouldNotIssueTokens() throws Exception {
-        RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("notoken@example.com");
-        request.setFirstName("No");
-        request.setLastName("Token");
-        request.setPhone("99887766");
-        request.setPassword("NoToken123!");
+        RegisterUserRequest request = createRegisterRequest("notoken@example.com", "NoToken123!");
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -229,24 +242,15 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.refreshToken").doesNotExist())
                 .andExpect(cookie().doesNotExist("refreshToken"));
     }
-    // ========== POST /api/auth/login ==========
 
+    // ========== POST /api/auth/login ==========
     @Test
     @DisplayName("POST /api/auth/login - Should return 200 with AuthResponse on successful login")
     void login_ShouldReturn200WithAuthResponse() throws Exception {
-        User user = new User();
-        user.setEmail("loginuser@example.com");
-        user.setFirstName("Login");
-        user.setLastName("User");
-        user.setPhone("12345678");
-        user.setPassword(passwordEncoder.encode("Test123!"));
-        user.setIsActive(true);
-        user.setRole(Roles.USER);
+        User user = createUserEntity("loginuser@example.com", "Test123!", true);
         userRepository.save(user);
 
-        LoginRequest request = new LoginRequest();
-        request.setEmail("loginuser@example.com");
-        request.setPassword("Test123!");
+        LoginRequest request = createLoginRequest("loginuser@example.com", "Test123!");
 
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -261,19 +265,10 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/login - Should verify access token in response body")
     void login_ShouldVerifyAccessTokenInResponseBody() throws Exception {
-        User user = new User();
-        user.setEmail("tokenuser@example.com");
-        user.setFirstName("Token");
-        user.setLastName("User");
-        user.setPhone("22223333");
-        user.setPassword(passwordEncoder.encode("Token123!"));
-        user.setIsActive(true);
-        user.setRole(Roles.USER);
+        User user = createUserEntity("tokenuser@example.com", "Token123!", true);
         userRepository.save(user);
 
-        LoginRequest request = new LoginRequest();
-        request.setEmail("tokenuser@example.com");
-        request.setPassword("Token123!");
+        LoginRequest request = createLoginRequest("tokenuser@example.com", "Token123!");
 
         MvcResult result = mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -292,19 +287,10 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/login - Should verify access token in Authorization header")
     void login_ShouldVerifyAccessTokenInAuthorizationHeader() throws Exception {
-        User user = new User();
-        user.setEmail("headeruser@example.com");
-        user.setFirstName("Header");
-        user.setLastName("User");
-        user.setPhone("33334444");
-        user.setPassword(passwordEncoder.encode("Header123!"));
-        user.setIsActive(true);
-        user.setRole(Roles.USER);
+        User user = createUserEntity("headeruser@example.com", "Header123!", true);
         userRepository.save(user);
 
-        LoginRequest request = new LoginRequest();
-        request.setEmail("headeruser@example.com");
-        request.setPassword("Header123!");
+        LoginRequest request = createLoginRequest("headeruser@example.com", "Header123!");
 
         MvcResult result = mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -323,19 +309,10 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/login - Should verify refresh token in HTTP-only cookie")
     void login_ShouldVerifyRefreshTokenInHttpOnlyCookie() throws Exception {
-        User user = new User();
-        user.setEmail("cookieuser@example.com");
-        user.setFirstName("Cookie");
-        user.setLastName("User");
-        user.setPhone("44445555");
-        user.setPassword(passwordEncoder.encode("Cookie123!"));
-        user.setIsActive(true);
-        user.setRole(Roles.USER);
+        User user = createUserEntity("cookieuser@example.com", "Cookie123!", true);
         userRepository.save(user);
 
-        LoginRequest request = new LoginRequest();
-        request.setEmail("cookieuser@example.com");
-        request.setPassword("Cookie123!");
+        LoginRequest request = createLoginRequest("cookieuser@example.com", "Cookie123!");
 
         MvcResult result = mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -362,19 +339,10 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/login - Should return 401 for invalid credentials")
     void login_ShouldReturn400ForInvalidCredentials() throws Exception {
-        User user = new User();
-        user.setEmail("invalidlogin@example.com");
-        user.setFirstName("Invalid");
-        user.setLastName("User");
-        user.setPhone("55556666");
-        user.setPassword(passwordEncoder.encode("Correct123!"));
-        user.setIsActive(true);
-        user.setRole(Roles.USER);
+        User user = createUserEntity("invalidlogin@example.com", "Correct123!", true);
         userRepository.save(user);
 
-        LoginRequest request = new LoginRequest();
-        request.setEmail("invalidlogin@example.com");
-        request.setPassword("WrongPassword!");
+        LoginRequest request = createLoginRequest("invalidlogin@example.com", "WrongPassword!");
 
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -389,9 +357,7 @@ public class AuthControllerTest {
     @DisplayName("POST /api/auth/login - Should return 401 for non-existent user")
     void login_ShouldReturn401ForNonExistentUser() throws Exception {
         // Arrange: no user created
-        LoginRequest request = new LoginRequest();
-        request.setEmail("nonexistent@example.com");
-        request.setPassword("SomePassword123!");
+        LoginRequest request = createLoginRequest("nonexistent@example.com", "SomePassword123!");
 
         // Act & Assert
         mockMvc.perform(post("/api/auth/login")
@@ -406,19 +372,10 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/login - Should return 403 for inactive user")
     void login_ShouldReturn403ForInactiveUser() throws Exception {
-        User user = new User();
-        user.setEmail("inactive@example.com");
-        user.setFirstName("Inactive");
-        user.setLastName("User");
-        user.setPhone("66667777");
-        user.setPassword(passwordEncoder.encode("Inactive123!"));
-        user.setIsActive(false);
-        user.setRole(Roles.USER);
+        User user = createUserEntity("inactive@example.com", "Inactive123!", false);
         userRepository.save(user);
 
-        LoginRequest request = new LoginRequest();
-        request.setEmail("inactive@example.com");
-        request.setPassword("Inactive123!");
+        LoginRequest request = createLoginRequest("inactive@example.com", "Inactive123!");
 
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -431,27 +388,15 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/login - Should delete old refresh tokens")
     void login_ShouldDeleteOldRefreshTokens() throws Exception {
-        User user = new User();
-        user.setEmail("deleteold@example.com");
-        user.setFirstName("Delete");
-        user.setLastName("Old");
-        user.setPhone("77778888");
-        user.setPassword(passwordEncoder.encode("DeleteOld123!"));
-        user.setIsActive(true);
-        user.setRole(Roles.USER);
+        User user = createUserEntity("deleteold@example.com", "DeleteOld123!", true);
         User savedUser = userRepository.save(user);
 
         // Create old refresh token
-        RefreshToken oldToken = new RefreshToken();
-        oldToken.setUser(savedUser);
+        RefreshToken oldToken = createRefreshTokenEntity(savedUser);
         oldToken.setToken("old-refresh-token-123");
-        oldToken.setRevoked(false);
-        oldToken.setExpiresAt(java.time.Instant.now().plusSeconds(3600));
         refreshTokenRepository.save(oldToken);
 
-        LoginRequest request = new LoginRequest();
-        request.setEmail("deleteold@example.com");
-        request.setPassword("DeleteOld123!");
+        LoginRequest request = createLoginRequest("deleteold@example.com", "DeleteOld123!");
 
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -465,19 +410,10 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/login - Should store new refresh token in database")
     void login_ShouldStoreNewRefreshTokenInDatabase() throws Exception {
-        User user = new User();
-        user.setEmail("newtoken@example.com");
-        user.setFirstName("New");
-        user.setLastName("Token");
-        user.setPhone("88889999");
-        user.setPassword(passwordEncoder.encode("NewToken123!"));
-        user.setIsActive(true);
-        user.setRole(Roles.USER);
+        User user = createUserEntity("newtoken@example.com", "NewToken123!", true);
         User savedUser = userRepository.save(user);
 
-        LoginRequest request = new LoginRequest();
-        request.setEmail("newtoken@example.com");
-        request.setPassword("NewToken123!");
+        LoginRequest request = createLoginRequest("newtoken@example.com", "NewToken123!");
 
         MvcResult result = mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -507,25 +443,10 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/logout - Should return 204 No Content on successful logout")
     void logout_ShouldReturn204NoContent() throws Exception {
-        User user = new User();
-        user.setEmail("logoutuser@example.com");
-        user.setFirstName("Logout");
-        user.setLastName("User");
-        user.setPhone("11112222");
-        user.setPassword(passwordEncoder.encode("Logout123!"));
-        user.setIsActive(true);
-        user.setRole(Roles.USER);
+        User user = createDefaultUserEntity();
         User savedUser = userRepository.save(user);
-
-        String accessToken = jwtService.generateAccessToken(
-                savedUser.getEmail(),
-                Map.of("role", savedUser.getRole().name(), "uid", savedUser.getId()));
-
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setUser(savedUser);
-        refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setExpiresAt(java.time.Instant.now().plusSeconds(3600));
-        refreshToken.setRevoked(false);
+        String accessToken = createAccessToken(savedUser);
+        RefreshToken refreshToken = createRefreshTokenEntity(savedUser);
         refreshTokenRepository.save(refreshToken);
 
         mockMvc.perform(post("/api/auth/logout")
@@ -537,25 +458,12 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/logout - Should revoke refresh token in database")
     void logout_ShouldRevokeRefreshTokenInDatabase() throws Exception {
-        User user = new User();
-        user.setEmail("revoketoken@example.com");
-        user.setFirstName("Revoke");
-        user.setLastName("Token");
-        user.setPhone("22223333");
-        user.setPassword(passwordEncoder.encode("Revoke123!"));
-        user.setIsActive(true);
-        user.setRole(Roles.USER);
+        User user = createUserEntity("revoketoken@example.com", "Revoke123!", true);
         User savedUser = userRepository.save(user);
 
-        String accessToken = jwtService.generateAccessToken(
-                savedUser.getEmail(),
-                Map.of("role", savedUser.getRole().name(), "uid", savedUser.getId()));
+        String accessToken = createAccessToken(savedUser);
 
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setUser(savedUser);
-        refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setExpiresAt(java.time.Instant.now().plusSeconds(3600));
-        refreshToken.setRevoked(false);
+        RefreshToken refreshToken = createRefreshTokenEntity(savedUser);
         RefreshToken savedRefreshToken = refreshTokenRepository.save(refreshToken);
 
         mockMvc.perform(post("/api/auth/logout")
@@ -571,25 +479,12 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/logout - Should add access token to denylist")
     void logout_ShouldAddAccessTokenToDenylist() throws Exception {
-        User user = new User();
-        user.setEmail("denylist@example.com");
-        user.setFirstName("Deny");
-        user.setLastName("List");
-        user.setPhone("33334444");
-        user.setPassword(passwordEncoder.encode("Denylist123!"));
-        user.setIsActive(true);
-        user.setRole(Roles.USER);
+        User user = createUserEntity("denylist@example.com", "Denylist123!", true);
         User savedUser = userRepository.save(user);
 
-        String accessToken = jwtService.generateAccessToken(
-                savedUser.getEmail(),
-                Map.of("role", savedUser.getRole().name(), "uid", savedUser.getId()));
+        String accessToken = createAccessToken(savedUser);
 
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setUser(savedUser);
-        refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setExpiresAt(java.time.Instant.now().plusSeconds(3600));
-        refreshToken.setRevoked(false);
+        RefreshToken refreshToken = createRefreshTokenEntity(savedUser);
         refreshTokenRepository.save(refreshToken);
 
         mockMvc.perform(post("/api/auth/logout")
@@ -603,25 +498,12 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/logout - Should delete refresh token cookie")
     void logout_ShouldDeleteRefreshTokenCookie() throws Exception {
-        User user = new User();
-        user.setEmail("deletecookie@example.com");
-        user.setFirstName("Delete");
-        user.setLastName("Cookie");
-        user.setPhone("44445555");
-        user.setPassword(passwordEncoder.encode("DeleteCookie123!"));
-        user.setIsActive(true);
-        user.setRole(Roles.USER);
+        User user = createUserEntity("deletecookie@example.com", "DeleteCookie123!", true);
         User savedUser = userRepository.save(user);
 
-        String accessToken = jwtService.generateAccessToken(
-                savedUser.getEmail(),
-                Map.of("role", savedUser.getRole().name(), "uid", savedUser.getId()));
+        String accessToken = createAccessToken(savedUser);
 
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setUser(savedUser);
-        refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setExpiresAt(java.time.Instant.now().plusSeconds(3600));
-        refreshToken.setRevoked(false);
+        RefreshToken refreshToken = createRefreshTokenEntity(savedUser);
         refreshTokenRepository.save(refreshToken);
 
         MvcResult result = mockMvc.perform(post("/api/auth/logout")
@@ -647,7 +529,6 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/logout - Should return 401 for missing access token")
     void logout_ShouldReturn401ForMissingAccessToken() throws Exception {
-
         mockMvc.perform(post("/api/auth/logout"))
                 .andExpect(status().isUnauthorized());
     }
@@ -655,28 +536,15 @@ public class AuthControllerTest {
     @Test
     @DisplayName("POST /api/auth/logout - Should return 401 for revoked access token")
     void logout_ShouldReturn401ForRevokedAccessToken() throws Exception {
-        User user = new User();
-        user.setEmail("revokedtoken@example.com");
-        user.setFirstName("Revoked");
-        user.setLastName("Token");
-        user.setPhone("55556666");
-        user.setPassword(passwordEncoder.encode("Revoked123!"));
-        user.setIsActive(true);
-        user.setRole(Roles.USER);
+        User user = createUserEntity("revokedtoken@example.com", "Revoked123!", true);
         User savedUser = userRepository.save(user);
 
-        String accessToken = jwtService.generateAccessToken(
-                savedUser.getEmail(),
-                Map.of("role", savedUser.getRole().name(), "uid", savedUser.getId()));
+        String accessToken = createAccessToken(savedUser);
 
         // Add token to denylist (simulate previous logout)
         tokenDenylistService.deny(accessToken, 3600);
 
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setUser(savedUser);
-        refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setExpiresAt(java.time.Instant.now().plusSeconds(3600));
-        refreshToken.setRevoked(false);
+        RefreshToken refreshToken = createRefreshTokenEntity(savedUser);
         refreshTokenRepository.save(refreshToken);
 
         mockMvc.perform(post("/api/auth/logout")
