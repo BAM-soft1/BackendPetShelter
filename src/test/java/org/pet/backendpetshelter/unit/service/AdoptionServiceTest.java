@@ -169,6 +169,97 @@ public class AdoptionServiceTest {
             assertEquals(1L, response.getId());
             verify(adoptionRepository).save(any(Adoption.class));
         }
+
+
+
+        // ==================== INVALID PARTITIONS PARTITION ====================
+
+        @Test
+        @DisplayName("Create Adoption - Null User")
+        void createAdoption_NullUser_ThrowsException() {
+            AdoptionRequest request = createValidRequest();
+            request.setUser(null);
+
+            try {
+                adoptionService.addAdoption(request);
+            } catch (IllegalArgumentException e) {
+                assertEquals("User cannot be null", e.getMessage());
+            }
+            verify(adoptionRepository,  org.mockito.Mockito.never()).save(any(Adoption.class));
+
+        }
+
+
+        @Test
+        @DisplayName("Create Adoption - Null Animal")
+        void createAdoption_NullAnimal_ThrowsException() {
+            AdoptionRequest request = createValidRequest();
+            request.setAnimal(null);
+
+            try {
+                adoptionService.addAdoption(request);
+            } catch (IllegalArgumentException e) {
+                assertEquals("Animal cannot be null", e.getMessage());
+            }
+            verify(adoptionRepository,  org.mockito.Mockito.never()).save(any(Adoption.class));
+        }
+
+
+        @Test
+        @DisplayName("Create Adoption - Null Adoption Application")
+        void createAdoption_NullAdoptionApplication_ThrowsException() {
+            AdoptionRequest request = createValidRequest();
+            request.setAdoptionApplication(null);
+
+            try {
+                adoptionService.addAdoption(request);
+            } catch (IllegalArgumentException e) {
+                assertEquals("Adoption Application cannot be null", e.getMessage());
+            }
+            verify(adoptionRepository,  org.mockito.Mockito.never()).save(any(Adoption.class));
+        }
+
+        @Test
+        @DisplayName("Create Adoption - Null Adoption Date")
+        void createAdoption_NullAdoptionDate_ThrowsException() {
+            AdoptionRequest request = createValidRequest();
+            request.setAdoptionDate(null);
+            try {
+                adoptionService.addAdoption(request);
+            } catch (IllegalArgumentException e) {
+                assertEquals("Adoption date cannot be null", e.getMessage());
+            }
+            verify(adoptionRepository, org.mockito.Mockito.never()).save(any(Adoption.class));
+
+        }
+
+
+        @Test
+        @DisplayName("Create Adoption - Null IsActive")
+        void createAdoption_NullIsActive_ThrowsException() {
+            AdoptionRequest request = createValidRequest();
+            request.setIsActive(null);
+            try {
+                adoptionService.addAdoption(request);
+            } catch (IllegalArgumentException e) {
+                assertEquals("IsActive cannot be null", e.getMessage());
+            }
+            verify(adoptionRepository, org.mockito.Mockito.never()).save(any(Adoption.class));
+        }
+
+        @Test
+        @DisplayName("Create Adoption - User with null ID")
+        void createAdoption_UserWithNullId_ThrowsException() {
+            AdoptionRequest request = createValidRequest();
+            request.getUser().setId(null);
+            try {
+                adoptionService.addAdoption(request);
+            } catch (IllegalArgumentException e) {
+                assertEquals("User cannot be null", e.getMessage());
+            }
+            verify(adoptionRepository, org.mockito.Mockito.never()).save(any(Adoption.class));
+        }
+        
     }
 
 }
