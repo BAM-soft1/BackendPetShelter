@@ -22,9 +22,9 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toMap(
                         fe -> fe.getField(),
                         fe -> fe.getDefaultMessage(),
-                        (a, b) -> a
-                ));
-        return build(HttpStatus.BAD_REQUEST, "Validation error", "Request validation failed", req.getRequestURI(), details);
+                        (a, b) -> a));
+        return build(HttpStatus.BAD_REQUEST, "Validation error", "Request validation failed", req.getRequestURI(),
+                details);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -50,12 +50,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> other(Exception ex, HttpServletRequest req) {
         ex.printStackTrace(); // Log the full stack trace to console
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", ex.getMessage(), req.getRequestURI(), null);
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", ex.getMessage(), req.getRequestURI(),
+                null);
     }
 
-    private ResponseEntity<ErrorResponse> build(HttpStatus status, String error, String message, String path, Map<String, Object> details) {
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> forbidden(IllegalStateException ex, HttpServletRequest req) {
+        return build(HttpStatus.FORBIDDEN, "Forbidden", ex.getMessage(), req.getRequestURI(), null);
+    }
+
+    private ResponseEntity<ErrorResponse> build(HttpStatus status, String error, String message, String path,
+            Map<String, Object> details) {
         return ResponseEntity.status(status).body(
-                new ErrorResponse(Instant.now(), status.value(), error, message, path, details)
-        );
+                new ErrorResponse(Instant.now(), status.value(), error, message, path, details));
     }
 }
