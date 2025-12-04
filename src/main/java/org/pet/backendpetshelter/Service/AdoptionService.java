@@ -56,19 +56,12 @@ public class AdoptionService {
         validateIsActive(request.getIsActive());
 
 
-        User user = userRepository.findById(request.getUser().getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Animal animal = animalRepository.findById(request.getAnimal().getId())
-                .orElseThrow(() -> new RuntimeException("Animal not found"));
-
-        AdoptionApplication application = adoptionApplicationRepository.findById(request.getAdoptionApplication().getId())
-                .orElseThrow(() -> new RuntimeException("Application not found"));
 
         Adoption adoption = new Adoption();
-        adoption.setAdoptionUser(user);
-        adoption.setAnimal(animal);
-        adoption.setApplication(application);
+        adoption.setAdoptionUser(request.getUser());
+        adoption.setAnimal(request.getAnimal());
+        adoption.setApplication(request.getAdoptionApplication());
         adoption.setAdoptionDate(request.getAdoptionDate());
         adoption.setIsActive(true);
 
