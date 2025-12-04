@@ -48,13 +48,21 @@ public class AdoptionService {
 
     public AdoptionResponse addAdoption(AdoptionRequest request) {
 
-        User user = userRepository.findById(request.getUserId())
+
+        validateUser(request.getUser());
+        validateAnimal(request.getAnimal());
+        validateApplication(request.getAdoptionApplication());
+        validateAdoptionDate(request.getAdoptionDate());
+        validateIsActive(request.getIsActive());
+
+
+        User user = userRepository.findById(request.getUser().getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Animal animal = animalRepository.findById(request.getAnimalId())
+        Animal animal = animalRepository.findById(request.getAnimal().getId())
                 .orElseThrow(() -> new RuntimeException("Animal not found"));
 
-        AdoptionApplication application = adoptionApplicationRepository.findById(request.getApplicationId())
+        AdoptionApplication application = adoptionApplicationRepository.findById(request.getAdoptionApplication().getId())
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
         Adoption adoption = new Adoption();
@@ -65,10 +73,69 @@ public class AdoptionService {
         adoption.setIsActive(true);
 
         adoptionRepository.save(adoption);
-
         return new AdoptionResponse(adoption);
+    }
+
+        // Validation Methods
+        private void validateUser(User user) {
+            if (user == null || user.getId() == null) {
+                throw new IllegalArgumentException("User cannot be null");
+            }
+
+        }
+
+    private void validateAnimal(Animal animal) {
+        if (animal == null || animal.getId() == null) {
+            throw new IllegalArgumentException("Animal cannot be null");
+        }
+    }
+
+    private void validateApplication(AdoptionApplication application) {
+        if (application == null || application.getId() == null) {
+            throw new IllegalArgumentException("Adoption Application cannot be null");
+        }
+
+    }
+
+    private void validateAdoptionDate(java.util.Date adoptionDate) {
+        if (adoptionDate == null) {
+            throw new IllegalArgumentException("Adoption date cannot be null");
+        }
+
+    }
+
+    private void validateIsActive(Boolean isActive) {
+        if (isActive == null) {
+            throw new IllegalArgumentException("IsActive cannot be null");
+        }
+    }
+
+
+    /* Update Adoption */
+    public AdoptionResponse updateAdoption(Long id, AdoptionRequest request) {
+        Adoption adoption = adoptionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Adoption not found with id: " + id));
+
+        adoption.setAdoptionUser(request.getUser());
+        adoption.setAnimal(request.getAnimal());
+        adoption.setApplication(request.getAdoptionApplication());
+        adoption.setAdoptionDate(request.getAdoptionDate());
+        adoption.setIsActive(request.getIsActive());
+
+        adoptionRepository.save(adoption);
+        return new AdoptionResponse(adoption);
+    }
+
+    /* Delete Adoption */
+    public void deleteAdoption(Long id) {
+        Adoption adoption = adoptionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Adoption not found with id: " + id));
+        adoptionRepository.delete(adoption);
     }
 
 
 
-}
+    }
+
+
+
