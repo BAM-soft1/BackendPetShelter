@@ -10,18 +10,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pet.backendpetshelter.DTO.AdoptionRequest;
 import org.pet.backendpetshelter.DTO.AdoptionResponse;
-import org.pet.backendpetshelter.Entity.Adoption;
-import org.pet.backendpetshelter.Entity.AdoptionApplication;
-import org.pet.backendpetshelter.Entity.Animal;
-import org.pet.backendpetshelter.Entity.User;
-import org.pet.backendpetshelter.Reposiotry.AdoptionApplicationRepository;
-import org.pet.backendpetshelter.Reposiotry.AdoptionRepository;
-import org.pet.backendpetshelter.Reposiotry.AnimalRepository;
+import org.pet.backendpetshelter.Entity.*;
+import org.pet.backendpetshelter.Reposiotry.*;
+import org.pet.backendpetshelter.Roles;
 import org.pet.backendpetshelter.Service.AdoptionService;
 import org.pet.backendpetshelter.Status;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,7 +35,16 @@ public class AdoptionServiceTest {
    private AdoptionRepository adoptionRepository;
 
     @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private AnimalRepository animalRepository;
+
+    @Mock
+    private BreedRepository breedRepository;
+
+    @Mock SpeciesRepository speciesRepository;
+
 
     @Mock
     private AdoptionApplicationRepository adoptionApplicationRepository;
@@ -53,15 +59,14 @@ public class AdoptionServiceTest {
 
     // ==================== TEST HELPERS ====================
 
-    private AdoptionRequest createValidRequest(){
+    private AdoptionRequest createValidRequest() {
         AdoptionRequest request = new AdoptionRequest();
-        request.setUserId(createValidRequest().getUserId());
-        request.setAnimalId(createValidAnimal().getId());
-        request.setApplicationId(createValidApplication().getId());
+        request.setUser(createValidUser());
+        request.setAnimal(createValidAnimal());
+        request.setAdoptionApplication(createValidApplication());
         request.setAdoptionDate(createPastDate(2023, 9, 15));
         request.setIsActive(true);
         return request;
-
     }
 
 
@@ -72,6 +77,10 @@ public class AdoptionServiceTest {
         user.setLastName("W00");
         user.setEmail("ox@gmail.com");
         user.setPassword("W1ldC4tWoo123");
+        user.setPhone("42424242");
+        user.setRole(Roles.USER);
+        user.setIsActive(true);
+
         return user;
 
     }
@@ -84,10 +93,34 @@ public class AdoptionServiceTest {
         return application;
     }
 
+    private Species createValidSpecies(){
+        Species species = new Species();
+        species.setId(1L);
+        species.setName("Dog");
+        return species;
+    }
+
+    private Breed createValidBreed(){
+        Breed breed = new Breed();
+        breed.setId(1L);
+        breed.setName("Labrador");
+        breed.setSpecies(createValidSpecies());
+        return breed;
+    }
+
     private Animal createValidAnimal(){
         Animal animal = new Animal();
         animal.setId(1L);
         animal.setName("Buddy");
+        animal.setSpecies(createValidSpecies());
+        animal.setBreed(createValidBreed());
+        animal.setBirthDate(Calendar.getInstance().getTime());
+        animal.setSex("Male");
+        animal.setIntakeDate(Calendar.getInstance().getTime());
+        animal.setStatus(Status.APPROVED);
+        animal.setPrice(499);
+        animal.setIsActive(true);
+        animal.setImageUrl("http://cuteDog.com/LabadrorDog.jpg");
         return animal;
 
     }
@@ -96,6 +129,12 @@ public class AdoptionServiceTest {
         Calendar cal = Calendar.getInstance();
         cal.set(year, month - 1, day, 0, 0, 0);
         cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
+
+    private Date createFutureDate() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, 1);
         return cal.getTime();
     }
 
@@ -108,12 +147,13 @@ public class AdoptionServiceTest {
     @DisplayName("Create Adoption Tests")
     class CreateAdoptionTests {
 
-
         @Test
         @DisplayName("Create Adoption - Valid Request")
         void createAdoption_ValidRequest_Success() {
-
+            // Arrange
             AdoptionRequest request = createValidRequest();
+
+
 
             when(adoptionRepository.save(any(Adoption.class))).thenAnswer(inv -> {
                 Adoption a = inv.getArgument(0);
@@ -121,13 +161,13 @@ public class AdoptionServiceTest {
                 return a;
             });
 
+            // Act
             AdoptionResponse response = adoptionService.addAdoption(request);
 
+            // Assert
             assertNotNull(response);
             assertEquals(1L, response.getId());
             verify(adoptionRepository).save(any(Adoption.class));
-
-
         }
     }
 

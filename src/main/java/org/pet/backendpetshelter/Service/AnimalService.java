@@ -8,6 +8,7 @@ import org.pet.backendpetshelter.Entity.Animal;
 import org.pet.backendpetshelter.Entity.Breed;
 import org.pet.backendpetshelter.Entity.Species;
 import org.pet.backendpetshelter.Reposiotry.AnimalRepository;
+import org.pet.backendpetshelter.Status;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -34,8 +35,9 @@ public class AnimalService {
         validateBreed(request.getBreed());
         validateSex(request.getSex());
         validateBirthDate(request.getBirthDate());
-        validateIntakeDate(request.getIntakeDate(), request.getBirthDate());
-        validateStatus(request.getStatus());
+        validateIntakeDate(request.getIntakeDate(),
+                request.getBirthDate());
+        validateStatus(String.valueOf(request.getStatus()));
         validatePrice(request.getPrice());
         validateIsActive(request.getIsActive());
         validateImageUrl(request.getImageUrl());
@@ -151,8 +153,13 @@ public class AnimalService {
             throw new IllegalArgumentException("Status cannot be null or empty");
         }
 
-        List<String> validStatus = List.of("Available", "Adopted"); if (!validStatus.contains(status)) {
-            throw new IllegalArgumentException("Status must be either 'Available' or 'Adopted'"); }
+        String statusLower = status.toLowerCase();
+        if (!statusLower.equals("available") &&
+                !statusLower.equals("adopted") &&
+                !statusLower.equals("fostered") &&
+                !statusLower.equals("deceased")) {
+            throw new IllegalArgumentException("Status must be Available, Adopted, Fostered, or Deceased");
+        }
     }
 
     private void validatePrice(int price) {
@@ -213,7 +220,7 @@ public class AnimalService {
         animal.setIntakeDate(request.getIntakeDate());
         animal.setStatus(request.getStatus());
         animal.setPrice(request.getPrice());
-        animal.setIsActive(isStatusActive(request.getStatus()));
+        animal.setIsActive(isStatusActive(String.valueOf(request.getStatus())));
         animal.setImageUrl(request.getImageUrl());
 
         animalRepository.save(animal);
