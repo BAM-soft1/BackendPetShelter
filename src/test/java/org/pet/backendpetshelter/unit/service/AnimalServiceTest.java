@@ -146,6 +146,7 @@ public class AnimalServiceTest {
 
             // Assert
             assertNotNull(response);
+            assertEquals(1L, response.getId());
             assertEquals("Ox", response.getName());
             assertEquals("Male", response.getSex());
             assertEquals("Available", response.getStatus());
@@ -153,8 +154,10 @@ public class AnimalServiceTest {
             verify(animalRepository).save(any(Animal.class));
 
 
-            // ==================== INVALID PARTITIONS PARTITION ====================
         }
+
+        // ==================== INVALID PARTITIONS PARTITION ====================
+
 
         // Name Invalid
         @Test
