@@ -4,7 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.pet.backendpetshelter.DTO.MedicalRecordDTORequest;
 import org.pet.backendpetshelter.DTO.MedicalRecordDTOResponse;
 import org.pet.backendpetshelter.Entity.MedicalRecord;
-import org.pet.backendpetshelter.Reposiotry.MedicalRecordReposiotry;
+import org.pet.backendpetshelter.Repository.MedicalRecordReposiotry;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

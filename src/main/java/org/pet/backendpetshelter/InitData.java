@@ -2,15 +2,16 @@ package org.pet.backendpetshelter;
 
 
 import org.pet.backendpetshelter.Entity.*;
-import org.pet.backendpetshelter.Reposiotry.*;
+import org.pet.backendpetshelter.Repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
-
+import org.springframework.context.annotation.Profile;
 
 @Component
+@Profile("!test")
 @Order(1) // Run first, before DatabaseFeaturesInitializer
 public class InitData implements CommandLineRunner {
     private final UserRepository userRepository;

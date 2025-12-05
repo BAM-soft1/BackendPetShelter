@@ -7,7 +7,7 @@ import org.pet.backendpetshelter.DTO.AnimalDTOResponse;
 import org.pet.backendpetshelter.Entity.Animal;
 import org.pet.backendpetshelter.Entity.Breed;
 import org.pet.backendpetshelter.Entity.Species;
-import org.pet.backendpetshelter.Reposiotry.AnimalRepository;
+import org.pet.backendpetshelter.Repository.AnimalRepository;
 import org.pet.backendpetshelter.Status;
 import org.springframework.stereotype.Service;
 

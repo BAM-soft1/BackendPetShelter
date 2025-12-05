@@ -1,4 +1,4 @@
-package org.pet.backendpetshelter.Reposiotry;
+package org.pet.backendpetshelter.Repository;
 
 import org.pet.backendpetshelter.Entity.VaccineTypeSpecies;
 import org.springframework.data.jpa.repository.JpaRepository;
