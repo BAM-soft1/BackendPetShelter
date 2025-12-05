@@ -12,8 +12,8 @@ import org.pet.backendpetshelter.DTO.BreedDTORequest;
 import org.pet.backendpetshelter.DTO.BreedDTOResponse;
 import org.pet.backendpetshelter.Entity.Breed;
 import org.pet.backendpetshelter.Entity.Species;
-import org.pet.backendpetshelter.Reposiotry.BreedRepository;
-import org.pet.backendpetshelter.Reposiotry.SpeciesRepository;
+import org.pet.backendpetshelter.Repository.BreedRepository;
+import org.pet.backendpetshelter.Repository.SpeciesRepository;
 import org.pet.backendpetshelter.Service.BreedService;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;

@@ -12,9 +12,9 @@ import org.pet.backendpetshelter.DTO.VeterinarianDTORequest;
 import org.pet.backendpetshelter.DTO.VeterinarianDTOResponse;
 import org.pet.backendpetshelter.Entity.User;
 import org.pet.backendpetshelter.Entity.Veterinarian;
-import org.pet.backendpetshelter.Reposiotry.AnimalRepository;
-import org.pet.backendpetshelter.Reposiotry.UserRepository;
-import org.pet.backendpetshelter.Reposiotry.VeterinarianRepository;
+import org.pet.backendpetshelter.Repository.AnimalRepository;
+import org.pet.backendpetshelter.Repository.UserRepository;
+import org.pet.backendpetshelter.Repository.VeterinarianRepository;
 import org.pet.backendpetshelter.Service.VeterinarianService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

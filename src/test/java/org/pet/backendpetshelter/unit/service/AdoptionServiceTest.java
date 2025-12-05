@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pet.backendpetshelter.DTO.AdoptionRequest;
 import org.pet.backendpetshelter.DTO.AdoptionResponse;
 import org.pet.backendpetshelter.Entity.*;
-import org.pet.backendpetshelter.Reposiotry.*;
+import org.pet.backendpetshelter.Repository.*;
 import org.pet.backendpetshelter.Roles;
 import org.pet.backendpetshelter.Service.AdoptionService;
 import org.pet.backendpetshelter.Status;

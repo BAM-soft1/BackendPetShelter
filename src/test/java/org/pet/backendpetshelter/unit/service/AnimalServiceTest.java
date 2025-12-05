@@ -13,9 +13,9 @@ import org.pet.backendpetshelter.DTO.AnimalDTOResponse;
 import org.pet.backendpetshelter.Entity.Animal;
 import org.pet.backendpetshelter.Entity.Breed;
 import org.pet.backendpetshelter.Entity.Species;
-import org.pet.backendpetshelter.Reposiotry.AnimalRepository;
-import org.pet.backendpetshelter.Reposiotry.BreedRepository;
-import org.pet.backendpetshelter.Reposiotry.SpeciesRepository;
+import org.pet.backendpetshelter.Repository.AnimalRepository;
+import org.pet.backendpetshelter.Repository.BreedRepository;
+import org.pet.backendpetshelter.Repository.SpeciesRepository;
 import org.pet.backendpetshelter.Service.AnimalService;
 import org.pet.backendpetshelter.Status;
 
