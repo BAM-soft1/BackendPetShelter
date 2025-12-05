@@ -44,7 +44,7 @@ public class AuthController {
                 .secure(true)            // true i prod (HTTPS)
                 .path("/api/auth")
                 .maxAge(refreshMaxAge)
-                .sameSite("Strict")      // Her kan du sætte SameSite
+                .sameSite("Strict")      
                 .build();
         res.addHeader(HttpHeaders.SET_COOKIE, refresh.toString());
 

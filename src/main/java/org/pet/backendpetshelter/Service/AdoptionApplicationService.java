@@ -4,7 +4,7 @@ package org.pet.backendpetshelter.Service;
 import org.pet.backendpetshelter.DTO.AdoptionApplicationRequest;
 import org.pet.backendpetshelter.DTO.AdoptionApplicationRespons;
 import org.pet.backendpetshelter.Entity.AdoptionApplication;
-import org.pet.backendpetshelter.Reposiotry.AdoptionApplicationRepository;
+import org.pet.backendpetshelter.Repository.AdoptionApplicationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
