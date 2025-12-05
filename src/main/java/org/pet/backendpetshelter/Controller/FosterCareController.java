@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/fosterCare")
+@RequestMapping("/api/foster-care")
 @CrossOrigin
 public class FosterCareController {
 

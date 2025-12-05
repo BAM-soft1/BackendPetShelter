@@ -3,7 +3,6 @@ package org.pet.backendpetshelter.Controller;
 
 import org.pet.backendpetshelter.DTO.AdoptionApplicationRequest;
 import org.pet.backendpetshelter.DTO.AdoptionApplicationRespons;
-import org.pet.backendpetshelter.Entity.AdoptionApplication;
 import org.pet.backendpetshelter.Service.AdoptionApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/adoption_application")
+@RequestMapping("/api/adoption-application")
 @CrossOrigin
 public class AdoptionApplicationController {
 

@@ -14,7 +14,7 @@ public class Veterinarian {
     @Column(name = "vet_id")
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
     private String licenseNumber;

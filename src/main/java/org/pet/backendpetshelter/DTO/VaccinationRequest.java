@@ -15,7 +15,7 @@ import java.util.Date;
 public class VaccinationRequest {
     private Animal animal;
     private Veterinarian veterinarian;
-    private Date date_administered;
+    private Date dateAdministered;
     private VaccinationType vaccinationType;
-    private Date next_due_date;
+    private Date nextDueDate;
 }

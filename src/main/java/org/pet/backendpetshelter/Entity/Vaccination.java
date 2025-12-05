@@ -26,11 +26,11 @@ public class Vaccination {
     @JoinColumn(name = "vet_id")
     private Veterinarian veterinarian;
 
-    private Date date_administered;
+    private Date dateAdministered;
 
     @ManyToOne
-    @JoinColumn(name = "vaccinationType_id")
+    @JoinColumn(name = "vaccination_type_id")
     private VaccinationType vaccinationType;
 
-    private Date next_due_date;
+    private Date nextDueDate;
 }

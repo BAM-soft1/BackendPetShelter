@@ -4,6 +4,7 @@ package org.pet.backendpetshelter;
 import org.pet.backendpetshelter.Entity.*;
 import org.pet.backendpetshelter.Repository.*;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Profile;
 
 @Component
 @Profile("!test")
+@Order(1) // Run first, before DatabaseFeaturesInitializer
 public class InitData implements CommandLineRunner {
     private final UserRepository userRepository;
     private final AnimalRepository animalRepository;
@@ -294,8 +296,8 @@ public class InitData implements CommandLineRunner {
         VaccinationType vaccinationType = new VaccinationType();
         vaccinationType.setVaccineName("Rabies Vaccine");
         vaccinationType.setDescription("Protects against rabies virus.");
-        vaccinationType.setDuration_months(12);
-        vaccinationType.setRequired_for_adoption(1);
+        vaccinationType.setDurationMonths(12);
+        vaccinationType.setRequiredForAdoption(1);
         vaccinationTypeRepository.save(vaccinationType);
 
 
@@ -306,8 +308,8 @@ public class InitData implements CommandLineRunner {
         vaccination1.setAnimal(animal1);
         vaccination1.setVeterinarian(veterinarian1);
         vaccination1.setVaccinationType(vaccinationType);
-        vaccination1.setDate_administered(dateFormat.parse("2023-07-10"));
-        vaccination1.setNext_due_date(dateFormat.parse("2024-07-10"));
+        vaccination1.setDateAdministered(dateFormat.parse("2023-07-10"));
+        vaccination1.setNextDueDate(dateFormat.parse("2024-07-10"));
         vaccinationRepository.save(vaccination1);
 
 
