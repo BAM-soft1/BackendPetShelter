@@ -3,6 +3,9 @@ package org.pet.backendpetshelter.DTO;
 import lombok.Getter;
 import lombok.Setter;
 import org.pet.backendpetshelter.Entity.Adoption;
+import org.pet.backendpetshelter.Entity.AdoptionApplication;
+import org.pet.backendpetshelter.Entity.Animal;
+import org.pet.backendpetshelter.Entity.User;
 
 import java.util.Date;
 
@@ -10,17 +13,17 @@ import java.util.Date;
 @Setter
 public class AdoptionResponse {
     private Long id;
-    private Long userId;
-    private Long animalId;
-    private Long applicationId;
+    private User user;
+    private Animal animal;
+    private AdoptionApplication adoptionApplication;
     private Date adoptionDate;
     private Boolean isActive;
 
     public AdoptionResponse(Adoption adoption) {
         this.id = adoption.getId();
-        this.userId = adoption.getAdoptionUser().getId();
-        this.animalId = adoption.getAnimal().getId();
-        this.applicationId = adoption.getApplication().getId();
+        this.user = adoption.getAdoptionUser();
+        this.animal = adoption.getAnimal();
+        this.adoptionApplication = adoption.getApplication();
         this.adoptionDate = adoption.getAdoptionDate();
         this.isActive = adoption.getIsActive();
     }

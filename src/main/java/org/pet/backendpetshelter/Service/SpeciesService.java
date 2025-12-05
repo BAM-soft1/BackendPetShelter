@@ -36,11 +36,25 @@ public class SpeciesService {
     /* Add Species */
     public SpeciesDTOResponse addSpecies(SpeciesDTORequest request){
 
+        // Validate input data
+        validateName(request.getName());
+
+
+
         Species newSpecies = new Species();
         newSpecies.setName(request.getName());
         speciesRepository.save(newSpecies);
         return new SpeciesDTOResponse(newSpecies);
     }
+
+
+    // Validation Methods
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Species name cannot be null or empty.");
+        }
+    }
+
 
 
     /* Update Species */

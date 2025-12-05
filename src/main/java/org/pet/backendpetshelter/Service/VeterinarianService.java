@@ -4,6 +4,7 @@ package org.pet.backendpetshelter.Service;
 import jakarta.validation.Valid;
 import org.pet.backendpetshelter.DTO.VeterinarianDTORequest;
 import org.pet.backendpetshelter.DTO.VeterinarianDTOResponse;
+import org.pet.backendpetshelter.Entity.User;
 import org.pet.backendpetshelter.Entity.Veterinarian;
 import org.pet.backendpetshelter.Repository.VeterinarianRepository;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,12 @@ public class VeterinarianService {
     public VeterinarianDTOResponse addVeterinian(@Valid VeterinarianDTORequest veterinian) {
 
 
+        validateUser(veterinian.getUser());
+        validateLicenseNumber(veterinian.getLicenseNumber());
+        validateClinicName(veterinian.getClinicName());
+        validateIsActive(veterinian.getIsActive());
+
+
         Veterinarian newVeterinarian = new Veterinarian();
         newVeterinarian.setUser(veterinian.getUser());
         newVeterinarian.setLicenseNumber(veterinian.getLicenseNumber());
@@ -68,6 +75,35 @@ public class VeterinarianService {
         newVeterinarian.setIsActive(true);
         veterinarianRepository.save(newVeterinarian);
         return new VeterinarianDTOResponse(newVeterinarian);
+    }
+
+
+    // Validation Methods
+    private void validateUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null.");
+        }
+        if (user.getId() == null) {
+            throw new IllegalArgumentException("User ID cannot be null.");
+        }
+    }
+
+    private void validateLicenseNumber(String licenseNumber) {
+        if (licenseNumber == null || licenseNumber.isBlank()) {
+            throw new IllegalArgumentException("License number cannot be null or empty.");
+        }
+    }
+
+    private void validateClinicName(String clinicName) {
+        if (clinicName == null || clinicName.isBlank()) {
+            throw new IllegalArgumentException("Clinic name cannot be null or empty.");
+        }
+    }
+
+    private void validateIsActive(Boolean isActive) {
+        if (isActive == null) {
+            throw new IllegalArgumentException("isActive cannot be null.");
+        }
     }
 
 

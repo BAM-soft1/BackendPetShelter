@@ -19,6 +19,45 @@ public class BreedService {
         this.breedRepository = breedRepository;
     }
 
+
+    /**
+     * Add a new breed
+     * @param request BreedDTORequest containing breed information
+     * @return BreedDTOResponse
+     */
+
+    public BreedDTOResponse addBreed(BreedDTORequest request) {
+
+        // Validate Input Data
+
+        validateName(request.getName());
+        validateSpecies(request.getSpecies());
+
+        Breed breed = new Breed();
+        breed.setName(request.getName());
+        breed.setSpecies(request.getSpecies());
+
+        breedRepository.save(breed);
+        return new BreedDTOResponse(breed);
+
+    }
+
+    // Validation Methods
+
+    private void validateName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Breed name cannot be null or empty.");
+        }
+    }
+
+    private void validateSpecies(Object species) {
+        if (species == null) {
+            throw new IllegalArgumentException("Species cannot be null.");
+        }
+    }
+
+
+
     /**
      * Get all breeds
      * @return List of BreedDTOResponse
@@ -55,23 +94,7 @@ public class BreedService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Add a new breed
-     * @param request BreedDTORequest containing breed information
-     * @return BreedDTOResponse
-     */
-    public BreedDTOResponse addBreed(BreedDTORequest request) {
-        if (breedRepository.findByName(request.getName()).isPresent()) {
-            throw new IllegalArgumentException("Breed already exists: " + request.getName());
-        }
 
-        Breed newBreed = new Breed();
-        newBreed.setName(request.getName());
-        newBreed.setSpecies(request.getSpecies());
-
-        breedRepository.save(newBreed);
-        return new BreedDTOResponse(newBreed);
-    }
 
     /**
      * Update breed

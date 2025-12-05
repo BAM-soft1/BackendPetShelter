@@ -4,6 +4,7 @@ package org.pet.backendpetshelter.Entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.pet.backendpetshelter.Status;
 
 import java.util.Date;
 
@@ -34,8 +35,9 @@ public class Animal {
     private String sex;
     private Date intakeDate;
 
-    @Column(nullable = false, length = 80)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 32)
+    private Status status;
     private int price;
     private Boolean isActive;
     private String imageUrl;
