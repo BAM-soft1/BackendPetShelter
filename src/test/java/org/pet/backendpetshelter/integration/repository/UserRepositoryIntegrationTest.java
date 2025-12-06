@@ -55,14 +55,14 @@ class UserRepositoryTest {
         // ==== BASIC PERSISTENCE ====
 
         @Test
-        @DisplayName("Should save user to database with all fields")
+        @DisplayName("Should save userId to database with all fields")
         void testSaveUserWithAllFields() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
 
             User savedUser = userRepository.save(user);
 
             assertNotNull(savedUser.getId());
-            assertEquals("user@example.com", savedUser.getEmail());
+            assertEquals("userId@example.com", savedUser.getEmail());
             assertEquals("Federico", savedUser.getFirstName());
             assertEquals("Valverde", savedUser.getLastName());
             assertEquals("hashedPassword123", savedUser.getPassword());
@@ -70,9 +70,9 @@ class UserRepositoryTest {
         }
 
         @Test
-        @DisplayName("Should persist user and retrieve from database")
+        @DisplayName("Should persist userId and retrieve from database")
         void testSaveAndFlush() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
 
             User savedUser = userRepository.save(user);
             entityManager.flush();
@@ -81,7 +81,7 @@ class UserRepositoryTest {
             Optional<User> retrievedUser = userRepository.findById(savedUser.getId());
 
             assertTrue(retrievedUser.isPresent());
-            assertEquals("user@example.com", retrievedUser.get().getEmail());
+            assertEquals("userId@example.com", retrievedUser.get().getEmail());
             assertEquals("Federico", retrievedUser.get().getFirstName());
         }
 
@@ -90,7 +90,7 @@ class UserRepositoryTest {
         @Test
         @DisplayName("Should set isActive to true by default")
         void testDefaultIsActiveTrue() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             // Don't explicitly set isActive
 
             User savedUser = userRepository.save(user);
@@ -106,7 +106,7 @@ class UserRepositoryTest {
         @Test
         @DisplayName("Should set role to USER by default")
         void testDefaultRoleUser() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
 
 
             User savedUser = userRepository.save(user);
@@ -158,7 +158,7 @@ class UserRepositoryTest {
         void testBCryptPasswordStorage() {
             String rawPassword = "MySecureP@ss123";
             String hashedPassword = passwordEncoder.encode(rawPassword);
-            User user = createValidUser("user@example.com", hashedPassword);
+            User user = createValidUser("userId@example.com", hashedPassword);
 
             User savedUser = userRepository.save(user);
             entityManager.flush();
@@ -176,7 +176,7 @@ class UserRepositoryTest {
         void testBCryptHashFormat() {
             String rawPassword = "AnotherP@ss456";
             String hashedPassword = passwordEncoder.encode(rawPassword);
-            User user = createValidUser("user@example.com", hashedPassword);
+            User user = createValidUser("userId@example.com", hashedPassword);
 
             User savedUser = userRepository.save(user);
 
@@ -193,16 +193,16 @@ class UserRepositoryTest {
         // ==== SUCCESSFUL RETRIEVAL ====
 
         @Test
-        @DisplayName("Should find user by exact email match")
+        @DisplayName("Should find userId by exact email match")
         void testFindByEmailExactMatch() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             userRepository.save(user);
             entityManager.flush();
 
-            Optional<User> foundUser = userRepository.findByEmail("user@example.com");
+            Optional<User> foundUser = userRepository.findByEmail("userId@example.com");
 
             assertTrue(foundUser.isPresent());
-            assertEquals("user@example.com", foundUser.get().getEmail());
+            assertEquals("userId@example.com", foundUser.get().getEmail());
             assertEquals("Federico", foundUser.get().getFirstName());
         }
 
@@ -217,9 +217,9 @@ class UserRepositoryTest {
         // ==== CASE SENSITIVITY ====
 
         @Test
-        @DisplayName("Should NOT find user with different case (case-sensitive)")
+        @DisplayName("Should NOT find userId with different case (case-sensitive)")
         void testFindByEmailCaseSensitive() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             userRepository.save(user);
             entityManager.flush();
 
@@ -229,23 +229,23 @@ class UserRepositoryTest {
         }
 
         @Test
-        @DisplayName("Should find user when email is stored in lowercase")
+        @DisplayName("Should find userId when email is stored in lowercase")
         void testFindByEmailLowercaseStored() {
             // Simulating service layer behavior: email stored in lowercase
-            User user = createValidUser("user@example.com".toLowerCase(), "hashedPassword123");
+            User user = createValidUser("userId@example.com".toLowerCase(), "hashedPassword123");
             userRepository.save(user);
             entityManager.flush();
 
-            Optional<User> foundUser = userRepository.findByEmail("user@example.com");
+            Optional<User> foundUser = userRepository.findByEmail("userId@example.com");
 
             assertTrue(foundUser.isPresent());
-            assertEquals("user@example.com", foundUser.get().getEmail());
+            assertEquals("userId@example.com", foundUser.get().getEmail());
         }
 
         // ==== MULTIPLE USERS ====
 
         @Test
-        @DisplayName("Should find correct user when multiple users exist")
+        @DisplayName("Should find correct userId when multiple users exist")
         void testFindByEmailWithMultipleUsers() {
             User user1 = createValidUser("user1@example.com", "hash1");
             User user2 = createValidUser("user2@example.com", "hash2");
@@ -271,11 +271,11 @@ class UserRepositoryTest {
         @Test
         @DisplayName("Should return true when email exists")
         void testExistsByEmailTrue() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             userRepository.save(user);
             entityManager.flush();
 
-            boolean exists = userRepository.existsByEmail("user@example.com");
+            boolean exists = userRepository.existsByEmail("userId@example.com");
 
             assertTrue(exists);
         }
@@ -293,7 +293,7 @@ class UserRepositoryTest {
         @Test
         @DisplayName("Should return false for different case (case-sensitive)")
         void testExistsByEmailCaseSensitive() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             userRepository.save(user);
             entityManager.flush();
 
@@ -306,11 +306,11 @@ class UserRepositoryTest {
         @DisplayName("Should return true when email stored in lowercase matches query")
         void testExistsByEmailLowercaseStored() {
             // Simulating service layer behavior: email stored in lowercase
-            User user = createValidUser("user@example.com".toLowerCase(), "hashedPassword123");
+            User user = createValidUser("userId@example.com".toLowerCase(), "hashedPassword123");
             userRepository.save(user);
             entityManager.flush();
 
-            boolean exists = userRepository.existsByEmail("user@example.com");
+            boolean exists = userRepository.existsByEmail("userId@example.com");
 
             assertTrue(exists);
         }
@@ -339,9 +339,9 @@ class UserRepositoryTest {
         // ==== FIELD UPDATES ====
 
         @Test
-        @DisplayName("Should update user first name")
+        @DisplayName("Should update userId first name")
         void testUpdateFirstName() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             User savedUser = userRepository.save(user);
             entityManager.flush();
             entityManager.clear();
@@ -358,9 +358,9 @@ class UserRepositoryTest {
         }
 
         @Test
-        @DisplayName("Should update user last name")
+        @DisplayName("Should update userId last name")
         void testUpdateLastName() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             User savedUser = userRepository.save(user);
             entityManager.flush();
             entityManager.clear();
@@ -377,9 +377,9 @@ class UserRepositoryTest {
         }
 
         @Test
-        @DisplayName("Should update user password")
+        @DisplayName("Should update userId password")
         void testUpdatePassword() {
-            User user = createValidUser("user@example.com", "oldHashedPassword");
+            User user = createValidUser("userId@example.com", "oldHashedPassword");
             User savedUser = userRepository.save(user);
             entityManager.flush();
             entityManager.clear();
@@ -397,9 +397,9 @@ class UserRepositoryTest {
         }
 
         @Test
-        @DisplayName("Should update user phone")
+        @DisplayName("Should update userId phone")
         void testUpdatePhone() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             User savedUser = userRepository.save(user);
             entityManager.flush();
             entityManager.clear();
@@ -416,9 +416,9 @@ class UserRepositoryTest {
         }
 
         @Test
-        @DisplayName("Should update user isActive status")
+        @DisplayName("Should update userId isActive status")
         void testUpdateIsActive() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             User savedUser = userRepository.save(user);
             entityManager.flush();
             entityManager.clear();
@@ -435,9 +435,9 @@ class UserRepositoryTest {
         }
 
         @Test
-        @DisplayName("Should update user role")
+        @DisplayName("Should update userId role")
         void testUpdateRole() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             User savedUser = userRepository.save(user);
             entityManager.flush();
             entityManager.clear();
@@ -456,7 +456,7 @@ class UserRepositoryTest {
         @Test
         @DisplayName("Should update multiple fields at once")
         void testUpdateMultipleFields() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             User savedUser = userRepository.save(user);
             entityManager.flush();
             entityManager.clear();
@@ -486,9 +486,9 @@ class UserRepositoryTest {
         // ==== DELETION ====
 
         @Test
-        @DisplayName("Should delete user by ID")
+        @DisplayName("Should delete userId by ID")
         void testDeleteUserById() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             User savedUser = userRepository.save(user);
             entityManager.flush();
 
@@ -501,9 +501,9 @@ class UserRepositoryTest {
         }
 
         @Test
-        @DisplayName("Should delete user by entity")
+        @DisplayName("Should delete userId by entity")
         void testDeleteUserByEntity() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             User savedUser = userRepository.save(user);
             entityManager.flush();
 
@@ -516,16 +516,16 @@ class UserRepositoryTest {
         }
 
         @Test
-        @DisplayName("Should not find user by email after deletion")
+        @DisplayName("Should not find userId by email after deletion")
         void testFindByEmailAfterDeletion() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             User savedUser = userRepository.save(user);
             entityManager.flush();
 
             userRepository.deleteById(savedUser.getId());
             entityManager.flush();
 
-            Optional<User> deletedUser = userRepository.findByEmail("user@example.com");
+            Optional<User> deletedUser = userRepository.findByEmail("userId@example.com");
 
             assertFalse(deletedUser.isPresent());
         }
@@ -533,20 +533,20 @@ class UserRepositoryTest {
         @Test
         @DisplayName("Should return false for existsByEmail after deletion")
         void testExistsByEmailAfterDeletion() {
-            User user = createValidUser("user@example.com", "hashedPassword123");
+            User user = createValidUser("userId@example.com", "hashedPassword123");
             User savedUser = userRepository.save(user);
             entityManager.flush();
 
             userRepository.deleteById(savedUser.getId());
             entityManager.flush();
 
-            boolean exists = userRepository.existsByEmail("user@example.com");
+            boolean exists = userRepository.existsByEmail("userId@example.com");
 
             assertFalse(exists);
         }
 
         @Test
-        @DisplayName("Should delete only specified user when multiple users exist")
+        @DisplayName("Should delete only specified userId when multiple users exist")
         void testDeleteSpecificUserWithMultipleUsers() {
             User user1 = createValidUser("user1@example.com", "hash1");
             User user2 = createValidUser("user2@example.com", "hash2");

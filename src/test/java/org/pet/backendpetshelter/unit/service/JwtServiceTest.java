@@ -57,7 +57,7 @@ class JwtServiceTest {
         @Test
         @DisplayName("Should generate access token with valid claims")
         void testGenerateAccessTokenWithValidClaims() {
-            String subject = "user@example.com";
+            String subject = "userId@example.com";
             Map<String, Object> claims = createValidClaims();
 
             String token = jwtService.generateAccessToken(subject, claims);
@@ -71,7 +71,7 @@ class JwtServiceTest {
         @Test
         @DisplayName("Should parse valid access token successfully")
         void testParseValidAccessToken() {
-            String subject = "user@example.com";
+            String subject = "userId@example.com";
             Map<String, Object> claims = createValidClaims();
 
             String token = jwtService.generateAccessToken(subject, claims);
@@ -84,7 +84,7 @@ class JwtServiceTest {
         @Test
         @DisplayName("Should verify token contains correct claims (sub, role, uid, iat, exp)")
         void testTokenContainsCorrectClaims() {
-            String subject = "user@example.com";
+            String subject = "userId@example.com";
             Map<String, Object> claims = createValidClaims();
 
             Instant beforeGeneration = Instant.now();
@@ -115,7 +115,7 @@ class JwtServiceTest {
         @Test
         @DisplayName("Should verify token expiration is set correctly (15 min for access)")
         void testAccessTokenExpirationSetCorrectly() {
-            String subject = "user@example.com";
+            String subject = "userId@example.com";
             Map<String, Object> claims = createValidClaims();
 
             Instant beforeGeneration = Instant.now();
@@ -147,7 +147,7 @@ class JwtServiceTest {
             expiredProps.setRefreshExpirationSeconds(86400L);
             JwtService expiredJwtService = new JwtService(expiredProps);
 
-            String subject = "user@example.com";
+            String subject = "userId@example.com";
             Map<String, Object> claims = createValidClaims();
             String expiredToken = expiredJwtService.generateAccessToken(subject, claims);
 
@@ -170,7 +170,7 @@ class JwtServiceTest {
             differentProps.setRefreshExpirationSeconds(86400L);
             JwtService differentJwtService = new JwtService(differentProps);
 
-            String subject = "user@example.com";
+            String subject = "userId@example.com";
             Map<String, Object> claims = createValidClaims();
             String tokenWithDifferentSignature = differentJwtService.generateAccessToken(subject, claims);
 
@@ -204,7 +204,7 @@ class JwtServiceTest {
         @Test
         @DisplayName("Should generate refresh token using refresh key and expiration")
         void testGenerateRefreshTokenUsesRefreshKeyAndExpiration() {
-            String subject = "user@example.com";
+            String subject = "userId@example.com";
             Map<String, Object> claims = createValidClaims();
 
             String refreshToken = jwtService.generateRefreshToken(subject, claims);
@@ -219,7 +219,7 @@ class JwtServiceTest {
         @Test
         @DisplayName("Should parse refresh token using refresh key")
         void testParseRefreshTokenUsesRefreshKey() {
-            String subject = "user@example.com";
+            String subject = "userId@example.com";
             Map<String, Object> claims = createValidClaims();
 
             String refreshToken = jwtService.generateRefreshToken(subject, claims);
@@ -235,7 +235,7 @@ class JwtServiceTest {
         @Test
         @DisplayName("Should verify refresh token expiration is set correctly (24 hours)")
         void testRefreshTokenExpirationSetCorrectly() {
-            String subject = "user@example.com";
+            String subject = "userId@example.com";
             Map<String, Object> claims = createValidClaims();
 
             Instant beforeGeneration = Instant.now();
@@ -260,7 +260,7 @@ class JwtServiceTest {
         @Test
         @DisplayName("Should throw SignatureException when parsing refresh token with access key")
         void testParseRefreshTokenWithWrongKey() {
-            String subject = "user@example.com";
+            String subject = "userId@example.com";
             Map<String, Object> claims = createValidClaims();
 
             // Generate refresh token (signed with refresh key)
@@ -278,7 +278,7 @@ class JwtServiceTest {
         @Test
         @DisplayName("Should throw SignatureException when parsing access token with refresh key")
         void testParseAccessTokenWithWrongKey() {
-            String subject = "user@example.com";
+            String subject = "userId@example.com";
             Map<String, Object> claims = createValidClaims();
 
             // Generate access token (signed with access key)
@@ -303,7 +303,7 @@ class JwtServiceTest {
             expiredProps.setRefreshExpirationSeconds(-1L);
             JwtService expiredJwtService = new JwtService(expiredProps);
 
-            String subject = "user@example.com";
+            String subject = "userId@example.com";
             Map<String, Object> claims = createValidClaims();
             String expiredRefreshToken = expiredJwtService.generateRefreshToken(subject, claims);
 

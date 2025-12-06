@@ -72,7 +72,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should save refresh token to database with all fields")
         void testSaveRefreshTokenWithAllFields() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token = createValidRefreshToken(user, "refresh.token.abc123");
 
             RefreshToken savedToken = refreshTokenRepository.save(token);
@@ -87,7 +87,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should persist refresh token and retrieve from database")
         void testSaveAndFlush() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token = createValidRefreshToken(user, "refresh.token.xyz789");
 
             RefreshToken savedToken = refreshTokenRepository.save(token);
@@ -106,7 +106,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should set revoked to false by default")
         void testDefaultRevokedFalse() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token = createValidRefreshToken(user, "refresh.token.default");
 
             RefreshToken savedToken = refreshTokenRepository.save(token);
@@ -124,7 +124,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should store expiration timestamp correctly")
         void testExpirationTimestampStorage() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             Instant expirationTime = Instant.now().plusSeconds(3600); // 1 hour
             RefreshToken token = createValidRefreshToken(user, "refresh.token.expiry");
             token.setExpiresAt(expirationTime);
@@ -142,7 +142,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should store future expiration timestamp")
         void testFutureExpirationTimestamp() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             Instant futureTime = Instant.now().plusSeconds(604800); // 7 days
             RefreshToken token = createValidRefreshToken(user, "refresh.token.future");
             token.setExpiresAt(futureTime);
@@ -155,7 +155,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should store past expiration timestamp")
         void testPastExpirationTimestamp() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             Instant pastTime = Instant.now().minusSeconds(3600); // 1 hour ago
             RefreshToken token = createValidRefreshToken(user, "refresh.token.past");
             token.setExpiresAt(pastTime);
@@ -175,7 +175,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should find refresh token by exact token string match")
         void testFindByTokenExactMatch() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token = createValidRefreshToken(user, "refresh.token.find123");
             refreshTokenRepository.save(token);
             entityManager.flush();
@@ -200,7 +200,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should find correct token when multiple tokens exist")
         void testFindByTokenWithMultipleTokens() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token1 = createValidRefreshToken(user, "token.one");
             RefreshToken token2 = createValidRefreshToken(user, "token.two");
             RefreshToken token3 = createValidRefreshToken(user, "token.three");
@@ -220,7 +220,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should find revoked token by token string")
         void testFindRevokedToken() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token = createValidRefreshToken(user, "revoked.token");
             token.setRevoked(true);
             refreshTokenRepository.save(token);
@@ -242,7 +242,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should update token revocation status to true")
         void testRevokeToken() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token = createValidRefreshToken(user, "token.to.revoke");
             RefreshToken savedToken = refreshTokenRepository.save(token);
             entityManager.flush();
@@ -262,7 +262,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should update token revocation status to false")
         void testUnrevokeToken() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token = createValidRefreshToken(user, "token.to.unrevoke");
             token.setRevoked(true);
             RefreshToken savedToken = refreshTokenRepository.save(token);
@@ -283,7 +283,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should update revocation status without affecting other fields")
         void testRevokeTokenPreservesOtherFields() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             Instant expirationTime = Instant.now().plusSeconds(3600);
             RefreshToken token = createValidRefreshToken(user, "token.preserve");
             token.setExpiresAt(expirationTime);
@@ -310,7 +310,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should update only specified token when multiple tokens exist")
         void testRevokeSpecificToken() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token1 = createValidRefreshToken(user, "token.1");
             RefreshToken token2 = createValidRefreshToken(user, "token.2");
             RefreshToken token3 = createValidRefreshToken(user, "token.3");
@@ -347,7 +347,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should delete token by ID")
         void testDeleteTokenById() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token = createValidRefreshToken(user, "token.to.delete");
             RefreshToken savedToken = refreshTokenRepository.save(token);
             entityManager.flush();
@@ -363,7 +363,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should delete token by entity")
         void testDeleteTokenByEntity() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token = createValidRefreshToken(user, "token.to.delete");
             RefreshToken savedToken = refreshTokenRepository.save(token);
             entityManager.flush();
@@ -379,7 +379,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should not find token by token string after deletion")
         void testFindByTokenAfterDeletion() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token = createValidRefreshToken(user, "token.deleted");
             RefreshToken savedToken = refreshTokenRepository.save(token);
             entityManager.flush();
@@ -395,7 +395,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should delete only specified token when multiple tokens exist")
         void testDeleteSpecificToken() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token1 = createValidRefreshToken(user, "token.1");
             RefreshToken token2 = createValidRefreshToken(user, "token.2");
             RefreshToken token3 = createValidRefreshToken(user, "token.3");
@@ -427,7 +427,7 @@ class RefreshTokenRepositoryTest {
         @Test
         @DisplayName("Should maintain foreign key relationship with User")
         void testForeignKeyRelationship() {
-            User user = createAndSaveUser("user@example.com");
+            User user = createAndSaveUser("userId@example.com");
             RefreshToken token = createValidRefreshToken(user, "token.fk");
             RefreshToken savedToken = refreshTokenRepository.save(token);
             entityManager.flush();
@@ -438,17 +438,17 @@ class RefreshTokenRepositoryTest {
             assertTrue(retrievedToken.isPresent());
             assertNotNull(retrievedToken.get().getUser());
             assertEquals(user.getId(), retrievedToken.get().getUser().getId());
-            assertEquals("user@example.com", retrievedToken.get().getUser().getEmail());
+            assertEquals("userId@example.com", retrievedToken.get().getUser().getEmail());
         }
 
         @Test
-        @DisplayName("Should not allow saving token without user (foreign key constraint)")
+        @DisplayName("Should not allow saving token without userId (foreign key constraint)")
         void testForeignKeyConstraintEnforced() {
             RefreshToken token = new RefreshToken();
             token.setToken("orphan.token");
             token.setExpiresAt(Instant.now().plusSeconds(3600));
             token.setRevoked(false);
-            // No user set
+            // No userId set
 
             assertThrows(DataIntegrityViolationException.class, () -> {
                 refreshTokenRepository.save(token);

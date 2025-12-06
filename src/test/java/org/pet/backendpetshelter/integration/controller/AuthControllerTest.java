@@ -196,7 +196,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/register - Should save user to database")
+    @DisplayName("POST /api/auth/register - Should save userId to database")
     void register_ShouldSaveUserToDatabase() throws Exception {
         RegisterUserRequest request = createRegisterRequest("dbtest@example.com", "DbPass123!");
 
@@ -354,9 +354,9 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/login - Should return 401 for non-existent user")
+    @DisplayName("POST /api/auth/login - Should return 401 for non-existent userId")
     void login_ShouldReturn401ForNonExistentUser() throws Exception {
-        // Arrange: no user created
+        // Arrange: no userId created
         LoginRequest request = createLoginRequest("nonexistent@example.com", "SomePassword123!");
 
         // Act & Assert
@@ -370,7 +370,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/auth/login - Should return 403 for inactive user")
+    @DisplayName("POST /api/auth/login - Should return 403 for inactive userId")
     void login_ShouldReturn403ForInactiveUser() throws Exception {
         User user = createUserEntity("inactive@example.com", "Inactive123!", false);
         userRepository.save(user);

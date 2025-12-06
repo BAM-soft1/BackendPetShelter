@@ -98,7 +98,7 @@ public class AuthService {
                 Map.of("role", user.getRole().name(), "uid", user.getId())
         );
 
-        // Single active refresh pr. user: ryd tidligere og lav nyt
+        // Single active refresh pr. userId: ryd tidligere og lav nyt
         refreshTokenRepository.deleteByUserId(user.getId());
 
         RefreshToken rt = new RefreshToken();

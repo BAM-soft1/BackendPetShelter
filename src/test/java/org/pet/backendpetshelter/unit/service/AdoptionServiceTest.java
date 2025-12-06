@@ -12,9 +12,7 @@ import org.pet.backendpetshelter.DTO.AdoptionRequest;
 import org.pet.backendpetshelter.DTO.AdoptionResponse;
 import org.pet.backendpetshelter.Entity.*;
 import org.pet.backendpetshelter.Repository.*;
-import org.pet.backendpetshelter.Roles;
 import org.pet.backendpetshelter.Service.AdoptionService;
-import org.pet.backendpetshelter.Status;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -152,9 +150,10 @@ public class AdoptionServiceTest {
             // Assert
             assertNotNull(response);
             assertEquals(1L, response.getId());
-            assertEquals(user, response.getUser());
-            assertEquals(animal, response.getAnimal());
-            assertEquals(application, response.getAdoptionApplication());
+            assertEquals(user.getId(), response.getUserId());
+            assertEquals(animal.getId(), response.getAnimalId());
+            assertEquals(application.getId(), response.getAdoptionApplicationId());
+
             assertEquals(request.getAdoptionDate(), response.getAdoptionDate());
             assertEquals(request.getIsActive(), response.getIsActive());
 

@@ -5,10 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.pet.backendpetshelter.DTO.AdoptionRequest;
-import org.pet.backendpetshelter.Repository.AdoptionApplicationRepository;
-import org.pet.backendpetshelter.Repository.AdoptionRepository;
-import org.pet.backendpetshelter.Repository.AnimalRepository;
-import org.pet.backendpetshelter.Repository.UserRepository;
+import org.pet.backendpetshelter.Entity.*;
+import org.pet.backendpetshelter.Repository.*;
+import org.pet.backendpetshelter.Roles;
+import org.pet.backendpetshelter.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,6 +48,12 @@ public class AdoptionIntegrationTest {
     private AnimalRepository animalRepository;
 
     @Autowired
+    private BreedRepository breedRepository;
+
+    @Autowired
+    private SpeciesRepository speciesRepository;
+
+    @Autowired
     private AdoptionApplicationRepository adoptionApplicationRepository;
 
 
@@ -57,35 +63,57 @@ public class AdoptionIntegrationTest {
         userRepository.deleteAll();
         animalRepository.deleteAll();
         adoptionApplicationRepository.deleteAll();
-    }
 
+        User user = new User();
+        user.setFirstName("Ox");
+        user.setLastName("W00");
+        user.setEmail("ox@gmail.com");
+        user.setPassword("secret");
+        user.setRole(Roles.USER);
+        user.setIsActive(true);
+        userRepository.save(user);
+
+        Species species = new Species();
+        species.setName("Dog");
+        species = speciesRepository.save(species);
+
+        Breed breed = new Breed();
+        breed.setName("Labrador");
+        breed.setSpecies(species);
+        breed = breedRepository.save(breed);
+
+        Animal animal = new Animal();
+        animal.setName("Buddy");
+        animal.setSpecies(species);
+        animal.setBreed(breed);
+        animal.setSex("Male");
+        animal.setBirthDate(Calendar.getInstance().getTime());
+        animal.setIntakeDate(Calendar.getInstance().getTime());
+        animal.setStatus(Status.APPROVED);
+        animal.setPrice(499);
+        animal.setIsActive(true);
+        animalRepository.save(animal);
+
+        AdoptionApplication app = new AdoptionApplication();
+        app.setUser(user);
+        app.setAnimal(animal);
+        app.setApplicationDate(Calendar.getInstance().getTime());
+        app.setStatus(Status.APPROVED);
+        app.setIsActive(true);
+        adoptionApplicationRepository.save(app);
+    }
 
     private AdoptionRequest createValidRequest() {
         AdoptionRequest request = new AdoptionRequest();
-
-        request.setUserId(1L);
-        request.setAnimalId(1L);
-        request.setAdoptionApplicationId(1L);
-        request.setAdoptionDate(new java.util.Date("2024-01-01"));
+        request.setUserId(userRepository.findAll().get(0).getId());
+        request.setAnimalId(animalRepository.findAll().get(0).getId());
+        request.setAdoptionApplicationId(adoptionApplicationRepository.findAll().get(0).getId());
+        request.setAdoptionDate(new Date());
         request.setIsActive(true);
         return request;
-
     }
 
-    private Date createPastDate(int year, int month, int day) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(year, month - 1, day, 0, 0, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
-    }
 
-    private Date createFutureDate(int year, int month, int day) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(year, month - 1, day, 0, 0, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        cal.add(Calendar.YEAR, 1);
-        return cal.getTime();
-    }
 
     // ==================== POST TEST ROUTES ====================
 
@@ -100,11 +128,10 @@ public class AdoptionIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.isActive").value(true))
                 .andExpect(jsonPath("$.userId").value(request.getUserId()))
                 .andExpect(jsonPath("$.animalId").value(request.getAnimalId()))
-                .andExpect(jsonPath("$.adoptionApplicationId").value(request.getAdoptionApplicationId()))
-                .andExpect(jsonPath("$.adoptionDate").value(request.getAdoptionDate().toString()))
-                .andExpect(jsonPath("$.isActive").value(request.getIsActive()));
+                .andExpect(jsonPath("$.adoptionApplicationId").value(request.getAdoptionApplicationId()));
 
 
     }

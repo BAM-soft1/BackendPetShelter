@@ -29,7 +29,7 @@ class RegisterUserRequestTest {
     
     private RegisterUserRequest createValidRequest() {
         RegisterUserRequest request = new RegisterUserRequest();
-        request.setEmail("user@example.com");
+        request.setEmail("userId@example.com");
         request.setFirstName("Sergio");
         request.setLastName("Ramos");
         request.setPhone("+45 12345678");
@@ -129,7 +129,7 @@ class RegisterUserRequestTest {
         @DisplayName("Should fail validation when email has invalid format (missing domain)")
         void testEmailInvalidFormatMissingDomain() {
             RegisterUserRequest request = createValidRequest();
-            request.setEmail("user@");
+            request.setEmail("userId@");
 
             Set<ConstraintViolation<RegisterUserRequest>> violations = validator.validate(request);
 
