@@ -30,6 +30,25 @@ public class AnimalService {
         this.speciesRepository = speciesRepository;
     }
 
+
+
+    /* Get All Animals */
+    public List<AnimalDTOResponse> GetAllAnimals() {
+        return animalRepository.findAll().stream()
+                .map(AnimalDTOResponse::new)
+                .collect(Collectors.toList());
+    }
+
+
+    /* Get Specific Animal */
+    public AnimalDTOResponse GetAnimalById(Long id) {
+        Animal animal = animalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Animal not found with id: " + id));
+        return new AnimalDTOResponse(animal);
+    }
+
+
+
     /*Add Animal */
     public AnimalDTOResponse addAnimal(AnimalDTORequest request) {
 
@@ -185,21 +204,6 @@ public class AnimalService {
             throw new IllegalArgumentException("Invalid image URL format"); }
     }
 
-
-    /* Get All Animals */
-    public List<AnimalDTOResponse> GetAllAnimals() {
-        return animalRepository.findAll().stream()
-                .map(AnimalDTOResponse::new)
-                .collect(Collectors.toList());
-    }
-
-
-    /* Get Specific Animal */
-    public AnimalDTOResponse GetAnimalById(Long id) {
-        Animal animal = animalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Animal not found with id: " + id));
-        return new AnimalDTOResponse(animal);
-    }
 
 
 

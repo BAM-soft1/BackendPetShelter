@@ -1,6 +1,7 @@
 package org.pet.backendpetshelter.Service;
 
 
+import jakarta.persistence.EntityNotFoundException;
 import org.pet.backendpetshelter.DTO.SpeciesDTORequest;
 import org.pet.backendpetshelter.DTO.SpeciesDTOResponse;
 import org.pet.backendpetshelter.Entity.Species;
@@ -27,11 +28,11 @@ public class SpeciesService {
     }
 
     /* Get Specific Species */
-    public SpeciesDTOResponse GetSpeciesById(Long id){
-        Species species = speciesRepository.findById(id).orElseThrow(() -> new RuntimeException("Animal not found with id: " + id));
+    public SpeciesDTOResponse GetSpeciesById(Long id) {
+        Species species = speciesRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Species not found with id: " + id));
         return new SpeciesDTOResponse(species);
     }
-
 
     /* Add Species */
     public SpeciesDTOResponse addSpecies(SpeciesDTORequest request){
@@ -76,17 +77,22 @@ public class SpeciesService {
 
     /* Update Species */
     public SpeciesDTOResponse updateSpecies(Long id, SpeciesDTORequest request){
-        Species species = speciesRepository.findById(id).orElseThrow(() -> new RuntimeException("Species not found with id: " + id));
+        Species species = speciesRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Species not found with id: " + id));
+
+        if (!species.getName().equals(request.getName())) {
+            validateName(request.getName());
+        }
+
         species.setName(request.getName());
         speciesRepository.save(species);
         return new SpeciesDTOResponse(species);
     }
-
     /* Delete Species */
     public void deleteSpecies(Long id){
-        Species species = speciesRepository.findById(id).orElseThrow(() -> new RuntimeException("Species not found with id: " + id));
+        Species species = speciesRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Species not found with id: " + id));
         speciesRepository.delete(species);
     }
-
 
 }

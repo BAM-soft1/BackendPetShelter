@@ -14,8 +14,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+
+
+
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -45,6 +51,48 @@ public class SpeciesIntegrationTest {
         request.setName("Dog");
         return request;
     }
+
+    // ==================== GET TEST ROUTES ====================
+
+    @Test
+    @DisplayName("GET /api/species - Get All Species - Success")
+    void testGetAllSpeciesSuccess() throws Exception {
+        mockMvc.perform(post("/api/species/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createValidRequest())))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(get("/api/species"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].name").value("Dog"));
+    }
+
+
+    @Test
+    @DisplayName("GET /api/species/{id} - Get Species By ID - Success")
+    void testGetSpeciesByIdSuccess() throws Exception {
+        String response = mockMvc.perform(post("/api/species/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createValidRequest())))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Long speciesId = objectMapper.readTree(response).get("id").asLong();
+
+        mockMvc.perform(get("/api/species/" + speciesId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(speciesId))
+                .andExpect(jsonPath("$.name").value("Dog"));
+    }
+
+
+
+
+    // ==================== POST TEST ROUTES ====================
 
 
     @Test
@@ -168,5 +216,52 @@ public class SpeciesIntegrationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message").value("Species name contains invalid characters."));
     }
+
+    // ==================== PUT TEST ROUTES ====================
+    @Test
+    @DisplayName("PUT /api/species/{id} - Update Species - Success")
+    void testUpdateSpeciesSuccess() throws Exception {
+        String response = mockMvc.perform(post("/api/species/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createValidRequest())))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Long speciesId = objectMapper.readTree(response).get("id").asLong();
+
+        SpeciesDTORequest updateRequest = new SpeciesDTORequest();
+        updateRequest.setName("Cat");
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/species/update/" + speciesId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(speciesId))
+                .andExpect(jsonPath("$.name").value("Cat"));
+    }
+
+
+
+    // ==================== DELETE TEST ROUTES ====================
+    @Test
+    @DisplayName("DELETE /api/species/{id} - Delete Species - Success")
+    void testDeleteSpeciesSuccess() throws Exception {
+        String response = mockMvc.perform(post("/api/species/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createValidRequest())))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Long speciesId = objectMapper.readTree(response).get("id").asLong();
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/species/delete/" + speciesId))
+                .andExpect(status().isNoContent());
+    }
+
 
 }
