@@ -90,12 +90,28 @@ public class AnimalService {
         if (speciesId == null) {
             throw new IllegalArgumentException("Species ID cannot be null");
         }
+
+        if (speciesId <= 0) {
+            throw new IllegalArgumentException("Species ID must be a positive number");
+        }
+
+        if (!speciesRepository.existsById(speciesId)) {
+            throw new IllegalArgumentException("Species ID does not exist");
+        }
     }
 
 
     private void validateBreedId(Long breedId) {
         if (breedId == null) {
-            throw new IllegalArgumentException("Species ID cannot be null");
+            throw new IllegalArgumentException("Breed ID cannot be null");
+        }
+
+        if (breedId <= 0) {
+            throw new IllegalArgumentException("Breed ID must be a positive number");
+        }
+
+        if (!breedRepository.existsById(breedId)) {
+            throw new IllegalArgumentException("Breed ID does not exist");
         }
     }
 
@@ -115,7 +131,7 @@ public class AnimalService {
         }
         Date today = new Date();
         if (birthDate.after(today)) {
-            throw new IllegalArgumentException("Birth date cannot be in the future");
+            throw new IllegalArgumentException("Birthdate cannot be in the future");
         }
     }
 
@@ -136,6 +152,11 @@ public class AnimalService {
         if (status == null) {
             throw new IllegalArgumentException("Status cannot be null");
         }
+
+    }
+
+    private boolean isStatusActive(Status status) {
+        return status == Status.APPROVED;
     }
 
     private void validatePrice(int price) {
@@ -144,7 +165,7 @@ public class AnimalService {
         }
 
         if (price > 30000) {
-            throw new IllegalArgumentException("Price cannot exceed 30,000");
+            throw new IllegalArgumentException("Price cannot exceed 30000");
         }
     }
 

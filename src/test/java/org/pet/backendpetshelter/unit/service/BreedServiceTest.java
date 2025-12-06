@@ -43,7 +43,7 @@ public class BreedServiceTest {
 
     private BreedDTORequest createValidRequest() {
         BreedDTORequest request = new BreedDTORequest();
-        request.setSpecies(createValidSpecies());
+        request.setSpeciesId(1L);
         request.setName("Alfred");
 
         return request;
@@ -61,7 +61,7 @@ public class BreedServiceTest {
     private Breed createValidBreed(BreedDTORequest request) {
         Breed breed = new Breed();
         breed.setId(1L);
-        breed.setSpecies(request.getSpecies());
+        breed.setSpecies(createValidSpecies());
         breed.setName(request.getName());
 
         return breed;
@@ -81,22 +81,26 @@ public class BreedServiceTest {
         @Test
         @DisplayName("Create Breed - Valid Data")
         void createBreed_ValidData_Success() {
+
             BreedDTORequest request = createValidRequest();
+            Species species = createValidSpecies();
 
+            when(speciesRepository.existsById(request.getSpeciesId())).thenReturn(true);
+            when(speciesRepository.findById(request.getSpeciesId())).thenReturn(java.util.Optional.of(species));
 
-            when(breedRepository.save(any(Breed.class))).thenAnswer(inv -> {
-                Breed a = inv.getArgument(0);
-                a.setId(1L);
-                return a;
+            when(breedRepository.save(any(Breed.class))).thenAnswer(invocation -> {
+                Breed breed = invocation.getArgument(0);
+                breed.setId(1L);
+                return breed;
             });
-
 
             BreedDTOResponse response = breedService.addBreed(request);
 
             assertNotNull(response);
-            assertEquals("Breed name should match", "Alfred", response.getName());
-            assertEquals("Breed species should match", request.getSpecies().getId(), 1L);
-
+            Assertions.assertEquals("Alfred", response.getName()); // Ret også navnet her - du brugte "Labrador" men request har "Alfred"
+            verify(breedRepository).save(any(Breed.class));
+            verify(speciesRepository).existsById(request.getSpeciesId());
+            verify(speciesRepository).findById(request.getSpeciesId());
         }
 
         // ==================== INVALID PARTITIONS PARTITION ====================
@@ -132,7 +136,7 @@ public class BreedServiceTest {
         void createBreed_SpeciesIsNull_ThrowsException() {
             // Arrange
             BreedDTORequest request = createValidRequest();
-            request.setSpecies(null);
+            request.setSpeciesId(null);
             assertThrows(IllegalArgumentException.class, () -> breedService.addBreed(request));
             verify(breedRepository, never()).save(any(Breed.class));
         }

@@ -53,6 +53,23 @@ public class SpeciesService {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Species name cannot be null or empty.");
         }
+
+        if (speciesRepository.findByName(name).isPresent()) {
+            throw new IllegalArgumentException("Species with name '" + name + "' already exists.");
+        }
+
+        if (name.length() > 50) {
+            throw new IllegalArgumentException("Species name cannot exceed 30 characters.");
+        }
+
+        if (name.length() < 2) {
+            throw new IllegalArgumentException("Species name must be at least 2 characters long.");
+        }
+
+        if (!name.matches("^[a-zA-Z\\s'-]+$")) {
+            throw new IllegalArgumentException("Species name contains invalid characters.");
+        }
+
     }
 
 
