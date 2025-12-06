@@ -17,6 +17,8 @@ import org.pet.backendpetshelter.Repository.VeterinarianRepository;
 import org.pet.backendpetshelter.Service.VeterinarianService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -99,7 +101,8 @@ public class VeterinarianServiceTest {
 
             User user = createValidUser();
 
-            when(userRepository.findById(request.getUserId())).thenReturn(java.util.Optional.of(user));
+            when(userRepository.findById(request.getUserId())).thenReturn(Optional.of(user));
+            when(userRepository.existsById(request.getUserId())).thenReturn(true);
 
             when(veterinarianRepository.save(any(Veterinarian.class))).thenAnswer(inv -> {
                 Veterinarian a = inv.getArgument(0);

@@ -12,10 +12,11 @@ import java.util.Date;
 @Getter
 @Setter
 public class AdoptionApplicationRequest {
-    private User user;
-    private Animal animal;
+    private Long userId;
+    private Long animalId;
     private Date applicationDate;
     private Status status;
-    private User reviewedByUser;
+    private Long reviewedByUserId;
     private Boolean isActive;
 }
+

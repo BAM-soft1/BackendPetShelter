@@ -49,19 +49,28 @@ public class AdoptionService {
     public AdoptionResponse addAdoption(AdoptionRequest request) {
 
 
-        validateUser(request.getUser());
-        validateAnimal(request.getAnimal());
-        validateApplication(request.getAdoptionApplication());
+        validateUserId(request.getUserId());
+        validateAnimalId(request.getAnimalId());
+        validateApplication(request.getAdoptionApplicationId());
         validateAdoptionDate(request.getAdoptionDate());
         validateIsActive(request.getIsActive());
 
 
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + request.getUserId()));
+
+        Animal animal = animalRepository.findById(request.getAnimalId())
+                .orElseThrow(() -> new RuntimeException("Animal not found with id: " + request.getAnimalId()));
+
+        AdoptionApplication application = adoptionApplicationRepository.findById(request.getAdoptionApplicationId())
+                .orElseThrow(() -> new RuntimeException("Adoption Application not found with id: " + request.getAdoptionApplicationId()));
+
 
 
         Adoption adoption = new Adoption();
-        adoption.setAdoptionUser(request.getUser());
-        adoption.setAnimal(request.getAnimal());
-        adoption.setApplication(request.getAdoptionApplication());
+        adoption.setAdoptionUser(user);
+        adoption.setAnimal(animal);
+        adoption.setApplication(application);
         adoption.setAdoptionDate(request.getAdoptionDate());
         adoption.setIsActive(true);
 
@@ -70,22 +79,21 @@ public class AdoptionService {
     }
 
         // Validation Methods
-        private void validateUser(User user) {
-            if (user == null || user.getId() == null) {
-                throw new IllegalArgumentException("User cannot be null");
-            }
-
+        private void validateUserId(Long userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
         }
 
-    private void validateAnimal(Animal animal) {
-        if (animal == null || animal.getId() == null) {
-            throw new IllegalArgumentException("Animal cannot be null");
+    private void validateAnimalId(Long animalId) {
+        if (animalId == null) {
+            throw new IllegalArgumentException("Animal ID cannot be null");
         }
     }
 
-    private void validateApplication(AdoptionApplication application) {
-        if (application == null || application.getId() == null) {
-            throw new IllegalArgumentException("Adoption Application cannot be null");
+    private void validateApplication(Long AdoptionApplicationId) {
+        if (AdoptionApplicationId == null) {
+            throw new IllegalArgumentException("Adoption Application ID cannot be null");
         }
 
     }
@@ -109,9 +117,20 @@ public class AdoptionService {
         Adoption adoption = adoptionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Adoption not found with id: " + id));
 
-        adoption.setAdoptionUser(request.getUser());
-        adoption.setAnimal(request.getAnimal());
-        adoption.setApplication(request.getAdoptionApplication());
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + request.getUserId()));
+
+        Animal animal = animalRepository.findById(request.getAnimalId())
+                .orElseThrow(() -> new RuntimeException("Animal not found with id: " + request.getAnimalId()));
+
+        AdoptionApplication application = adoptionApplicationRepository.findById(request.getAdoptionApplicationId())
+                .orElseThrow(() -> new RuntimeException("Adoption Application not found with id: " + request.getAdoptionApplicationId()));
+
+
+
+        adoption.setAdoptionUser(user);
+        adoption.setAnimal(animal);
+        adoption.setApplication(application);
         adoption.setAdoptionDate(request.getAdoptionDate());
         adoption.setIsActive(request.getIsActive());
 
