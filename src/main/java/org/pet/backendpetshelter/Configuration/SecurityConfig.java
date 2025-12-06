@@ -48,6 +48,7 @@ public class SecurityConfig {
 
                         // Public GET endpoints - allow browsing without authentication
                         .requestMatchers(HttpMethod.GET, "/api/animal/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/animal/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/species/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/breed/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/veterinarian/**").permitAll()

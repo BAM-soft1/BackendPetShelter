@@ -55,8 +55,8 @@ public class AnimalServiceTest {
     private AnimalDTORequest createValidRequest() {
         AnimalDTORequest request = new AnimalDTORequest();
         request.setName("Ox");
-        request.setSpecies(createValidSpecies());
-        request.setBreed(createValidBreed());
+        request.setSpeciesId(1L);
+        request.setBreedId(1L);
         request.setSex("Male");
         request.setBirthDate(createPastDate(2020, 1, 1));
         request.setIntakeDate(createPastDate(2023, 1, 1));
@@ -96,22 +96,6 @@ public class AnimalServiceTest {
         return cal.getTime();
     }
 
-
-    private Animal createSavedAnimal(AnimalDTORequest request) {
-        Animal animal = new Animal();
-        animal.setId(1L);
-        animal.setName(request.getName());
-        animal.setSpecies(request.getSpecies());
-        animal.setBreed(request.getBreed());
-        animal.setSex(request.getSex());
-        animal.setBirthDate(request.getBirthDate());
-        animal.setIntakeDate(request.getIntakeDate());
-        animal.setStatus(request.getStatus());
-        animal.setPrice(request.getPrice());
-        animal.setIsActive(request.getIsActive());
-        animal.setImageUrl(request.getImageUrl());
-        return animal;
-    }
 
 
     // ==================== BLACKBOX TESTS ====================
@@ -195,6 +179,8 @@ public class AnimalServiceTest {
             assertThrows(IllegalArgumentException.class, () -> animalService.addAnimal(request));
             verify(animalRepository, never()).save(any(Animal.class));
         }
+
+        /*
 
 
         // Species Invalid

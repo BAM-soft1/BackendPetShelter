@@ -8,6 +8,8 @@ import org.pet.backendpetshelter.Entity.Animal;
 import org.pet.backendpetshelter.Entity.Breed;
 import org.pet.backendpetshelter.Entity.Species;
 import org.pet.backendpetshelter.Repository.AnimalRepository;
+import org.pet.backendpetshelter.Repository.BreedRepository;
+import org.pet.backendpetshelter.Repository.SpeciesRepository;
 import org.pet.backendpetshelter.Status;
 import org.springframework.stereotype.Service;
 
@@ -19,34 +21,40 @@ import java.util.stream.Collectors;
 public class AnimalService {
 
     private final AnimalRepository animalRepository;
+    private final BreedRepository breedRepository;
+    private final SpeciesRepository speciesRepository;
 
-    public AnimalService(AnimalRepository animalRepository) {
+    public AnimalService(AnimalRepository animalRepository, BreedRepository breedRepository, SpeciesRepository speciesRepository) {
         this.animalRepository = animalRepository;
+        this.breedRepository = breedRepository;
+        this.speciesRepository = speciesRepository;
     }
 
     /*Add Animal */
     public AnimalDTOResponse addAnimal(AnimalDTORequest request) {
 
-
-        // Validate input data
-
         validateName(request.getName());
-        validateSpecies(request.getSpecies());
-        validateBreed(request.getBreed());
+        validateSpeciesId(request.getSpeciesId());
+        validateBreedId(request.getBreedId());
         validateSex(request.getSex());
         validateBirthDate(request.getBirthDate());
-        validateIntakeDate(request.getIntakeDate(),
-                request.getBirthDate());
-        validateStatus(String.valueOf(request.getStatus()));
+        validateIntakeDate(request.getIntakeDate(), request.getBirthDate());
+        validateStatus(request.getStatus());
         validatePrice(request.getPrice());
         validateIsActive(request.getIsActive());
         validateImageUrl(request.getImageUrl());
 
+        Species species = speciesRepository.findById(request.getSpeciesId())
+                .orElseThrow(() -> new EntityNotFoundException("Species not found"));
+
+        Breed breed = breedRepository.findById(request.getBreedId())
+                .orElseThrow(() -> new EntityNotFoundException("Breed not found"));
+
         Animal animal = new Animal();
         animal.setName(request.getName());
         animal.setSex(request.getSex());
-        animal.setSpecies(request.getSpecies());
-        animal.setBreed(request.getBreed());
+        animal.setSpecies(species);
+        animal.setBreed(breed);
         animal.setBirthDate(request.getBirthDate());
         animal.setIntakeDate(request.getIntakeDate());
         animal.setStatus(request.getStatus());
@@ -55,9 +63,10 @@ public class AnimalService {
         animal.setImageUrl(request.getImageUrl());
 
         animalRepository.save(animal);
-        return new AnimalDTOResponse(animal);
 
+        return new AnimalDTOResponse(animal);
     }
+
 
 
     // Validation Methods
@@ -77,41 +86,16 @@ public class AnimalService {
     }
 
 
-    private void validateSpecies(Species species) {
-        if (species == null) {
-            throw new IllegalArgumentException("Species cannot be null");
-        }
-
-        if (species.getId() == null) {
+    private void validateSpeciesId(Long speciesId) {
+        if (speciesId == null) {
             throw new IllegalArgumentException("Species ID cannot be null");
         }
-
-        if (species.getName() == null) {
-            throw new IllegalArgumentException("Species name cannot be empty");
-        }
-
-        if (species.getName() == null || species.getName().isBlank()) {
-            throw new IllegalArgumentException("Species name cannot be null or empty");
-        }
-
-
     }
 
-    private void validateBreed(Breed breed) {
-        if (breed == null) {
-            throw new IllegalArgumentException("Breed cannot be null");
-        }
 
-        if (breed.getId() == null) {
-            throw new IllegalArgumentException("Breed ID cannot be null");
-        }
-
-        if (breed.getName() == null) {
-            throw new IllegalArgumentException("Breed name cannot be null or empty");
-        }
-
-        if (breed.getName() == null || breed.getName().isBlank()) {
-            throw new IllegalArgumentException("Breed name cannot be null or empty");
+    private void validateBreedId(Long breedId) {
+        if (breedId == null) {
+            throw new IllegalArgumentException("Species ID cannot be null");
         }
     }
 
@@ -148,17 +132,9 @@ public class AnimalService {
         }
     }
 
-    private void validateStatus(String status) {
-        if (status == null || status.isBlank()) {
-            throw new IllegalArgumentException("Status cannot be null or empty");
-        }
-
-        String statusLower = status.toLowerCase();
-        if (!statusLower.equals("available") &&
-                !statusLower.equals("adopted") &&
-                !statusLower.equals("fostered") &&
-                !statusLower.equals("deceased")) {
-            throw new IllegalArgumentException("Status must be Available, Adopted, Fostered, or Deceased");
+    private void validateStatus(Status status) {
+        if (status == null) {
+            throw new IllegalArgumentException("Status cannot be null");
         }
     }
 
@@ -212,9 +188,15 @@ public class AnimalService {
         Animal animal = animalRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Animal not found with id: " + id));
 
+        Breed breed = breedRepository.findById(request.getBreedId())
+                .orElseThrow(() -> new EntityNotFoundException("Breed not found"));
+
+        Species species = speciesRepository.findById(request.getSpeciesId())
+                .orElseThrow(() -> new EntityNotFoundException("Species not found"));
+
         animal.setName(request.getName());
-        animal.setSpecies(request.getSpecies());
-        animal.setBreed(request.getBreed());
+        animal.setSpecies(species);
+        animal.setBreed(breed);
         animal.setSex(request.getSex());
         animal.setBirthDate(request.getBirthDate());
         animal.setIntakeDate(request.getIntakeDate());
