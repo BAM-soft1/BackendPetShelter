@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -41,7 +42,6 @@ public class VeterinarianIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;
-
 
 
     @BeforeEach
@@ -72,7 +72,7 @@ public class VeterinarianIntegrationTest {
 
 
     @Test
-    @DisplayName("Add Veterinarian - Success")
+    @DisplayName("POST /api/veterinarian Add Veterinarian - Success")
     void addVeterinarian_Success() throws Exception {
         VeterinarianDTORequest request = createValidRequest();
 
@@ -88,4 +88,117 @@ public class VeterinarianIntegrationTest {
 
     }
 
+
+    @Test
+    @DisplayName("POST /api/veterinarian Add Veterinarian - User ID Cannot Be Null")
+    void addVeterinarian_FailNullUserId() throws Exception {
+        VeterinarianDTORequest request = createValidRequest();
+        request.setUserId(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/veterinarian/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("User ID cannot be null.")));
+    }
+
+    @Test
+    @DisplayName("POST /api/veterinarian Add Veterinarian - Non-Existent User ID")
+    void addVeterinarian_FailNonExistentUserId() throws Exception {
+        VeterinarianDTORequest request = createValidRequest();
+        request.setUserId(999L);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/veterinarian/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("User with ID 999 does not exist.")));
+    }
+
+
+    @Test
+    @DisplayName("POST /api/veterinarian Add Veterinarian - Null License Number")
+    void addVeterinarian_FailInvalidLicenseNumber() throws Exception {
+        VeterinarianDTORequest request = createValidRequest();
+        request.setLicenseNumber(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/veterinarian/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("License number cannot be null or empty.")));
+    }
+
+    @Test
+    @DisplayName("POST /api/veterinarian Add Veterinarian - License Number Exceeds Max Length")
+    void addVeterinarian_FailLicenseNumberExceedsMaxLength() throws Exception {
+        VeterinarianDTORequest request = createValidRequest();
+        request.setLicenseNumber("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/veterinarian/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("License number cannot exceed 20 characters.")));
+    }
+
+    @Test
+    @DisplayName("POST /api/veterinarian Add Veterinarian - Invalid Characters in License")
+    void addVeterinarian_FailInvalidCharactersInLicense() throws Exception {
+        VeterinarianDTORequest request = createValidRequest();
+        request.setLicenseNumber("VET@123!");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/veterinarian/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("License number contains invalid characters.")));
+    }
+
+    @Test
+    @DisplayName("POST /api/veterinarian Add Veterinarian - Null Clinic Name")
+    void addVeterinarian_FailNullClinicName() throws Exception {
+        VeterinarianDTORequest request = createValidRequest();
+        request.setClinicName(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/veterinarian/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Clinic name cannot be null or empty.")));
+    }
+
+
+    @Test
+    @DisplayName("POST /api/veterinarian Add Veterinarian - Clinic Name Exceeds Max Length")
+    void addVeterinarian_FailClinicNameExceedsMaxLength() throws Exception {
+        VeterinarianDTORequest request = createValidRequest();
+        request.setClinicName("A".repeat(70));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/veterinarian/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Clinic name cannot exceed 65 characters.")));
+    }
+
+    @Test
+    @DisplayName("POST /api/veterinarian Add Veterinarian - Clinic Name Contains Invalid Characters")
+    void addVeterinarian_FailClinicNameContainsInvalidCharacters() throws Exception {
+        VeterinarianDTORequest request = createValidRequest();
+        request.setClinicName("BAM Pet Shelter!@#");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/veterinarian/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Clinic name contains invalid characters.")));
+    }
+
+
 }
+
+
+
+
+
