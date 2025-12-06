@@ -37,7 +37,7 @@ public class VeterinarianController {
 
     @PostMapping("/add")
     public ResponseEntity<VeterinarianDTOResponse> addVeterinian(@Valid @RequestBody VeterinarianDTORequest veterinarianDTORequest){
-        return ResponseEntity.status(201).body(veterinarianService.addVeterinian(veterinarianDTORequest));
+        return ResponseEntity.status(201).body(veterinarianService.addVeterinarian(veterinarianDTORequest));
     }
 
     @PutMapping("/update/{id}")

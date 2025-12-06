@@ -12,7 +12,6 @@ import org.pet.backendpetshelter.DTO.VeterinarianDTORequest;
 import org.pet.backendpetshelter.DTO.VeterinarianDTOResponse;
 import org.pet.backendpetshelter.Entity.User;
 import org.pet.backendpetshelter.Entity.Veterinarian;
-import org.pet.backendpetshelter.Repository.AnimalRepository;
 import org.pet.backendpetshelter.Repository.UserRepository;
 import org.pet.backendpetshelter.Repository.VeterinarianRepository;
 import org.pet.backendpetshelter.Service.VeterinarianService;
@@ -49,7 +48,7 @@ public class VeterinarianServiceTest {
 
     private VeterinarianDTORequest createValidRequest(){
         VeterinarianDTORequest request = new VeterinarianDTORequest();
-        request.setUser(createValidUser());
+        request.setUserId(1L);
         request.setLicenseNumber("VET123456");
         request.setClinicName("Bam Pet Shelter");
         request.setIsActive(true);
@@ -73,7 +72,7 @@ public class VeterinarianServiceTest {
     private Veterinarian createSavedVeterinarian(VeterinarianDTORequest request){
         Veterinarian veterinarian = new Veterinarian();
         veterinarian.setId(1L);
-        veterinarian.setUser(request.getUser());
+        veterinarian.setUser(createValidUser());
         veterinarian.setLicenseNumber(request.getLicenseNumber());
         veterinarian.setClinicName(request.getClinicName());
         veterinarian.setIsActive(request.getIsActive());
@@ -98,13 +97,17 @@ public class VeterinarianServiceTest {
         void createVeterinarian_ValidData_Success() {
             VeterinarianDTORequest request = createValidRequest();
 
+            User user = createValidUser();
+
+            when(userRepository.findById(request.getUserId())).thenReturn(java.util.Optional.of(user));
+
             when(veterinarianRepository.save(any(Veterinarian.class))).thenAnswer(inv -> {
                 Veterinarian a = inv.getArgument(0);
                 a.setId(1L);
                 return a;
             });
 
-            VeterinarianDTOResponse response = veterinarianService.addVeterinian(request);
+            VeterinarianDTOResponse response = veterinarianService.addVeterinarian(request);
 
             assertNotNull(response);
             assertEquals(1L, response.getId());
@@ -122,9 +125,9 @@ public class VeterinarianServiceTest {
         @DisplayName("User ID is null - Throws Exception")
         void createVeterinarian_UserIdIsNull_ThrowsException() {
             VeterinarianDTORequest request = createValidRequest();
-            request.getUser().setId(null);
+            request.setUserId(null);
 
-            assertThrows(IllegalArgumentException.class, () -> veterinarianService.addVeterinian(request));
+            assertThrows(IllegalArgumentException.class, () -> veterinarianService.addVeterinarian(request));
             verify(veterinarianRepository, never()).save(any(Veterinarian.class));
 
         }
@@ -134,9 +137,9 @@ public class VeterinarianServiceTest {
         @DisplayName("User is null - Throws Exception")
         void createVeterinarian_UserIsNull_ThrowsException() {
             VeterinarianDTORequest request = createValidRequest();
-            request.setUser(null);
+            request.setUserId(null);
 
-            assertThrows(IllegalArgumentException.class, () -> veterinarianService.addVeterinian(request));
+            assertThrows(IllegalArgumentException.class, () -> veterinarianService.addVeterinarian(request));
             verify(veterinarianRepository, never()).save(any(Veterinarian.class));
         }
 
@@ -149,7 +152,7 @@ public class VeterinarianServiceTest {
             VeterinarianDTORequest request = createValidRequest();
             request.setLicenseNumber(null);
 
-            assertThrows(IllegalArgumentException.class, () -> veterinarianService.addVeterinian(request));
+            assertThrows(IllegalArgumentException.class, () -> veterinarianService.addVeterinarian(request));
             verify(veterinarianRepository, never()).save(any(Veterinarian.class));
 
         }
@@ -160,7 +163,7 @@ public class VeterinarianServiceTest {
             VeterinarianDTORequest request = createValidRequest();
             request.setClinicName("   ");
 
-            assertThrows(IllegalArgumentException.class, () -> veterinarianService.addVeterinian(request));
+            assertThrows(IllegalArgumentException.class, () -> veterinarianService.addVeterinarian(request));
             verify(veterinarianRepository, never()).save(any(Veterinarian.class));
         }
 
@@ -170,7 +173,7 @@ public class VeterinarianServiceTest {
             VeterinarianDTORequest request = createValidRequest();
             request.setIsActive(null);
 
-            assertThrows(IllegalArgumentException.class, () -> veterinarianService.addVeterinian(request));
+            assertThrows(IllegalArgumentException.class, () -> veterinarianService.addVeterinarian(request));
             verify(veterinarianRepository, never()).save(any(Veterinarian.class));
         }
 
