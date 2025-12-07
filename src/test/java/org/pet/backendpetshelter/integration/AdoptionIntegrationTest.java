@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Calendar;
 import java.util.Date;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -136,6 +137,79 @@ public class AdoptionIntegrationTest {
 
     }
 
+
+
+    @Test
+    @DisplayName("POST /api/adoptions - Add Adoption - Fail Null User ID")
+    public void testAddAdoption_FailNullUserId() throws Exception {
+        AdoptionRequest request = createValidRequest();
+        request.setUserId(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/adoption/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("User ID cannot be null")));
+    }
+
+
+    @Test
+    @DisplayName("POST /api/adoptions - Add Adoption - Fail Null Animal ID")
+    public void testAddAdoption_FailNullAnimalId() throws Exception {
+        AdoptionRequest request = createValidRequest();
+        request.setAnimalId(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/adoption/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Animal ID cannot be null")));
+    }
+
+
+    @Test
+    @DisplayName("POST /api/adoptions - Add Adoption - Fail Null Adoption Application ID")
+    public void testAddAdoption_FailNullAdoptionApplicationId() throws Exception {
+        AdoptionRequest request = createValidRequest();
+        request.setAdoptionApplicationId(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/adoption/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Adoption Application ID cannot be null")));
+
+    }
+
+
+    @Test
+    @DisplayName("POST /api/adoptions - Add Adoption - Valid Adoption Date")
+    public void testAddAdoption_FailNullAdoptionDate() throws Exception {
+        AdoptionRequest request = createValidRequest();
+        request.setAdoptionDate(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/adoption/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Adoption date cannot be null")));
+    }
+
+
+    @Test
+    @DisplayName("POST /api/adoptions - Add Adoption - Adoption Date In The Past")
+    public void testAddAdoption_FailAdoptionDateInThePast() throws Exception {
+        AdoptionRequest request = createValidRequest();
+        Calendar pastDate = Calendar.getInstance();
+        pastDate.add(Calendar.DAY_OF_MONTH, -1);
+        request.setAdoptionDate(pastDate.getTime());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/adoption/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Adoption date cannot be in the past.")));
+    }
 
 
 

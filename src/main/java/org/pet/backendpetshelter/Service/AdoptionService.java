@@ -13,6 +13,7 @@ import org.pet.backendpetshelter.Repository.AnimalRepository;
 import org.pet.backendpetshelter.Repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,12 +99,16 @@ public class AdoptionService {
 
     }
 
-    private void validateAdoptionDate(java.util.Date adoptionDate) {
+    private void validateAdoptionDate(Date adoptionDate) {
         if (adoptionDate == null) {
             throw new IllegalArgumentException("Adoption date cannot be null");
         }
 
+        if (adoptionDate.before(new Date())) {
+            throw new IllegalArgumentException("Adoption date cannot be in the past.");
+        }
     }
+
 
     private void validateIsActive(Boolean isActive) {
         if (isActive == null) {
