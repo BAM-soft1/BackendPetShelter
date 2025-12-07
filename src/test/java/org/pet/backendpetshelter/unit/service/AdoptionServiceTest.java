@@ -61,7 +61,7 @@ public class AdoptionServiceTest {
         request.setUserId(createValidUserId());
         request.setAnimalId(createValidAnimalId());
         request.setAdoptionApplicationId(createValidApplicationId());
-        request.setAdoptionDate(new Date());
+        request.setAdoptionDate(createFutureDate());
         request.setIsActive(true);
         return request;
     }
@@ -96,16 +96,9 @@ public class AdoptionServiceTest {
     }
 
 
-    private Date createPastDate(int year, int month, int day) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(year, month - 1, day, 0, 0, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
-    }
-
     private Date createFutureDate() {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.DAY_OF_MONTH, 1); // 1 dag frem
         return cal.getTime();
     }
 
