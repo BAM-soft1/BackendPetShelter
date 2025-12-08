@@ -12,9 +12,9 @@ import java.util.Date;
 @Getter
 @Setter
 public class AdoptionRequest {
-    private User user;
-    private Animal animal;
-    private AdoptionApplication adoptionApplication;
+    private Long userId;
+    private Long animalId;
+    private Long adoptionApplicationId;
     private Date adoptionDate;
     private Boolean isActive;
 }

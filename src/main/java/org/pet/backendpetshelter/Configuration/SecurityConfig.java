@@ -48,9 +48,18 @@ public class SecurityConfig {
 
                         // Public GET endpoints - allow browsing without authentication
                         .requestMatchers(HttpMethod.GET, "/api/animal/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/animal/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/species/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/species/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/species/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/species/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/breed/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/breed/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/veterinarian/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/veterinarian/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/adoption/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/adoption/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/adoption-application/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/foster-care/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/medical-record/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/vaccination/**").permitAll()

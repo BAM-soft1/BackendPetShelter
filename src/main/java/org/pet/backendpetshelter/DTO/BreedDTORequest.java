@@ -7,6 +7,6 @@ import org.pet.backendpetshelter.Entity.Species;
 @Getter
 @Setter
 public class BreedDTORequest {
-    private Species species;
+    private Long speciesId;
     private String name;
 }

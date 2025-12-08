@@ -12,13 +12,10 @@ import org.pet.backendpetshelter.DTO.AdoptionRequest;
 import org.pet.backendpetshelter.DTO.AdoptionResponse;
 import org.pet.backendpetshelter.Entity.*;
 import org.pet.backendpetshelter.Repository.*;
-import org.pet.backendpetshelter.Roles;
 import org.pet.backendpetshelter.Service.AdoptionService;
-import org.pet.backendpetshelter.Status;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -61,37 +58,27 @@ public class AdoptionServiceTest {
 
     private AdoptionRequest createValidRequest() {
         AdoptionRequest request = new AdoptionRequest();
-        request.setUser(createValidUser());
-        request.setAnimal(createValidAnimal());
-        request.setAdoptionApplication(createValidApplication());
-        request.setAdoptionDate(createPastDate(2023, 9, 15));
+        request.setUserId(createValidUserId());
+        request.setAnimalId(createValidAnimalId());
+        request.setAdoptionApplicationId(createValidApplicationId());
+        request.setAdoptionDate(createFutureDate());
         request.setIsActive(true);
         return request;
     }
 
 
-    private User createValidUser(){
-        User user = new User();
-        user.setId(1L);
-        user.setFirstName("Ox");
-        user.setLastName("W00");
-        user.setEmail("ox@gmail.com");
-        user.setPassword("W1ldC4tWoo123");
-        user.setPhone("42424242");
-        user.setRole(Roles.USER);
-        user.setIsActive(true);
 
-        return user;
+    private Long createValidUserId() {
+        return 1L;    }
 
+    private Long createValidAnimalId() {
+        return 1L;
     }
 
-    private AdoptionApplication createValidApplication(){
-        AdoptionApplication application = new AdoptionApplication();
-        application.setId(1L);
-        application.setUser(createValidUser());
-        application.setStatus(Status.APPROVED);
-        return application;
+    private Long createValidApplicationId() {
+        return 1L;
     }
+
 
     private Species createValidSpecies(){
         Species species = new Species();
@@ -108,33 +95,10 @@ public class AdoptionServiceTest {
         return breed;
     }
 
-    private Animal createValidAnimal(){
-        Animal animal = new Animal();
-        animal.setId(1L);
-        animal.setName("Buddy");
-        animal.setSpecies(createValidSpecies());
-        animal.setBreed(createValidBreed());
-        animal.setBirthDate(Calendar.getInstance().getTime());
-        animal.setSex("Male");
-        animal.setIntakeDate(Calendar.getInstance().getTime());
-        animal.setStatus(Status.APPROVED);
-        animal.setPrice(499);
-        animal.setIsActive(true);
-        animal.setImageUrl("http://cuteDog.com/LabadrorDog.jpg");
-        return animal;
-
-    }
-
-    private Date createPastDate(int year, int month, int day) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(year, month - 1, day, 0, 0, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return cal.getTime();
-    }
 
     private Date createFutureDate() {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.DAY_OF_MONTH, 1); // 1 dag frem
         return cal.getTime();
     }
 
@@ -152,6 +116,18 @@ public class AdoptionServiceTest {
         void createAdoption_ValidRequest_Success() {
             // Arrange
             AdoptionRequest request = createValidRequest();
+            User user = new User();
+            user.setId(request.getUserId());
+            Animal animal = new Animal();
+            animal.setId(request.getAnimalId());
+            AdoptionApplication application = new AdoptionApplication();
+            application.setId(request.getAdoptionApplicationId());
+
+            when(userRepository.findById(request.getUserId())).thenReturn(java.util.Optional.of(user));
+            when(animalRepository.findById(request.getAnimalId())).thenReturn(java.util.Optional.of(animal));
+            when(adoptionApplicationRepository.findById(request.getAdoptionApplicationId())).thenReturn(java.util.Optional.of(application));
+
+
 
 
 
@@ -167,6 +143,13 @@ public class AdoptionServiceTest {
             // Assert
             assertNotNull(response);
             assertEquals(1L, response.getId());
+            assertEquals(user.getId(), response.getUserId());
+            assertEquals(animal.getId(), response.getAnimalId());
+            assertEquals(application.getId(), response.getAdoptionApplicationId());
+
+            assertEquals(request.getAdoptionDate(), response.getAdoptionDate());
+            assertEquals(request.getIsActive(), response.getIsActive());
+
             verify(adoptionRepository).save(any(Adoption.class));
         }
 
@@ -175,15 +158,15 @@ public class AdoptionServiceTest {
         // ==================== INVALID PARTITIONS PARTITION ====================
 
         @Test
-        @DisplayName("Create Adoption - Null User")
-        void createAdoption_NullUser_ThrowsException() {
+        @DisplayName("Create Adoption - Null User ID")
+        void createAdoption_NullUserId_ThrowsException() {
             AdoptionRequest request = createValidRequest();
-            request.setUser(null);
+            request.setUserId(null);
 
             try {
                 adoptionService.addAdoption(request);
             } catch (IllegalArgumentException e) {
-                assertEquals("User cannot be null", e.getMessage());
+                assertEquals("User ID cannot be null", e.getMessage());
             }
             verify(adoptionRepository,  org.mockito.Mockito.never()).save(any(Adoption.class));
 
@@ -194,12 +177,12 @@ public class AdoptionServiceTest {
         @DisplayName("Create Adoption - Null Animal")
         void createAdoption_NullAnimal_ThrowsException() {
             AdoptionRequest request = createValidRequest();
-            request.setAnimal(null);
+            request.setAnimalId(null);
 
             try {
                 adoptionService.addAdoption(request);
             } catch (IllegalArgumentException e) {
-                assertEquals("Animal cannot be null", e.getMessage());
+                assertEquals("Animal ID cannot be null", e.getMessage());
             }
             verify(adoptionRepository,  org.mockito.Mockito.never()).save(any(Adoption.class));
         }
@@ -209,12 +192,12 @@ public class AdoptionServiceTest {
         @DisplayName("Create Adoption - Null Adoption Application")
         void createAdoption_NullAdoptionApplication_ThrowsException() {
             AdoptionRequest request = createValidRequest();
-            request.setAdoptionApplication(null);
+            request.setAdoptionApplicationId(null);
 
             try {
                 adoptionService.addAdoption(request);
             } catch (IllegalArgumentException e) {
-                assertEquals("Adoption Application cannot be null", e.getMessage());
+                assertEquals("Adoption Application ID cannot be null", e.getMessage());
             }
             verify(adoptionRepository,  org.mockito.Mockito.never()).save(any(Adoption.class));
         }
@@ -251,15 +234,15 @@ public class AdoptionServiceTest {
         @DisplayName("Create Adoption - User with null ID")
         void createAdoption_UserWithNullId_ThrowsException() {
             AdoptionRequest request = createValidRequest();
-            request.getUser().setId(null);
+            request.setUserId(null);
             try {
                 adoptionService.addAdoption(request);
             } catch (IllegalArgumentException e) {
-                assertEquals("User cannot be null", e.getMessage());
+                assertEquals("User ID cannot be null", e.getMessage());
             }
             verify(adoptionRepository, org.mockito.Mockito.never()).save(any(Adoption.class));
         }
-        
+
     }
 
 }

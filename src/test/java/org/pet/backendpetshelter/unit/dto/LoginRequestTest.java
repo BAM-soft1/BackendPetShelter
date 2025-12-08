@@ -29,7 +29,7 @@ class LoginRequestTest {
     
     private LoginRequest createValidRequest() {
         LoginRequest request = new LoginRequest();
-        request.setEmail("user@example.com");
+        request.setEmail("userId@example.com");
         request.setPassword("SecurePassword123");
         return request;
     }
@@ -115,7 +115,7 @@ class LoginRequestTest {
         @DisplayName("Should fail validation when email has invalid format (missing domain)")
         void testEmailInvalidFormatMissingDomain() {
             LoginRequest request = createValidRequest();
-            request.setEmail("user@");
+            request.setEmail("userId@");
 
             Set<ConstraintViolation<LoginRequest>> violations = validator.validate(request);
 

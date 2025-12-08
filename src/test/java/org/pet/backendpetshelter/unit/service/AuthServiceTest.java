@@ -235,7 +235,7 @@ class AuthServiceTest {
         // ==================== VALID PARTITION ====================
 
         @Test
-        @DisplayName("Should successfully register user with all valid fields")
+        @DisplayName("Should successfully register userId with all valid fields")
         void testValidRegistrationWithAllFields() {
             RegisterUserRequest request = createValidRequest();
             mockSuccessfulRegistration("test@example.com");
@@ -253,7 +253,7 @@ class AuthServiceTest {
         }
 
         @Test
-        @DisplayName("Should successfully register user with optional phone omitted")
+        @DisplayName("Should successfully register userId with optional phone omitted")
         void testValidRegistrationWithoutPhone() {
             RegisterUserRequest request = createValidRequest();
             request.setPhone(null);
@@ -382,7 +382,7 @@ class AuthServiceTest {
         // ====================
 
         @Test
-        @DisplayName("Should successfully login with valid credentials and active user")
+        @DisplayName("Should successfully login with valid credentials and active userId")
         void testSuccessfulLoginWithValidCredentials() {
             LoginRequest request = createValidLoginRequest();
             User user = createActiveUser();
@@ -449,7 +449,7 @@ class AuthServiceTest {
         // USER ====================
 
         @Test
-        @DisplayName("Should throw IllegalStateException when user is inactive")
+        @DisplayName("Should throw IllegalStateException when userId is inactive")
         void testLoginWithInactiveUserFails() {
             LoginRequest request = createValidLoginRequest();
             User user = createActiveUser();
@@ -1108,7 +1108,7 @@ class AuthServiceTest {
         // ====================
 
         @Test
-        @DisplayName("DC: Should execute TRUE branch when user does not exist (Optional.empty)")
+        @DisplayName("DC: Should execute TRUE branch when userId does not exist (Optional.empty)")
         void testUserExists_TrueBranch() {
             LoginRequest request = new LoginRequest();
             request.setEmail("nonexistent@example.com");
@@ -1126,7 +1126,7 @@ class AuthServiceTest {
         }
 
         @Test
-        @DisplayName("DC: Should execute FALSE branch when user exists (Optional.present)")
+        @DisplayName("DC: Should execute FALSE branch when userId exists (Optional.present)")
         void testUserExists_FalseBranch() {
             LoginRequest request = new LoginRequest();
             request.setEmail("existing@example.com");
@@ -1153,7 +1153,7 @@ class AuthServiceTest {
         // ====================
 
         @Test
-        @DisplayName("DC: Should execute TRUE branch when user is inactive")
+        @DisplayName("DC: Should execute TRUE branch when userId is inactive")
         void testIsActive_TrueBranch() {
             LoginRequest request = new LoginRequest();
             request.setEmail("test@example.com");
@@ -1177,7 +1177,7 @@ class AuthServiceTest {
         }
 
         @Test
-        @DisplayName("DC: Should execute FALSE branch when user is active")
+        @DisplayName("DC: Should execute FALSE branch when userId is active")
         void testIsActive_FalseBranch() {
             LoginRequest request = new LoginRequest();
             request.setEmail("test@example.com");

@@ -382,7 +382,7 @@ ORDER BY aa.application_date;
 -- INDEXES
 -- ============================================================================
 
--- Index 1: Speed up user login queries
+-- Index 1: Speed up userId login queries
 CREATE INDEX idx_user_email ON users(email);
 
 -- Index 2: Speed up animal searches by name
@@ -406,7 +406,7 @@ CREATE INDEX idx_vaccination_due_date ON vaccination(next_due_date);
 -- Index 8: Speed up medical record lookups
 CREATE INDEX idx_medical_animal ON medical_record(animal_id);
 
--- Index 9: Speed up application queries by user
+-- Index 9: Speed up application queries by userId
 CREATE INDEX idx_application_user ON adoption_application(user_id);
 
 -- Index 10: Speed up application queries by status

@@ -92,7 +92,7 @@ class JwtAuthenticationFilterTest {
             String token = "valid.jwt.token";
             request.addHeader("Authorization", "Bearer " + token);
             
-            Jws<Claims> mockJws = createMockJws("user@example.com", "USER");
+            Jws<Claims> mockJws = createMockJws("userId@example.com", "USER");
             when(denylistService.isDenied(token)).thenReturn(false);
             when(jwtService.parseAccessToken(token)).thenReturn(mockJws);
 
@@ -100,13 +100,13 @@ class JwtAuthenticationFilterTest {
 
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             assertNotNull(auth);
-            assertEquals("user@example.com", auth.getPrincipal());
+            assertEquals("userId@example.com", auth.getPrincipal());
             assertTrue(auth.getAuthorities().contains(new SimpleGrantedAuthority("USER")));
             verify(filterChain).doFilter(request, response);
         }
 
         @Test
-        @DisplayName("Should extract correct claims and set user details")
+        @DisplayName("Should extract correct claims and set userId details")
         void testExtractedClaimsMatchUserDetails() throws ServletException, IOException {
             String token = "valid.jwt.token";
             request.addHeader("Authorization", "Bearer " + token);
@@ -215,7 +215,7 @@ class JwtAuthenticationFilterTest {
             String token = "valid.jwt.token";
             request.addHeader("Authorization", "Bearer " + token);
             
-            Jws<Claims> mockJws = createMockJws("user@example.com", "USER");
+            Jws<Claims> mockJws = createMockJws("userId@example.com", "USER");
             when(denylistService.isDenied(token)).thenReturn(false);
             when(jwtService.parseAccessToken(token)).thenReturn(mockJws);
 
@@ -290,7 +290,7 @@ class JwtAuthenticationFilterTest {
             String token = "valid.token";
             request.addHeader("Authorization", "Bearer " + token);
             
-            Jws<Claims> mockJws = createMockJws("user@example.com", "USER");
+            Jws<Claims> mockJws = createMockJws("userId@example.com", "USER");
             when(denylistService.isDenied(token)).thenReturn(false);
             when(jwtService.parseAccessToken(token)).thenReturn(mockJws);
 
@@ -328,7 +328,7 @@ class JwtAuthenticationFilterTest {
             String token = "valid.token";
             request.addHeader("Authorization", "Bearer " + token);
             
-            Jws<Claims> mockJws = createMockJws("user@example.com", "USER");
+            Jws<Claims> mockJws = createMockJws("userId@example.com", "USER");
             when(denylistService.isDenied(token)).thenReturn(false);
             when(jwtService.parseAccessToken(token)).thenReturn(mockJws);
 
@@ -348,7 +348,7 @@ class JwtAuthenticationFilterTest {
             String token = "valid.token";
             request.addHeader("Authorization", "Bearer " + token);
             
-            Jws<Claims> mockJws = createMockJws("user@example.com", "USER");
+            Jws<Claims> mockJws = createMockJws("userId@example.com", "USER");
             when(denylistService.isDenied(token)).thenReturn(false);
             when(jwtService.parseAccessToken(token)).thenReturn(mockJws);
 
@@ -387,7 +387,7 @@ class JwtAuthenticationFilterTest {
             String token = "valid.token";
             request.addHeader("Authorization", "Bearer " + token);
             
-            Jws<Claims> mockJws = createMockJws("user@example.com", "USER");
+            Jws<Claims> mockJws = createMockJws("userId@example.com", "USER");
             when(denylistService.isDenied(token)).thenReturn(false);
             when(jwtService.parseAccessToken(token)).thenReturn(mockJws);
 
@@ -395,7 +395,7 @@ class JwtAuthenticationFilterTest {
 
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             assertNotNull(auth);
-            assertEquals("user@example.com", auth.getPrincipal());
+            assertEquals("userId@example.com", auth.getPrincipal());
             verify(filterChain).doFilter(request, response);
         }
 
@@ -413,7 +413,7 @@ class JwtAuthenticationFilterTest {
                     "existing@example.com", null, null);
             SecurityContextHolder.getContext().setAuthentication(existingAuth);
             
-            Jws<Claims> mockJws = createMockJws("user@example.com", "USER");
+            Jws<Claims> mockJws = createMockJws("userId@example.com", "USER");
             when(denylistService.isDenied(token)).thenReturn(false);
             when(jwtService.parseAccessToken(token)).thenReturn(mockJws);
 
@@ -434,7 +434,7 @@ class JwtAuthenticationFilterTest {
             String token = "valid.token";
             request.addHeader("Authorization", "Bearer " + token + "  "); // Extra spaces
             
-            Jws<Claims> mockJws = createMockJws("user@example.com", "USER");
+            Jws<Claims> mockJws = createMockJws("userId@example.com", "USER");
             when(denylistService.isDenied(token)).thenReturn(false);
             when(jwtService.parseAccessToken(token)).thenReturn(mockJws);
 
@@ -453,7 +453,7 @@ class JwtAuthenticationFilterTest {
             String token = "valid.token";
             request.addHeader("Authorization", "Bearer " + token);
             
-            Jws<Claims> mockJws = createMockJws("user@example.com", "ADMIN");
+            Jws<Claims> mockJws = createMockJws("userId@example.com", "ADMIN");
             when(denylistService.isDenied(token)).thenReturn(false);
             when(jwtService.parseAccessToken(token)).thenReturn(mockJws);
 
@@ -475,7 +475,7 @@ class JwtAuthenticationFilterTest {
             request.addHeader("Authorization", "Bearer " + token);
             request.setRemoteAddr("192.168.1.1");
             
-            Jws<Claims> mockJws = createMockJws("user@example.com", "USER");
+            Jws<Claims> mockJws = createMockJws("userId@example.com", "USER");
             when(denylistService.isDenied(token)).thenReturn(false);
             when(jwtService.parseAccessToken(token)).thenReturn(mockJws);
 

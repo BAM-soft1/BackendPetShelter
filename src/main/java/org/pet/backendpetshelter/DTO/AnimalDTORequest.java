@@ -13,8 +13,8 @@ import java.util.Date;
 public class AnimalDTORequest {
 
     private String name;
-    private Species species;
-    private Breed breed;
+    private Long speciesId;
+    private Long breedId;
     private String sex;
     private Date birthDate;
     private Date intakeDate;

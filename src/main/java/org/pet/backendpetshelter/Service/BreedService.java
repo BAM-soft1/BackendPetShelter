@@ -4,7 +4,9 @@ import jakarta.persistence.EntityNotFoundException;
 import org.pet.backendpetshelter.DTO.BreedDTORequest;
 import org.pet.backendpetshelter.DTO.BreedDTOResponse;
 import org.pet.backendpetshelter.Entity.Breed;
+import org.pet.backendpetshelter.Entity.Species;
 import org.pet.backendpetshelter.Repository.BreedRepository;
+import org.pet.backendpetshelter.Repository.SpeciesRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,9 +16,11 @@ import java.util.stream.Collectors;
 public class BreedService {
 
     private final BreedRepository breedRepository;
+    private final SpeciesRepository speciesRepository;
 
-    public BreedService(BreedRepository breedRepository) {
+    public BreedService(BreedRepository breedRepository, SpeciesRepository speciesRepository) {
         this.breedRepository = breedRepository;
+        this.speciesRepository = speciesRepository;
     }
 
 
@@ -31,13 +35,17 @@ public class BreedService {
         // Validate Input Data
 
         validateName(request.getName());
-        validateSpecies(request.getSpecies());
+        validateSpeciesId(request.getSpeciesId());
+
+        Species species = speciesRepository.findById(request.getSpeciesId())
+                .orElseThrow(() -> new EntityNotFoundException("Species not found"));
 
         Breed breed = new Breed();
         breed.setName(request.getName());
-        breed.setSpecies(request.getSpecies());
+        breed.setSpecies(species);
 
         breedRepository.save(breed);
+
         return new BreedDTOResponse(breed);
 
     }
@@ -48,12 +56,39 @@ public class BreedService {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Breed name cannot be null or empty.");
         }
+
+        if (breedRepository.findByName(name).isPresent()) {
+            throw new IllegalArgumentException("Breed with name '" + name + "' already exists.");
+        }
+
+        if (name.length() > 50) {
+            throw new IllegalArgumentException("Breed name cannot exceed 50 characters.");
+        }
+
+        if (name.length() < 3) {
+            throw new IllegalArgumentException("Breed name must be at least 3 characters long.");
+        }
+
+        if (!name.matches("^[a-zA-Z\\s'-]+$")) {
+            throw new IllegalArgumentException("Breed name contains invalid characters.");
+        }
     }
 
-    private void validateSpecies(Object species) {
-        if (species == null) {
-            throw new IllegalArgumentException("Species cannot be null.");
+    private void validateSpeciesId(Long speciesId) {
+        if (speciesId == null) {
+            throw new IllegalArgumentException("Species ID cannot be null.");
         }
+
+
+        if (speciesId <= 0) {
+            throw new IllegalArgumentException("Species ID must be a positive number.");
+        }
+
+
+        if (!speciesRepository.existsById(speciesId)) {
+            throw new IllegalArgumentException("Species ID does not exist.");
+        }
+
     }
 
 
